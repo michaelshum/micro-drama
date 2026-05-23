@@ -1,0 +1,157 @@
+{
+  "app": {
+    "name": "Micro Drama",
+    "minimumSupportedVersion": "0.1.0",
+    "defaultFeed": "featured"
+  },
+  "shows": [
+    {
+      "id": "show_heiress_contract",
+      "title": "The Heiress Contract",
+      "description": "A hidden heiress accepts a fake marriage deal, then discovers the contract was never just business.",
+      "genre": "Romance",
+      "posterUrl": "https://videodelivery.net/replace-with-cloudflare-poster-1/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/replace-with-cloudflare-cover-1/thumbnails/thumbnail.jpg",
+      "sortOrder": 1,
+      "status": "published"
+    },
+    {
+      "id": "show_midnight_vow",
+      "title": "Midnight Vow",
+      "description": "A runaway bride wakes up married to the one man her family warned her never to trust.",
+      "genre": "Drama",
+      "posterUrl": "https://videodelivery.net/replace-with-cloudflare-poster-2/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/replace-with-cloudflare-cover-2/thumbnails/thumbnail.jpg",
+      "sortOrder": 2,
+      "status": "published"
+    },
+    {
+      "id": "show_second_chance_ceo",
+      "title": "Second Chance CEO",
+      "description": "After losing everything, a fired assistant returns with a secret identity and a plan to take back the company.",
+      "genre": "Revenge",
+      "posterUrl": "https://videodelivery.net/replace-with-cloudflare-poster-3/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/replace-with-cloudflare-cover-3/thumbnails/thumbnail.jpg",
+      "sortOrder": 3,
+      "status": "published"
+    }
+  ],
+  "episodes": [
+    {
+      "id": "ep_heiress_001",
+      "showId": "show_heiress_contract",
+      "episodeNumber": 1,
+      "title": "The Offer",
+      "description": "Mia gets an impossible proposal from the city's most untouchable bachelor.",
+      "durationSeconds": 72,
+      "thumbnailUrl": "https://videodelivery.net/replace-with-cloudflare-asset-1/thumbnails/thumbnail.jpg",
+      "playbackUrl": "https://videodelivery.net/replace-with-cloudflare-asset-1/manifest/video.m3u8",
+      "provider": "cloudflare_stream",
+      "providerAssetId": "replace-with-cloudflare-asset-1",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-05-23T00:00:00.000Z"
+    },
+    {
+      "id": "ep_heiress_002",
+      "showId": "show_heiress_contract",
+      "episodeNumber": 2,
+      "title": "Terms and Conditions",
+      "description": "The deal gets personal when Mia finds a clause meant to trap her.",
+      "durationSeconds": 78,
+      "thumbnailUrl": "https://videodelivery.net/replace-with-cloudflare-asset-2/thumbnails/thumbnail.jpg",
+      "playbackUrl": "https://videodelivery.net/replace-with-cloudflare-asset-2/manifest/video.m3u8",
+      "provider": "cloudflare_stream",
+      "providerAssetId": "replace-with-cloudflare-asset-2",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-05-23T00:00:00.000Z"
+    },
+    {
+      "id": "ep_heiress_003",
+      "showId": "show_heiress_contract",
+      "episodeNumber": 3,
+      "title": "Locked Door",
+      "description": "A private elevator ride exposes the truth behind the contract.",
+      "durationSeconds": 81,
+      "thumbnailUrl": "https://videodelivery.net/replace-with-cloudflare-asset-3/thumbnails/thumbnail.jpg",
+      "playbackUrl": "https://videodelivery.net/replace-with-cloudflare-asset-3/manifest/video.m3u8",
+      "provider": "cloudflare_stream",
+      "providerAssetId": "replace-with-cloudflare-asset-3",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-05-23T00:00:00.000Z"
+    },
+    {
+      "id": "ep_midnight_001",
+      "showId": "show_midnight_vow",
+      "episodeNumber": 1,
+      "title": "Runaway",
+      "description": "Lena flees her wedding and steps into a stranger's car.",
+      "durationSeconds": 69,
+      "thumbnailUrl": "https://videodelivery.net/replace-with-cloudflare-asset-4/thumbnails/thumbnail.jpg",
+      "playbackUrl": "https://videodelivery.net/replace-with-cloudflare-asset-4/manifest/video.m3u8",
+      "provider": "cloudflare_stream",
+      "providerAssetId": "replace-with-cloudflare-asset-4",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-05-23T00:00:00.000Z"
+    },
+    {
+      "id": "ep_midnight_002",
+      "showId": "show_midnight_vow",
+      "episodeNumber": 2,
+      "title": "The Ring",
+      "description": "A ring on Lena's finger turns a bad decision into a public scandal.",
+      "durationSeconds": 75,
+      "thumbnailUrl": "https://videodelivery.net/replace-with-cloudflare-asset-5/thumbnails/thumbnail.jpg",
+      "playbackUrl": "https://videodelivery.net/replace-with-cloudflare-asset-5/manifest/video.m3u8",
+      "provider": "cloudflare_stream",
+      "providerAssetId": "replace-with-cloudflare-asset-5",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-05-23T00:00:00.000Z"
+    },
+    {
+      "id": "ep_ceo_001",
+      "showId": "show_second_chance_ceo",
+      "episodeNumber": 1,
+      "title": "Fired",
+      "description": "Nora is thrown out of the company she quietly saved.",
+      "durationSeconds": 66,
+      "thumbnailUrl": "https://videodelivery.net/replace-with-cloudflare-asset-6/thumbnails/thumbnail.jpg",
+      "playbackUrl": "https://videodelivery.net/replace-with-cloudflare-asset-6/manifest/video.m3u8",
+      "provider": "cloudflare_stream",
+      "providerAssetId": "replace-with-cloudflare-asset-6",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-05-23T00:00:00.000Z"
+    }
+  ],
+  "feeds": [
+    {
+      "id": "featured",
+      "title": "Featured",
+      "episodeIds": [
+        "ep_heiress_001",
+        "ep_midnight_001",
+        "ep_ceo_001",
+        "ep_heiress_002",
+        "ep_midnight_002",
+        "ep_heiress_003"
+      ]
+    }
+  ]
+}
