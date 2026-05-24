@@ -14,6 +14,12 @@ api/         Render metadata API
 
 The initial API is a small Render-ready Node service that serves show, episode, feed, and app configuration metadata.
 
+Deployed demo API:
+
+```text
+https://micro-drama.onrender.com
+```
+
 ```bash
 cd api
 npm start
@@ -48,6 +54,31 @@ For Cloudflare Stream, each episode should eventually store:
   "playbackUrl": "https://videodelivery.net/cloudflare-video-uid/manifest/video.m3u8"
 }
 ```
+
+Uploaded Cloudflare Stream videos should use this name pattern:
+
+```text
+demo-candy-love-island-s01e01
+demo-candy-love-island-s01e02
+demo-candy-love-island-s01e03
+```
+
+To list Cloudflare Stream videos and derive app-ready URLs:
+
+```bash
+cd api
+npm run cloudflare:videos
+```
+
+Optional local config in `.env.local` at the repo root or in `api/.env.local`:
+
+```bash
+CLOUDFLARE_ACCOUNT_ID=...
+CLOUDFLARE_STREAM_API_TOKEN=...
+CLOUDFLARE_STREAM_NAME_PREFIX=demo-fruit-love-island,demo-candy-love-island
+```
+
+The script prints JSON with `showSlug`, `episodeNumber`, `cloudflareVideoUid`, `durationSeconds`, `playbackUrl`, and `thumbnailUrl`.
 
 ## Render
 

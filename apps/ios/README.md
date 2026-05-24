@@ -30,3 +30,9 @@ MicroDrama/
 ```
 
 For the first implementation, the app should consume `GET /feed` and treat each episode's `playbackUrl` as an HLS URL playable by `AVPlayer`.
+
+Demo API base URL:
+
+```text
+https://micro-drama.onrender.com
+```
