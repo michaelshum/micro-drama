@@ -1,6 +1,14 @@
 # iOS App
 
-Placeholder for the SwiftUI iOS app.
+SwiftUI iOS app for the Micro Drama demo.
+
+Open `MicroDrama.xcodeproj` in Xcode and run the `MicroDrama` scheme.
+
+Command-line simulator build:
+
+```bash
+xcodebuild -project MicroDrama.xcodeproj -scheme MicroDrama -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /private/tmp/MicroDramaDerivedData build
+```
 
 Planned MVP scope:
 
