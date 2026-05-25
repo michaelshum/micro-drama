@@ -40,11 +40,6 @@ final class HomeViewModel: ObservableObject {
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 14),
-        GridItem(.flexible(), spacing: 14)
-    ]
-
     var body: some View {
         NavigationStack {
             Group {
@@ -52,19 +47,21 @@ struct HomeView: View {
                     ProgressView()
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: columns, alignment: .leading, spacing: 22) {
-                            ForEach(viewModel.shows) { show in
-                                Button {
-                                    Task {
-                                        await viewModel.open(show)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            LazyHStack(alignment: .top, spacing: 10) {
+                                ForEach(viewModel.shows) { show in
+                                    Button {
+                                        Task {
+                                            await viewModel.open(show)
+                                        }
+                                    } label: {
+                                        ShowPosterCard(show: show)
                                     }
-                                } label: {
-                                    ShowPosterCard(show: show)
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
+                            .padding(.horizontal, 16)
                         }
-                        .padding(.horizontal, 16)
                         .padding(.top, 12)
                         .padding(.bottom, 24)
                     }
@@ -104,6 +101,9 @@ struct HomeView: View {
 private struct ShowPosterCard: View {
     let show: Show
 
+    private let posterWidth: CGFloat = 108
+    private let posterHeight: CGFloat = 150
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             AsyncImage(url: show.posterUrl) { phase in
@@ -128,7 +128,7 @@ private struct ShowPosterCard: View {
                     Rectangle().fill(.quaternary)
                 }
             }
-            .aspectRatio(0.72, contentMode: .fit)
+            .frame(width: posterWidth, height: posterHeight)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
             Text(show.title)
@@ -136,6 +136,8 @@ private struct ShowPosterCard: View {
                 .foregroundStyle(.primary)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
+                .frame(width: posterWidth, alignment: .leading)
         }
+        .frame(width: posterWidth, alignment: .leading)
     }
 }

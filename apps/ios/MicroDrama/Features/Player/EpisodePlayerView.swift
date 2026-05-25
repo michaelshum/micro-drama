@@ -56,9 +56,9 @@ struct EpisodePlayerView: View {
         let threshold: CGFloat = 72
 
         if verticalTranslation > threshold {
-            moveToNextEpisode()
-        } else if verticalTranslation < -threshold {
             moveToPreviousEpisode()
+        } else if verticalTranslation < -threshold {
+            moveToNextEpisode()
         }
     }
 
@@ -160,12 +160,13 @@ private struct PlayerLayerView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> PlayerUIView {
         let view = PlayerUIView()
-        view.playerLayer.videoGravity = .resizeAspectFill
+        view.playerLayer.videoGravity = .resizeAspect
         view.playerLayer.player = player
         return view
     }
 
     func updateUIView(_ uiView: PlayerUIView, context: Context) {
+        uiView.playerLayer.videoGravity = .resizeAspect
         uiView.playerLayer.player = player
     }
 }

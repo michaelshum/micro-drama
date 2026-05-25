@@ -50,7 +50,7 @@ function parseVideoName(name) {
   const normalized = String(name || "")
     .trim()
     .replace(/\.(mp4|mov|m4v|webm)$/i, "");
-  const match = normalized.match(/^(?<showSlug>.+)-s(?<season>\d{2})e(?<episode>\d{2})(?:-(?<title>.+))?$/i);
+  const match = normalized.match(/^(?<showSlug>.+)-s(?<season>\d{2})-?e(?<episode>\d{2})(?:-(?<title>.+))?$/i);
 
   if (!match?.groups) {
     return {
