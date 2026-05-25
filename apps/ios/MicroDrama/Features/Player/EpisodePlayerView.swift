@@ -6,6 +6,7 @@ struct EpisodePlayerView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var currentIndex = 0
+    @State private var isEpisodeListPresented = false
     @State private var likedEpisodes: Set<String> = []
 
     var body: some View {
@@ -17,7 +18,8 @@ struct EpisodePlayerView: View {
                     showTitle: show.title,
                     episode: episode,
                     isLiked: likedEpisodes.contains(episode.id),
-                    onLike: { toggleLike(for: episode) }
+                    onLike: { toggleLike(for: episode) },
+                    onEpisodesTapped: { isEpisodeListPresented = true }
                 )
                 .id(episode.id)
                 .transition(.opacity)
@@ -41,6 +43,19 @@ struct EpisodePlayerView: View {
                     handleSwipe(value.translation.height)
                 }
         )
+        .sheet(isPresented: $isEpisodeListPresented) {
+            EpisodeListSheet(
+                showTitle: show.title,
+                episodes: show.episodes,
+                currentEpisodeID: show.episodes[safe: currentIndex]?.id,
+                onSelect: { index in
+                    currentIndex = index
+                    isEpisodeListPresented = false
+                }
+            )
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
         .statusBarHidden()
     }
 
@@ -82,6 +97,7 @@ private struct EpisodePage: View {
     let episode: Episode
     let isLiked: Bool
     let onLike: () -> Void
+    let onEpisodesTapped: () -> Void
 
     var body: some View {
         ZStack {
@@ -112,7 +128,11 @@ private struct EpisodePage: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                ActionRail(isLiked: isLiked, onLike: onLike)
+                ActionRail(
+                    isLiked: isLiked,
+                    onLike: onLike,
+                    onEpisodesTapped: onEpisodesTapped
+                )
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 34)
@@ -210,6 +230,7 @@ private struct LockedEpisodeView: View {
 private struct ActionRail: View {
     let isLiked: Bool
     let onLike: () -> Void
+    let onEpisodesTapped: () -> Void
 
     var body: some View {
         VStack(spacing: 22) {
@@ -219,7 +240,7 @@ private struct ActionRail: View {
             }
             .accessibilityLabel(isLiked ? "Unlike" : "Like")
 
-            Button {} label: {
+            Button(action: onEpisodesTapped) {
                 Image(systemName: "list.bullet")
             }
             .accessibilityLabel("Episodes")
@@ -233,6 +254,56 @@ private struct ActionRail: View {
         .foregroundStyle(.white)
         .shadow(radius: 5)
         .frame(width: 48)
+    }
+}
+
+private struct EpisodeListSheet: View {
+    let showTitle: String
+    let episodes: [Episode]
+    let currentEpisodeID: String?
+    let onSelect: (Int) -> Void
+
+    var body: some View {
+        NavigationStack {
+            List(Array(episodes.enumerated()), id: \.element.id) { index, episode in
+                Button {
+                    onSelect(index)
+                } label: {
+                    HStack(spacing: 12) {
+                        Text("\(episode.episodeNumber)")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                            .frame(width: 34, alignment: .leading)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(episode.title)
+                                .font(.body)
+                                .foregroundStyle(.primary)
+
+                            Text(episode.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                        }
+
+                        Spacer()
+
+                        if episode.isLocked {
+                            Image(systemName: "lock.fill")
+                                .foregroundStyle(.secondary)
+                        } else if episode.id == currentEpisodeID {
+                            Image(systemName: "checkmark")
+                                .font(.headline)
+                                .foregroundStyle(.blue)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+            .navigationTitle(showTitle)
+            .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 

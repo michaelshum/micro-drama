@@ -13,8 +13,8 @@ final class HomeViewModel: ObservableObject {
         self.apiClient = apiClient
     }
 
-    func loadShows() async {
-        guard shows.isEmpty else { return }
+    func loadShows(forceRefresh: Bool = false) async {
+        guard forceRefresh || shows.isEmpty else { return }
         isLoading = true
         defer { isLoading = false }
 
@@ -66,7 +66,7 @@ struct HomeView: View {
                         .padding(.bottom, 24)
                     }
                     .refreshable {
-                        await viewModel.loadShows()
+                        await viewModel.loadShows(forceRefresh: true)
                     }
                 }
             }
