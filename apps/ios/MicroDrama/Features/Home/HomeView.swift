@@ -162,9 +162,10 @@ private struct ShowPosterCard: View {
             posterImage
 
             Text(show.title)
-                .font(.caption.weight(.semibold))
+                .font(.footnote.weight(.medium))
                 .foregroundStyle(.primary)
                 .lineLimit(2)
+                .lineSpacing(1)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
