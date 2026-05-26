@@ -183,7 +183,7 @@ private struct ShowPosterCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
             Text(show.title)
-                .font(.headline)
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(.primary)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)

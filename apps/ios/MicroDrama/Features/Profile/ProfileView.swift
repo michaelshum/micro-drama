@@ -1,5 +1,10 @@
 import SwiftUI
 
+private enum InitialNotificationShow {
+    static let fruitLoveIslandID = "show_demo_fruit_love_island"
+    static let fruitLoveIslandThumbnailURL = URL(string: "https://videodelivery.net/211482750ae557b749a98f27d74772d8/thumbnails/thumbnail.jpg")!
+}
+
 @MainActor
 final class MockNotificationStore: ObservableObject {
     static let shared = MockNotificationStore()
@@ -8,9 +13,11 @@ final class MockNotificationStore: ObservableObject {
     @Published private(set) var notifications: [ProfileNotification] = [
         ProfileNotification(
             title: "New episodes waiting",
-            message: "Love in the Clouds has fresh episodes ready to watch.",
+            message: "Fruit Love Island has fresh episodes ready to watch.",
             sentAt: Calendar.current.date(byAdding: .hour, value: -5, to: Date()) ?? Date(),
-            systemImage: "play.rectangle.fill"
+            systemImage: "play.rectangle.fill",
+            thumbnailUrl: InitialNotificationShow.fruitLoveIslandThumbnailURL,
+            showID: InitialNotificationShow.fruitLoveIslandID
         ),
         ProfileNotification(
             title: "Because you watched romance",
@@ -35,6 +42,24 @@ struct ProfileNotification: Identifiable, Hashable {
     let message: String
     let sentAt: Date
     let systemImage: String
+    let thumbnailUrl: URL?
+    let showID: String?
+
+    init(
+        title: String,
+        message: String,
+        sentAt: Date,
+        systemImage: String,
+        thumbnailUrl: URL? = nil,
+        showID: String? = nil
+    ) {
+        self.title = title
+        self.message = message
+        self.sentAt = sentAt
+        self.systemImage = systemImage
+        self.thumbnailUrl = thumbnailUrl
+        self.showID = showID
+    }
 }
 
 struct ProfileView: View {
@@ -58,8 +83,15 @@ struct ProfileView: View {
 
                     if notificationStore.notificationsEnabled,
                        let latestNotification = notificationStore.sortedNotifications.first {
-                        LatestNotificationPreviewRow(notification: latestNotification)
-                            .listRowSeparator(.hidden)
+                        NotificationActionRow(notification: latestNotification) { notification in
+                            Task {
+                                await episodeOpener.open(notification)
+                            }
+                        } label: {
+                            LatestNotificationPreviewRow(notification: latestNotification)
+                        }
+                        .listRowInsets(ProfileLayout.contentRowInsets)
+                        .listRowSeparator(.hidden)
                     }
                 }
 
@@ -82,6 +114,7 @@ struct ProfileView: View {
                                 }
                             }
                         )
+                        .listRowInsets(ProfileLayout.contentRowInsets)
                         .listRowSeparator(.hidden)
                     }
                 }
@@ -199,7 +232,6 @@ private struct MySavedListShelf: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(.vertical, 2)
             }
         }
         .padding(.vertical, 6)
@@ -209,11 +241,11 @@ private struct MySavedListShelf: View {
 private struct SavedEpisodeShelfCard: View {
     let savedEpisode: SavedEpisode
 
-    private let cardWidth: CGFloat = 104
+    private let cardWidth: CGFloat = ProfileLayout.homePosterWidth
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            PosterThumbnail(url: savedEpisode.thumbnailUrl, width: cardWidth, height: 146)
+            PosterThumbnail(url: savedEpisode.thumbnailUrl, width: cardWidth, height: ProfileLayout.homePosterHeight)
 
             Text(savedEpisode.showTitle)
                 .font(ProfileTypography.shelfTitle)
@@ -236,8 +268,12 @@ private struct LatestNotificationPreviewRow: View {
     let notification: ProfileNotification
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            NotificationIconTile(systemImage: notification.systemImage, size: 44)
+        HStack(alignment: .center, spacing: 12) {
+            NotificationArtwork(
+                notification: notification,
+                width: ProfileLayout.homePosterWidth,
+                height: ProfileLayout.homePosterHeight
+            )
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(notification.title)
@@ -263,6 +299,7 @@ private struct LatestNotificationPreviewRow: View {
 
 private struct NotificationsTrayView: View {
     @ObservedObject var store: MockNotificationStore
+    @StateObject private var episodeOpener = EpisodeOpeningViewModel()
 
     var body: some View {
         List {
@@ -279,7 +316,14 @@ private struct NotificationsTrayView: View {
                 } else {
                     Section {
                         ForEach(store.sortedNotifications) { notification in
-                            NotificationDetailRow(notification: notification)
+                            NotificationActionRow(notification: notification) { notification in
+                                Task {
+                                    await episodeOpener.open(notification)
+                                }
+                            } label: {
+                                NotificationDetailRow(notification: notification)
+                            }
+                            .listRowInsets(ProfileLayout.contentRowInsets)
                         }
                     }
                 }
@@ -306,6 +350,47 @@ private struct NotificationsTrayView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
+        .overlay {
+            if episodeOpener.isLoading {
+                ProgressView()
+                    .controlSize(.large)
+            }
+        }
+        .alert("Unable to open episode", isPresented: episodeOpener.errorAlertBinding) {
+            Button("OK") {
+                episodeOpener.errorMessage = nil
+            }
+        } message: {
+            Text(episodeOpener.errorMessage ?? "")
+        }
+        .fullScreenCover(item: $episodeOpener.selectedShowDetail) { showDetail in
+            EpisodePlayerView(
+                show: showDetail,
+                initialEpisodeID: episodeOpener.initialEpisodeID,
+                onEpisodeChanged: { episode in
+                    episodeOpener.recordLastWatchedEpisode(episode, for: showDetail)
+                }
+            )
+        }
+    }
+}
+
+private struct NotificationActionRow<Label: View>: View {
+    let notification: ProfileNotification
+    let onSelect: (ProfileNotification) -> Void
+    @ViewBuilder let label: () -> Label
+
+    var body: some View {
+        if notification.showID == nil {
+            label()
+        } else {
+            Button {
+                onSelect(notification)
+            } label: {
+                label()
+            }
+            .buttonStyle(.plain)
+        }
     }
 }
 
@@ -313,8 +398,12 @@ private struct NotificationDetailRow: View {
     let notification: ProfileNotification
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            NotificationIconTile(systemImage: notification.systemImage, size: 44)
+        HStack(alignment: .center, spacing: 12) {
+            NotificationArtwork(
+                notification: notification,
+                width: ProfileLayout.homePosterWidth,
+                height: ProfileLayout.homePosterHeight
+            )
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(notification.title)
@@ -541,6 +630,23 @@ private final class EpisodeOpeningViewModel: ObservableObject {
         }
     }
 
+    func open(_ notification: ProfileNotification) async {
+        guard let showID = notification.showID else { return }
+        await open(showID: showID)
+    }
+
+    func open(showID: String) async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            initialEpisodeID = progressStore.lastWatchedEpisodeID(for: showID)
+            selectedShowDetail = try await apiClient.fetchShow(id: showID)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisodeID(episode.id, for: show.id)
     }
@@ -623,6 +729,12 @@ private enum ProfileTypography {
     static let shelfTitle = Font.caption.weight(.semibold)
 }
 
+private enum ProfileLayout {
+    static let homePosterWidth: CGFloat = 108
+    static let homePosterHeight: CGFloat = 150
+    static let contentRowInsets = EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16)
+}
+
 private struct ProfileSectionHeaderRow: View {
     let systemImage: String
     let title: String
@@ -671,6 +783,20 @@ private struct NotificationIconTile: View {
             .foregroundStyle(.secondary)
             .frame(width: size, height: size)
             .background(.quaternary, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+private struct NotificationArtwork: View {
+    let notification: ProfileNotification
+    let width: CGFloat
+    let height: CGFloat
+
+    var body: some View {
+        if let thumbnailUrl = notification.thumbnailUrl {
+            PosterThumbnail(url: thumbnailUrl, width: width, height: height)
+        } else {
+            NotificationIconTile(systemImage: notification.systemImage, size: 44)
+        }
     }
 }
 
