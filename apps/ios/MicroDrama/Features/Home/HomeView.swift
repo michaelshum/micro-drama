@@ -8,9 +8,11 @@ final class HomeViewModel: ObservableObject {
     @Published var isLoading = false
 
     private let apiClient: APIClient
+    private let progressStore: ShowEpisodeProgressStore
 
-    init(apiClient: APIClient = .shared) {
+    init(apiClient: APIClient = .shared, progressStore: ShowEpisodeProgressStore = .shared) {
         self.apiClient = apiClient
+        self.progressStore = progressStore
     }
 
     func loadShows(forceRefresh: Bool = false) async {
@@ -34,6 +36,39 @@ final class HomeViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func lastWatchedEpisodeID(for showID: String) -> String? {
+        progressStore.lastWatchedEpisodeID(for: showID)
+    }
+
+    func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
+        progressStore.setLastWatchedEpisodeID(episode.id, for: show.id)
+    }
+}
+
+final class ShowEpisodeProgressStore {
+    static let shared = ShowEpisodeProgressStore()
+
+    private let defaults: UserDefaults
+    private let storageKey = "showLastWatchedEpisodeIDs"
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    func lastWatchedEpisodeID(for showID: String) -> String? {
+        allProgress()[showID]
+    }
+
+    func setLastWatchedEpisodeID(_ episodeID: String, for showID: String) {
+        var progress = allProgress()
+        progress[showID] = episodeID
+        defaults.set(progress, forKey: storageKey)
+    }
+
+    private func allProgress() -> [String: String] {
+        defaults.dictionary(forKey: storageKey) as? [String: String] ?? [:]
     }
 }
 
@@ -71,6 +106,16 @@ struct HomeView: View {
                 }
             }
             .navigationTitle("Shows")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        ShowSearchView()
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    .accessibilityLabel("Search")
+                }
+            }
             .task {
                 await viewModel.loadShows()
             }
@@ -82,7 +127,13 @@ struct HomeView: View {
                 Text(viewModel.errorMessage ?? "")
             }
             .fullScreenCover(item: $viewModel.selectedShowDetail) { showDetail in
-                EpisodePlayerView(show: showDetail)
+                EpisodePlayerView(
+                    show: showDetail,
+                    initialEpisodeID: viewModel.lastWatchedEpisodeID(for: showDetail.id),
+                    onEpisodeChanged: { episode in
+                        viewModel.recordLastWatchedEpisode(episode, for: showDetail)
+                    }
+                )
             }
         }
     }

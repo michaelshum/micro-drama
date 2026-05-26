@@ -3,18 +3,33 @@ import SwiftUI
 
 struct EpisodePlayerView: View {
     let show: ShowDetail
+    let onEpisodeChanged: (Episode) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var currentIndex = 0
+    @State private var currentIndex: Int
     @State private var dragOffset: CGFloat = 0
     @State private var isEpisodeListPresented = false
     @State private var isSpeedSheetPresented = false
-    @State private var likedEpisodes: Set<String> = []
     @State private var playbackRate: Float = 1.0
+    @ObservedObject private var myListStore = MyListEpisodeStore.shared
+
+    init(
+        show: ShowDetail,
+        initialEpisodeID: String? = nil,
+        onEpisodeChanged: @escaping (Episode) -> Void = { _ in }
+    ) {
+        self.show = show
+        self.onEpisodeChanged = onEpisodeChanged
+
+        let initialIndex = initialEpisodeID
+            .flatMap { episodeID in show.episodes.firstIndex { $0.id == episodeID } } ?? 0
+        _currentIndex = State(initialValue: initialIndex)
+    }
 
     var body: some View {
         GeometryReader { proxy in
             let pageHeight = proxy.size.height
+            let headerTopPadding = max(proxy.safeAreaInsets.top + 8, 24)
 
             ZStack(alignment: .top) {
                 Color.black.ignoresSafeArea()
@@ -26,9 +41,9 @@ struct EpisodePlayerView: View {
                                 showTitle: show.title,
                                 episode: episode,
                                 isActive: index == currentIndex,
-                                isLiked: likedEpisodes.contains(episode.id),
+                                isSaved: myListStore.isSaved(episode),
                                 playbackRate: playbackRate,
-                                onLike: { toggleLike(for: episode) },
+                                onSave: { toggleSave(for: episode) },
                                 onEpisodesTapped: { isEpisodeListPresented = true },
                                 onVideoFinished: moveToNextEpisode
                             )
@@ -45,7 +60,7 @@ struct EpisodePlayerView: View {
                     onSpeed: { isSpeedSheetPresented = true }
                 )
                 .padding(.horizontal, 14)
-                .padding(.top, 8)
+                .padding(.top, headerTopPadding)
             }
             .contentShape(Rectangle())
             .gesture(
@@ -89,6 +104,12 @@ struct EpisodePlayerView: View {
             .presentationDetents([.height(270)])
             .presentationDragIndicator(.visible)
         }
+        .onAppear {
+            recordCurrentEpisode()
+        }
+        .onChange(of: currentIndex) { _, _ in
+            recordCurrentEpisode()
+        }
         .statusBarHidden()
     }
 
@@ -103,12 +124,13 @@ struct EpisodePlayerView: View {
         .interactiveSpring(response: 0.32, dampingFraction: 0.9)
     }
 
-    private func toggleLike(for episode: Episode) {
-        if likedEpisodes.contains(episode.id) {
-            likedEpisodes.remove(episode.id)
-        } else {
-            likedEpisodes.insert(episode.id)
-        }
+    private func toggleSave(for episode: Episode) {
+        myListStore.toggle(show: show, episode: episode)
+    }
+
+    private func recordCurrentEpisode() {
+        guard let episode = show.episodes[safe: currentIndex] else { return }
+        onEpisodeChanged(episode)
     }
 
     private func updateDragOffset(_ verticalTranslation: CGFloat) {
@@ -161,9 +183,9 @@ private struct EpisodePage: View {
     let showTitle: String
     let episode: Episode
     let isActive: Bool
-    let isLiked: Bool
+    let isSaved: Bool
     let playbackRate: Float
-    let onLike: () -> Void
+    let onSave: () -> Void
     let onEpisodesTapped: () -> Void
     let onVideoFinished: () -> Void
 
@@ -172,11 +194,14 @@ private struct EpisodePage: View {
     @State private var isScrubbing = false
     @State private var seekRequest: PlaybackSeekRequest?
     @State private var toggleRequest: PlaybackToggleRequest?
+    @State private var lockedOfferAlert: LockedOffer?
+    @State private var isUnlockDrawerPresented = false
+    @State private var unlockDrawerDragOffset: CGFloat = 0
 
     var body: some View {
         ZStack {
             if episode.isLocked {
-                LockedEpisodeView(episode: episode)
+                LockedEpisodeBackgroundView(episode: episode)
             } else if isActive {
                 PlayerSurface(
                     url: episode.playbackUrl,
@@ -208,7 +233,18 @@ private struct EpisodePage: View {
                     }
             }
 
-            VStack(spacing: 10) {
+            if episode.isLocked {
+                if !isUnlockDrawerPresented {
+                    LockedEpisodeOverlay(
+                        episode: episode,
+                        onUnlockNow: { presentUnlockDrawer() },
+                        onWatchAd: { lockedOfferAlert = .watchAd }
+                    )
+                    .padding(.horizontal, 18)
+                    .frame(maxHeight: .infinity, alignment: .center)
+                    .transition(.opacity)
+                }
+
                 HStack(alignment: .bottom, spacing: 18) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(showTitle)
@@ -224,23 +260,128 @@ private struct EpisodePage: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     ActionRail(
-                        isLiked: isLiked,
-                        onLike: onLike,
+                        isSaved: isSaved,
+                        onSave: onSave,
                         onEpisodesTapped: onEpisodesTapped
                     )
                 }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 34)
+                .frame(maxHeight: .infinity, alignment: .bottom)
 
-                if isActive && !episode.isLocked {
-                    PlaybackProgressBar(progress: $playbackProgress, isScrubbing: $isScrubbing) { progress in
-                        seekRequest = PlaybackSeekRequest(progress: progress)
+                if isUnlockDrawerPresented {
+                    Color.black.opacity(0.26)
+                        .ignoresSafeArea()
+                        .onTapGesture(perform: dismissUnlockDrawer)
+                        .transition(.opacity)
+
+                    LockedPaywallDrawer(
+                        episode: episode,
+                        onOfferTapped: { offer in
+                            dismissUnlockDrawer()
+                            lockedOfferAlert = offer
+                        }
+                    )
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 22)
+                    .offset(y: unlockDrawerDragOffset)
+                    .gesture(unlockDrawerDragGesture)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(1)
+                }
+            } else {
+                VStack(spacing: 10) {
+                    HStack(alignment: .bottom, spacing: 18) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(showTitle)
+                                .font(.title2.bold())
+                                .foregroundStyle(.white)
+                                .lineLimit(2)
+
+                            Text(episode.description)
+                                .font(.subheadline)
+                                .foregroundStyle(.white.opacity(0.86))
+                                .lineLimit(3)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        ActionRail(
+                            isSaved: isSaved,
+                            onSave: onSave,
+                            onEpisodesTapped: onEpisodesTapped
+                        )
+                    }
+
+                    if isActive {
+                        PlaybackProgressBar(progress: $playbackProgress, isScrubbing: $isScrubbing) { progress in
+                            seekRequest = PlaybackSeekRequest(progress: progress)
+                        }
+                    }
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 34)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+            }
+        }
+        .ignoresSafeArea()
+        .alert(item: $lockedOfferAlert) { offer in
+            Alert(
+                title: Text("Coming Soon"),
+                message: Text(offer.alertMessage),
+                dismissButton: .default(Text("OK"))
+            )
+        }
+        .onAppear {
+            if isActive && episode.isLocked {
+                presentUnlockDrawer(animated: false)
+            }
+        }
+        .onChange(of: isActive) { _, isActive in
+            guard episode.isLocked else { return }
+
+            if isActive {
+                presentUnlockDrawer()
+            } else {
+                dismissUnlockDrawer()
+            }
+        }
+    }
+
+    private var unlockDrawerDragGesture: some Gesture {
+        DragGesture(minimumDistance: 8)
+            .onChanged { value in
+                unlockDrawerDragOffset = max(value.translation.height, 0)
+            }
+            .onEnded { value in
+                if value.translation.height > 90 || value.predictedEndTranslation.height > 170 {
+                    dismissUnlockDrawer()
+                } else {
+                    withAnimation(.interactiveSpring(response: 0.28, dampingFraction: 0.86)) {
+                        unlockDrawerDragOffset = 0
                     }
                 }
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 34)
-            .frame(maxHeight: .infinity, alignment: .bottom)
+    }
+
+    private func presentUnlockDrawer(animated: Bool = true) {
+        let changes = {
+            unlockDrawerDragOffset = 0
+            isUnlockDrawerPresented = true
         }
-        .ignoresSafeArea()
+
+        if animated {
+            withAnimation(.interactiveSpring(response: 0.32, dampingFraction: 0.9), changes)
+        } else {
+            changes()
+        }
+    }
+
+    private func dismissUnlockDrawer() {
+        withAnimation(.interactiveSpring(response: 0.28, dampingFraction: 0.9)) {
+            unlockDrawerDragOffset = 0
+            isUnlockDrawerPresented = false
+        }
     }
 }
 
@@ -494,7 +635,7 @@ private final class PlayerUIView: UIView {
     }
 }
 
-private struct LockedEpisodeView: View {
+private struct LockedEpisodeBackgroundView: View {
     let episode: Episode
 
     var body: some View {
@@ -504,18 +645,315 @@ private struct LockedEpisodeView: View {
                 case .success(let image):
                     image
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                 default:
                     Color.black
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.black)
             .ignoresSafeArea()
 
-            Color.black.opacity(0.48).ignoresSafeArea()
+            Color.black.opacity(0.64).ignoresSafeArea()
 
-            Text("Locked")
-                .font(.system(size: 44, weight: .bold))
-                .foregroundStyle(.white)
+            LinearGradient(
+                colors: [.black.opacity(0.2), .black.opacity(0.78)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        }
+    }
+}
+
+private struct LockedEpisodeOverlay: View {
+    let episode: Episode
+    let onUnlockNow: () -> Void
+    let onWatchAd: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(.blue, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Episode \(episode.episodeNumber) is locked")
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
+
+                    Text("Unlock this episode to keep watching.")
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.78))
+                        .lineLimit(2)
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            VStack(spacing: 10) {
+                Button(action: onUnlockNow) {
+                    Label("Unlock Now", systemImage: "lock.open.fill")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(.blue, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Unlock Now")
+
+                Button(action: onWatchAd) {
+                    Label("Watch an ad to unlock for free", systemImage: "play.rectangle.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(.white.opacity(0.14), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(.white.opacity(0.16), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Watch an ad to unlock for free")
+            }
+        }
+        .padding(16)
+        .background(.black.opacity(0.48), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(.white.opacity(0.14), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.28), radius: 18, y: 10)
+    }
+}
+
+private struct LockedPaywallDrawer: View {
+    let episode: Episode
+    let onOfferTapped: (LockedOffer) -> Void
+
+    private let offers: [LockedOffer] = [
+        .oneTimeUnlock,
+        .weeklyUnlimited,
+        .yearlyUnlimited
+    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Capsule()
+                .fill(Color.black.opacity(0.18))
+                .frame(width: 36, height: 5)
+                .padding(.top, 8)
+                .padding(.bottom, 14)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(.blue, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Unlock Episode")
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(.primary)
+                            .lineLimit(1)
+
+                        Text("Episode \(episode.episodeNumber) is locked")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
+                    }
+
+                    Spacer(minLength: 10)
+                }
+
+                VStack(spacing: 10) {
+                    ForEach(offers) { offer in
+                        LockedOfferRow(offer: offer) {
+                            onOfferTapped(offer)
+                        }
+                    }
+                }
+
+                Text("Purchases and ads are preview-only in this demo.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+        .background(Color(uiColor: .systemGroupedBackground), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.28), radius: 24, y: 14)
+    }
+}
+
+private struct LockedOfferRow: View {
+    let offer: LockedOffer
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: offer.systemImage)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(offer.isRecommended ? .white : .blue)
+                    .frame(width: 36, height: 36)
+                    .background(offer.isRecommended ? Color.blue : Color.blue.opacity(0.12), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(offer.title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+
+                    Text(offer.subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+                }
+
+                Spacer(minLength: 8)
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    if let badge = offer.badge {
+                        Text(badge)
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(offer.isRecommended ? .blue : .secondary)
+                            .padding(.horizontal, 6)
+                            .frame(height: 18)
+                            .background(offer.isRecommended ? Color.blue.opacity(0.12) : Color(uiColor: .tertiarySystemFill), in: Capsule())
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
+                    }
+
+                    Text(offer.price)
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
+                }
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 11)
+            .frame(minHeight: 62)
+            .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .stroke(offer.isRecommended ? Color.blue.opacity(0.65) : Color.black.opacity(0.05), lineWidth: offer.isRecommended ? 1.5 : 1)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(offer.title), \(offer.price)")
+    }
+}
+
+private enum LockedOffer: String, Identifiable {
+    case watchAd
+    case oneTimeUnlock
+    case weeklyUnlimited
+    case yearlyUnlimited
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .watchAd:
+            "Watch Ad"
+        case .oneTimeUnlock:
+            "One-time Unlock"
+        case .weeklyUnlimited:
+            "Weekly Unlimited"
+        case .yearlyUnlimited:
+            "Yearly Unlimited"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .watchAd:
+            "Unlock this episode after an ad"
+        case .oneTimeUnlock:
+            "Keep access to this episode"
+        case .weeklyUnlimited:
+            "Unlimited episodes for 7 days"
+        case .yearlyUnlimited:
+            "Unlimited episodes all year"
+        }
+    }
+
+    var price: String {
+        switch self {
+        case .watchAd:
+            "Free"
+        case .oneTimeUnlock:
+            "$0.99"
+        case .weeklyUnlimited:
+            "$4.99/wk"
+        case .yearlyUnlimited:
+            "$39.99/yr"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .watchAd:
+            "play.rectangle"
+        case .oneTimeUnlock:
+            "lock.open"
+        case .weeklyUnlimited:
+            "calendar.badge.clock"
+        case .yearlyUnlimited:
+            "crown"
+        }
+    }
+
+    var badge: String? {
+        switch self {
+        case .weeklyUnlimited:
+            "Recommended"
+        case .yearlyUnlimited:
+            "Best value"
+        default:
+            nil
+        }
+    }
+
+    var isRecommended: Bool {
+        self == .weeklyUnlimited
+    }
+
+    var alertMessage: String {
+        switch self {
+        case .watchAd:
+            "This will show an interstitial advertisement, unlocking the episode."
+        case .oneTimeUnlock:
+            "One-time episode unlock will implement iOS one-time purchase."
+        case .weeklyUnlimited:
+            "Weekly unlimited access will implement iOS in-app purchases."
+        case .yearlyUnlimited:
+            "Yearly unlimited access will implement iOS in-app purchases."
         }
     }
 }
@@ -540,32 +978,71 @@ private struct EpisodeThumbnailView: View {
 }
 
 private struct ActionRail: View {
-    let isLiked: Bool
-    let onLike: () -> Void
+    let isSaved: Bool
+    let onSave: () -> Void
     let onEpisodesTapped: () -> Void
 
     var body: some View {
-        VStack(spacing: 22) {
-            Button(action: onLike) {
-                Image(systemName: isLiked ? "heart.fill" : "heart")
-                    .foregroundStyle(isLiked ? .red : .white)
-            }
-            .accessibilityLabel(isLiked ? "Unlike" : "Like")
+        VStack(spacing: 18) {
+            ActionRailButton(
+                systemName: isSaved ? "bookmark.fill" : "bookmark",
+                title: isSaved ? "Saved" : "Save",
+                tint: isSaved ? .yellow : .white,
+                action: onSave
+            )
+            .accessibilityLabel(isSaved ? "Remove from My List" : "Save")
 
-            Button(action: onEpisodesTapped) {
-                Image(systemName: "list.bullet")
-            }
+            ActionRailButton(
+                systemName: "list.bullet",
+                title: "Episodes",
+                action: onEpisodesTapped
+            )
             .accessibilityLabel("Episodes")
 
             ShareLink(item: "https://micro-drama.onrender.com") {
-                Image(systemName: "square.and.arrow.up")
+                ActionRailItem(systemName: "square.and.arrow.up", title: "Share")
             }
             .accessibilityLabel("Share")
         }
-        .font(.system(size: 29, weight: .semibold))
         .foregroundStyle(.white)
         .shadow(radius: 5)
-        .frame(width: 48)
+        .frame(width: 64)
+    }
+}
+
+private struct ActionRailButton: View {
+    let systemName: String
+    let title: String
+    var tint: Color = .white
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ActionRailItem(systemName: systemName, title: title, tint: tint)
+        }
+    }
+}
+
+private struct ActionRailItem: View {
+    let systemName: String
+    let title: String
+    var tint: Color = .white
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: systemName)
+                .font(.system(size: 27, weight: .semibold))
+                .foregroundStyle(tint)
+                .frame(width: 34, height: 32)
+
+            Text(title)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
+        }
+        .frame(width: 64)
+        .contentShape(Rectangle())
     }
 }
 
