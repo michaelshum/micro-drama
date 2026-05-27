@@ -2,7 +2,12 @@
   "app": {
     "name": "Micro Drama",
     "minimumSupportedVersion": "0.1.0",
-    "defaultFeed": "featured"
+    "defaultFeed": "featured",
+    "initialExperience": {
+      "enabled": true,
+      "showId": "show_demo_candy_love_island",
+      "episodeId": "ep_demo_candy_love_island_001"
+    }
   },
   "shows": [
     {
