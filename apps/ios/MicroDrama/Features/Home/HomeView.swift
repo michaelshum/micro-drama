@@ -6,6 +6,7 @@ final class HomeViewModel: ObservableObject {
     @Published var selectedShowDetail: ShowDetail?
     @Published var errorMessage: String?
     @Published var isLoading = false
+    var initialEpisodeID: String?
 
     private let apiClient: APIClient
     private let progressStore: ShowEpisodeProgressStore
@@ -32,43 +33,140 @@ final class HomeViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
+            initialEpisodeID = progressStore.lastWatchedEpisodeID(for: show.id)
             selectedShowDetail = try await apiClient.fetchShow(id: show.id)
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
-    func lastWatchedEpisodeID(for showID: String) -> String? {
-        progressStore.lastWatchedEpisodeID(for: showID)
+    func continueWatchingShows() -> [Show] {
+        shows
+            .filter { progressStore.lastWatchedEpisodeID(for: $0.id) != nil }
+            .sorted { first, second in
+                let firstDate = progressStore.lastWatchedAt(for: first.id) ?? .distantPast
+                let secondDate = progressStore.lastWatchedAt(for: second.id) ?? .distantPast
+                return firstDate > secondDate
+            }
+    }
+
+    func lastWatchedEpisodeNumber(for showID: String) -> Int? {
+        progressStore.lastWatchedEpisodeNumber(for: showID)
     }
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
-        progressStore.setLastWatchedEpisodeID(episode.id, for: show.id)
+        progressStore.setLastWatchedEpisode(episode, for: show.id)
     }
+}
+
+struct ShowEpisodeProgress: Codable {
+    let episodeID: String
+    let episodeNumber: Int
+    let watchedAt: Date
+
+    init(episodeID: String, episodeNumber: Int, watchedAt: Date = Date()) {
+        self.episodeID = episodeID
+        self.episodeNumber = episodeNumber
+        self.watchedAt = watchedAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        episodeID = try container.decode(String.self, forKey: .episodeID)
+        episodeNumber = try container.decode(Int.self, forKey: .episodeNumber)
+        watchedAt = try container.decodeIfPresent(Date.self, forKey: .watchedAt) ?? .distantPast
+    }
+}
+
+struct LastWatchedEpisode: Codable {
+    let showID: String
+    let episodeID: String
+    let episodeNumber: Int
+    let watchedAt: Date
 }
 
 final class ShowEpisodeProgressStore {
     static let shared = ShowEpisodeProgressStore()
 
     private let defaults: UserDefaults
-    private let storageKey = "showLastWatchedEpisodeIDs"
+    private let storageKey = "showLastWatchedEpisodeProgress"
+    private let lastWatchedStorageKey = "lastWatchedEpisode"
+    private let legacyStorageKey = "showLastWatchedEpisodeIDs"
+    private let initialExperienceSeenKey = "initialExperienceSeen"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
     }
 
     func lastWatchedEpisodeID(for showID: String) -> String? {
-        allProgress()[showID]
+        allProgress()[showID]?.episodeID ?? legacyProgress()[showID]
     }
 
-    func setLastWatchedEpisodeID(_ episodeID: String, for showID: String) {
+    func lastWatchedEpisodeNumber(for showID: String) -> Int? {
+        allProgress()[showID]?.episodeNumber
+    }
+
+    func lastWatchedAt(for showID: String) -> Date? {
+        allProgress()[showID]?.watchedAt
+    }
+
+    func recentlyWatchedEpisode(maxAge: TimeInterval, now: Date = Date()) -> LastWatchedEpisode? {
+        guard let lastWatchedEpisode,
+              now.timeIntervalSince(lastWatchedEpisode.watchedAt) <= maxAge else {
+            return nil
+        }
+
+        return lastWatchedEpisode
+    }
+
+    var hasSeenInitialExperience: Bool {
+        defaults.bool(forKey: initialExperienceSeenKey)
+    }
+
+    func markInitialExperienceSeen() {
+        defaults.set(true, forKey: initialExperienceSeenKey)
+    }
+
+    func setLastWatchedEpisode(_ episode: Episode, for showID: String) {
         var progress = allProgress()
-        progress[showID] = episodeID
-        defaults.set(progress, forKey: storageKey)
+        progress[showID] = ShowEpisodeProgress(
+            episodeID: episode.id,
+            episodeNumber: episode.episodeNumber
+        )
+
+        guard let data = try? JSONEncoder().encode(progress) else { return }
+        defaults.set(data, forKey: storageKey)
+        setLastWatchedEpisode(
+            LastWatchedEpisode(
+                showID: showID,
+                episodeID: episode.id,
+                episodeNumber: episode.episodeNumber,
+                watchedAt: Date()
+            )
+        )
     }
 
-    private func allProgress() -> [String: String] {
-        defaults.dictionary(forKey: storageKey) as? [String: String] ?? [:]
+    private var lastWatchedEpisode: LastWatchedEpisode? {
+        guard let data = defaults.data(forKey: lastWatchedStorageKey) else { return nil }
+        return try? JSONDecoder().decode(LastWatchedEpisode.self, from: data)
+    }
+
+    private func setLastWatchedEpisode(_ episode: LastWatchedEpisode) {
+        guard let data = try? JSONEncoder().encode(episode) else { return }
+        defaults.set(data, forKey: lastWatchedStorageKey)
+    }
+
+    private func allProgress() -> [String: ShowEpisodeProgress] {
+        guard let data = defaults.data(forKey: storageKey),
+              let progress = try? JSONDecoder().decode([String: ShowEpisodeProgress].self, from: data) else {
+            return [:]
+        }
+
+        return progress
+    }
+
+    private func legacyProgress() -> [String: String] {
+        defaults.dictionary(forKey: legacyStorageKey) as? [String: String] ?? [:]
     }
 }
 
@@ -87,19 +185,56 @@ struct HomeView: View {
                     ProgressView()
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: showGridColumns, alignment: .leading, spacing: 16) {
-                            ForEach(viewModel.shows) { show in
-                                Button {
-                                    Task {
-                                        await viewModel.open(show)
+                        VStack(alignment: .leading, spacing: 24) {
+                            let continueWatchingShows = viewModel.continueWatchingShows()
+
+                            if !continueWatchingShows.isEmpty {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Continue Watching")
+                                        .font(.headline)
+                                        .padding(.horizontal, 16)
+
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack(spacing: 12) {
+                                            ForEach(continueWatchingShows.prefix(8)) { show in
+                                                Button {
+                                                    Task {
+                                                        await viewModel.open(show)
+                                                    }
+                                                } label: {
+                                                    ContinueWatchingCard(
+                                                        show: show,
+                                                        episodeNumber: viewModel.lastWatchedEpisodeNumber(for: show.id)
+                                                    )
+                                                }
+                                                .buttonStyle(.plain)
+                                            }
+                                        }
+                                        .padding(.horizontal, 16)
                                     }
-                                } label: {
-                                    ShowPosterCard(show: show)
                                 }
-                                .buttonStyle(.plain)
+                            }
+
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("All Shows")
+                                    .font(.headline)
+                                    .padding(.horizontal, 16)
+
+                                LazyVGrid(columns: showGridColumns, alignment: .leading, spacing: 16) {
+                                    ForEach(viewModel.shows) { show in
+                                        Button {
+                                            Task {
+                                                await viewModel.open(show)
+                                            }
+                                        } label: {
+                                            ShowPosterCard(show: show)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .padding(.horizontal, 16)
                             }
                         }
-                        .padding(.horizontal, 16)
                         .padding(.top, 12)
                         .padding(.bottom, 24)
                     }
@@ -132,7 +267,7 @@ struct HomeView: View {
             .fullScreenCover(item: $viewModel.selectedShowDetail) { showDetail in
                 EpisodePlayerView(
                     show: showDetail,
-                    initialEpisodeID: viewModel.lastWatchedEpisodeID(for: showDetail.id),
+                    initialEpisodeID: viewModel.initialEpisodeID,
                     onEpisodeChanged: { episode in
                         viewModel.recordLastWatchedEpisode(episode, for: showDetail)
                     }
@@ -149,6 +284,58 @@ struct HomeView: View {
                 viewModel.errorMessage = nil
             }
         }
+    }
+}
+
+private struct ContinueWatchingCard: View {
+    let show: Show
+    let episodeNumber: Int?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            posterImage
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(show.title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                Text(episodeNumber.map { "Episode \($0)" } ?? "Keep watching")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+        }
+        .frame(width: 150, alignment: .leading)
+    }
+
+    private var posterImage: some View {
+        AsyncImage(url: show.posterUrl) { phase in
+            switch phase {
+            case .empty:
+                ZStack {
+                    Rectangle().fill(.quaternary)
+                    ProgressView()
+                }
+            case .success(let image):
+                image
+                    .resizable()
+                    .scaledToFill()
+            case .failure:
+                ZStack {
+                    Rectangle().fill(.quaternary)
+                    Image(systemName: "photo")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                }
+            @unknown default:
+                Rectangle().fill(.quaternary)
+            }
+        }
+        .frame(width: 150, height: 208)
+        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 

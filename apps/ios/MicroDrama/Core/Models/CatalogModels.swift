@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import UserNotifications
 
 struct Show: Identifiable, Decodable, Hashable {
     let id: String
@@ -37,83 +38,136 @@ struct Episode: Identifiable, Decodable, Hashable {
     let publishedAt: Date
 }
 
-struct SavedEpisode: Identifiable, Codable, Hashable {
-    var id: String { episodeID }
+struct AppConfig: Decodable {
+    let name: String
+    let minimumSupportedVersion: String
+    let defaultFeed: String
+    let initialExperience: InitialExperienceConfig?
+}
 
-    let episodeID: String
+struct InitialExperienceConfig: Decodable {
+    let enabled: Bool
+    let showId: String
+    let episodeId: String?
+}
+
+struct FollowedShow: Identifiable, Codable, Hashable {
+    var id: String { showID }
+
     let showID: String
     let showTitle: String
-    let episodeNumber: Int
-    let episodeTitle: String
-    let episodeDescription: String
-    let durationSeconds: Int
-    let thumbnailUrl: URL
     let posterUrl: URL
-    let savedAt: Date
+    let latestEpisodeID: String
+    let latestEpisodeNumber: Int
+    let followedAt: Date
 
-    init(show: ShowDetail, episode: Episode, savedAt: Date = Date()) {
-        episodeID = episode.id
+    init(show: ShowDetail, episode: Episode, followedAt: Date = Date()) {
         showID = show.id
         showTitle = show.title
-        episodeNumber = episode.episodeNumber
-        episodeTitle = episode.title
-        episodeDescription = episode.description
-        durationSeconds = episode.durationSeconds
-        thumbnailUrl = episode.thumbnailUrl
         posterUrl = show.posterUrl
-        self.savedAt = savedAt
+        latestEpisodeID = episode.id
+        latestEpisodeNumber = episode.episodeNumber
+        self.followedAt = followedAt
     }
 }
 
 @MainActor
-final class MyListEpisodeStore: ObservableObject {
-    static let shared = MyListEpisodeStore()
+final class FollowedShowStore: ObservableObject {
+    static let shared = FollowedShowStore()
 
-    @Published private(set) var savedEpisodes: [SavedEpisode]
+    @Published private(set) var followedShows: [FollowedShow]
 
     private let defaults: UserDefaults
-    private let storageKey = "savedEpisodes"
+    private let storageKey = "followedShows"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        savedEpisodes = Self.loadSavedEpisodes(from: defaults, key: storageKey)
+        followedShows = Self.loadFollowedShows(from: defaults, key: storageKey)
     }
 
-    func isSaved(_ episode: Episode) -> Bool {
-        savedEpisodes.contains { $0.episodeID == episode.id }
+    func isFollowing(_ show: ShowDetail) -> Bool {
+        followedShows.contains { $0.showID == show.id }
     }
 
-    func toggle(show: ShowDetail, episode: Episode) {
-        if isSaved(episode) {
-            remove(episodeID: episode.id)
+    @discardableResult
+    func toggle(show: ShowDetail, episode: Episode) -> Bool {
+        if isFollowing(show) {
+            remove(showID: show.id)
+            return false
         } else {
-            save(show: show, episode: episode)
+            follow(show: show, episode: episode)
+            return true
         }
     }
 
-    func save(show: ShowDetail, episode: Episode) {
-        let savedEpisode = SavedEpisode(show: show, episode: episode)
-        savedEpisodes.removeAll { $0.episodeID == episode.id }
-        savedEpisodes.insert(savedEpisode, at: 0)
+    func follow(show: ShowDetail, episode: Episode) {
+        let followedShow = FollowedShow(show: show, episode: episode)
+        followedShows.removeAll { $0.showID == show.id }
+        followedShows.insert(followedShow, at: 0)
         persist()
     }
 
-    func remove(episodeID: String) {
-        savedEpisodes.removeAll { $0.episodeID == episodeID }
+    func remove(showID: String) {
+        followedShows.removeAll { $0.showID == showID }
         persist()
     }
 
     private func persist() {
-        guard let data = try? JSONEncoder().encode(savedEpisodes) else { return }
+        guard let data = try? JSONEncoder().encode(followedShows) else { return }
         defaults.set(data, forKey: storageKey)
     }
 
-    private static func loadSavedEpisodes(from defaults: UserDefaults, key: String) -> [SavedEpisode] {
+    private static func loadFollowedShows(from defaults: UserDefaults, key: String) -> [FollowedShow] {
         guard let data = defaults.data(forKey: key),
-              let episodes = try? JSONDecoder().decode([SavedEpisode].self, from: data) else {
+              let shows = try? JSONDecoder().decode([FollowedShow].self, from: data) else {
             return []
         }
 
-        return episodes.sorted { $0.savedAt > $1.savedAt }
+        return shows.sorted { $0.followedAt > $1.followedAt }
+    }
+}
+
+@MainActor
+final class NotificationPermissionStore: ObservableObject {
+    static let shared = NotificationPermissionStore()
+
+    @Published private(set) var authorizationStatus: UNAuthorizationStatus = .notDetermined
+    @Published private(set) var isRequesting = false
+
+    private let defaults: UserDefaults
+    private let softAskShownKey = "notificationSoftAskShown"
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    var canShowSoftAsk: Bool {
+        authorizationStatus == .notDetermined && !hasShownSoftAsk
+    }
+
+    var shouldShowCTA: Bool {
+        authorizationStatus != .authorized && authorizationStatus != .provisional && authorizationStatus != .ephemeral
+    }
+
+    private var hasShownSoftAsk: Bool {
+        defaults.bool(forKey: softAskShownKey)
+    }
+
+    func markSoftAskShown() {
+        defaults.set(true, forKey: softAskShownKey)
+    }
+
+    func refreshAuthorizationStatus() async {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        authorizationStatus = settings.authorizationStatus
+    }
+
+    func requestAuthorization() async {
+        markSoftAskShown()
+        isRequesting = true
+        defer { isRequesting = false }
+
+        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+        await refreshAuthorizationStatus()
     }
 }

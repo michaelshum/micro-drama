@@ -9,7 +9,6 @@ private enum InitialNotificationShow {
 final class MockNotificationStore: ObservableObject {
     static let shared = MockNotificationStore()
 
-    @Published var notificationsEnabled = true
     @Published private(set) var notifications: [ProfileNotification] = [
         ProfileNotification(
             title: "New episodes waiting",
@@ -29,10 +28,6 @@ final class MockNotificationStore: ObservableObject {
 
     var sortedNotifications: [ProfileNotification] {
         notifications.sorted { $0.sentAt > $1.sentAt }
-    }
-
-    func enableNotifications() {
-        notificationsEnabled = true
     }
 }
 
@@ -63,26 +58,27 @@ struct ProfileNotification: Identifiable, Hashable {
 }
 
 struct ProfileView: View {
-    @StateObject private var notificationStore = MockNotificationStore.shared
+    @StateObject private var notificationContentStore = MockNotificationStore.shared
+    @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
     @StateObject private var episodeOpener = EpisodeOpeningViewModel()
-    @ObservedObject private var myListStore = MyListEpisodeStore.shared
+    @ObservedObject private var followedShowStore = FollowedShowStore.shared
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     NavigationLink {
-                        NotificationsTrayView(store: notificationStore)
+                        NotificationsTrayView(store: notificationContentStore)
                     } label: {
                         NotificationHeaderRow(
-                            notificationsEnabled: notificationStore.notificationsEnabled,
-                            notificationCount: notificationStore.notifications.count
+                            notificationsEnabled: !notificationPermissionStore.shouldShowCTA,
+                            notificationCount: notificationContentStore.notifications.count
                         )
                     }
                     .listRowSeparator(.hidden)
 
-                    if notificationStore.notificationsEnabled,
-                       let latestNotification = notificationStore.sortedNotifications.first {
+                    if !notificationPermissionStore.shouldShowCTA,
+                       let latestNotification = notificationContentStore.sortedNotifications.first {
                         NotificationActionRow(notification: latestNotification) { notification in
                             Task {
                                 await episodeOpener.open(notification)
@@ -96,26 +92,38 @@ struct ProfileView: View {
                 }
 
                 Section {
-                    if myListStore.savedEpisodes.isEmpty {
-                        EmptyMyListRow()
+                    if followedShowStore.followedShows.isEmpty {
+                        EmptyFollowingRow()
+
+                        if notificationPermissionStore.shouldShowCTA {
+                            NotificationPermissionCTA()
+                                .listRowInsets(ProfileLayout.contentRowInsets)
+                                .listRowSeparator(.hidden)
+                        }
                     } else {
                         NavigationLink {
-                            MyListView()
+                            FollowedShowsView()
                         } label: {
-                            MySavedListHeaderRow(savedCount: myListStore.savedEpisodes.count)
+                            FollowedShowsHeaderRow(followedCount: followedShowStore.followedShows.count)
                         }
                         .listRowSeparator(.hidden)
 
-                        MySavedListShelf(
-                            savedEpisodes: myListStore.savedEpisodes,
-                            onSelect: { savedEpisode in
+                        FollowedShowsShelf(
+                            followedShows: followedShowStore.followedShows,
+                            onSelect: { followedShow in
                                 Task {
-                                    await episodeOpener.open(savedEpisode)
+                                    await episodeOpener.open(followedShow)
                                 }
                             }
                         )
                         .listRowInsets(ProfileLayout.contentRowInsets)
                         .listRowSeparator(.hidden)
+
+                        if notificationPermissionStore.shouldShowCTA {
+                            NotificationPermissionCTA()
+                                .listRowInsets(ProfileLayout.contentRowInsets)
+                                .listRowSeparator(.hidden)
+                        }
                     }
                 }
             }
@@ -153,18 +161,21 @@ struct ProfileView: View {
                     }
                 )
             }
+            .task {
+                await notificationPermissionStore.refreshAuthorizationStatus()
+            }
         }
     }
 }
 
-private struct MySavedListHeaderRow: View {
-    let savedCount: Int
+private struct FollowedShowsHeaderRow: View {
+    let followedCount: Int
 
     var body: some View {
         ProfileSectionHeaderRow(
-            systemImage: "bookmark.fill",
-            title: "My Saved List",
-            trailingText: "\(savedCount) saved"
+            systemImage: "checkmark.circle.fill",
+            title: "Following",
+            trailingText: "\(followedCount) followed"
         )
     }
 }
@@ -191,20 +202,20 @@ private struct NotificationHeaderRow: View {
     }
 }
 
-private struct EmptyMyListRow: View {
+private struct EmptyFollowingRow: View {
     var body: some View {
         HStack(spacing: 12) {
             ProfileRowIcon(
-                systemImage: "bookmark.fill",
+                systemImage: "plus.circle",
                 width: 32
             )
 
             VStack(alignment: .leading, spacing: 3) {
-                Text("My Saved List")
+                Text("Following")
                     .font(ProfileTypography.sectionTitle)
                     .foregroundStyle(.primary)
 
-                Text("Save episodes to watch next")
+                Text("Follow shows to keep up with new episodes")
                     .font(ProfileTypography.rowSubtitle)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
@@ -215,19 +226,19 @@ private struct EmptyMyListRow: View {
     }
 }
 
-private struct MySavedListShelf: View {
-    let savedEpisodes: [SavedEpisode]
-    let onSelect: (SavedEpisode) -> Void
+private struct FollowedShowsShelf: View {
+    let followedShows: [FollowedShow]
+    let onSelect: (FollowedShow) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 12) {
-                    ForEach(savedEpisodes) { savedEpisode in
+                    ForEach(followedShows) { followedShow in
                         Button {
-                            onSelect(savedEpisode)
+                            onSelect(followedShow)
                         } label: {
-                            SavedEpisodeShelfCard(savedEpisode: savedEpisode)
+                            FollowedShowShelfCard(followedShow: followedShow)
                         }
                         .buttonStyle(.plain)
                     }
@@ -238,23 +249,27 @@ private struct MySavedListShelf: View {
     }
 }
 
-private struct SavedEpisodeShelfCard: View {
-    let savedEpisode: SavedEpisode
+private struct FollowedShowShelfCard: View {
+    let followedShow: FollowedShow
 
     private let cardWidth: CGFloat = ProfileLayout.homePosterWidth
+    private var restartEpisodeNumber: Int {
+        ShowEpisodeProgressStore.shared.lastWatchedEpisodeNumber(for: followedShow.showID)
+            ?? followedShow.latestEpisodeNumber
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            PosterThumbnail(url: savedEpisode.thumbnailUrl, width: cardWidth, height: ProfileLayout.homePosterHeight)
+            PosterThumbnail(url: followedShow.posterUrl, width: cardWidth, height: ProfileLayout.homePosterHeight)
 
-            Text(savedEpisode.showTitle)
+            Text(followedShow.showTitle)
                 .font(ProfileTypography.shelfTitle)
                 .foregroundStyle(.primary)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .frame(width: cardWidth, alignment: .leading)
 
-            Text("Episode \(savedEpisode.episodeNumber)")
+            Text("Resume Episode \(restartEpisodeNumber)")
                 .font(ProfileTypography.rowMetadata)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
@@ -299,17 +314,18 @@ private struct LatestNotificationPreviewRow: View {
 
 private struct NotificationsTrayView: View {
     @ObservedObject var store: MockNotificationStore
+    @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
     @StateObject private var episodeOpener = EpisodeOpeningViewModel()
 
     var body: some View {
         List {
-            if store.notificationsEnabled {
+            if !notificationPermissionStore.shouldShowCTA {
                 if store.notifications.isEmpty {
                     Section {
                         ContentUnavailableView(
                             "No Notifications Yet",
                             systemImage: "bell",
-                            description: Text("New episode drops, saved-show reminders, and recommendations will appear here.")
+                            description: Text("New episode drops, followed-show reminders, and recommendations will appear here.")
                         )
                     }
                     .listRowBackground(Color.clear)
@@ -333,13 +349,16 @@ private struct NotificationsTrayView: View {
                         ContentUnavailableView(
                             "Notifications Are Off",
                             systemImage: "bell.slash",
-                            description: Text("Enable notifications to see episode drops, saved-show reminders, and recommendations.")
+                            description: Text("Enable notifications to see episode drops, followed-show reminders, and recommendations.")
                         )
 
                         Button("Enable Notifications") {
-                            store.enableNotifications()
+                            Task {
+                                await notificationPermissionStore.requestAuthorization()
+                            }
                         }
                         .buttonStyle(.borderedProminent)
+                        .disabled(notificationPermissionStore.isRequesting)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -350,6 +369,9 @@ private struct NotificationsTrayView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await notificationPermissionStore.refreshAuthorizationStatus()
+        }
         .overlay {
             if episodeOpener.isLoading {
                 ProgressView()
@@ -425,37 +447,54 @@ private struct NotificationDetailRow: View {
     }
 }
 
-private struct MyListView: View {
-    @ObservedObject private var myListStore = MyListEpisodeStore.shared
+private struct FollowedShowsView: View {
+    @ObservedObject private var followedShowStore = FollowedShowStore.shared
+    @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
     @StateObject private var viewModel = EpisodeOpeningViewModel()
 
     var body: some View {
         List {
-            if myListStore.savedEpisodes.isEmpty {
+            if followedShowStore.followedShows.isEmpty {
                 Section {
                     ContentUnavailableView(
-                        "My Saved List Is Empty",
-                        systemImage: "bookmark",
-                        description: Text("Saved episodes from the player will appear here with show and episode details.")
+                        "No Followed Shows",
+                        systemImage: "plus.circle",
+                        description: Text("Follow shows from the player to keep up with new episodes.")
                     )
                 }
                 .listRowBackground(Color.clear)
+
+                if notificationPermissionStore.shouldShowCTA {
+                    Section {
+                        NotificationPermissionCTA()
+                            .listRowInsets(ProfileLayout.contentRowInsets)
+                    }
+                    .listRowBackground(Color.clear)
+                }
             } else {
+                if notificationPermissionStore.shouldShowCTA {
+                    Section {
+                        NotificationPermissionCTA()
+                            .listRowInsets(ProfileLayout.contentRowInsets)
+                    }
+                    .listRowBackground(Color.clear)
+                }
+
                 Section {
-                    ForEach(myListStore.savedEpisodes) { savedEpisode in
+                    ForEach(followedShowStore.followedShows) { followedShow in
                         Button {
                             Task {
-                                await viewModel.open(savedEpisode)
+                                await viewModel.open(followedShow)
                             }
                         } label: {
-                            SavedEpisodeRow(savedEpisode: savedEpisode)
+                            FollowedShowRow(followedShow: followedShow)
                         }
                         .buttonStyle(.plain)
                         .swipeActions {
                             Button(role: .destructive) {
-                                myListStore.remove(episodeID: savedEpisode.episodeID)
+                                followedShowStore.remove(showID: followedShow.showID)
                             } label: {
-                                Label("Remove", systemImage: "trash")
+                                Label("Unfollow", systemImage: "minus.circle")
                             }
                         }
                     }
@@ -463,8 +502,11 @@ private struct MyListView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle("My Saved List")
+        .navigationTitle("Following")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await notificationPermissionStore.refreshAuthorizationStatus()
+        }
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
@@ -490,24 +532,65 @@ private struct MyListView: View {
     }
 }
 
-private struct SavedEpisodeRow: View {
-    let savedEpisode: SavedEpisode
+private struct NotificationPermissionCTA: View {
+    @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            ProfileRowIcon(systemImage: "bell.badge.fill", width: 32)
+
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Never miss followed-show drops")
+                        .font(ProfileTypography.rowTitle)
+                        .foregroundStyle(.primary)
+
+                    Text("Turn on notifications for new episodes and free unlock windows.")
+                        .font(ProfileTypography.rowSubtitle)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(3)
+                }
+
+                Button("Enable Notifications") {
+                    Task {
+                        await notificationPermissionStore.requestAuthorization()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+                .disabled(notificationPermissionStore.isRequesting)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.vertical, 10)
+        .task {
+            await notificationPermissionStore.refreshAuthorizationStatus()
+        }
+    }
+}
+
+private struct FollowedShowRow: View {
+    let followedShow: FollowedShow
+    private var restartEpisodeNumber: Int {
+        ShowEpisodeProgressStore.shared.lastWatchedEpisodeNumber(for: followedShow.showID)
+            ?? followedShow.latestEpisodeNumber
+    }
 
     var body: some View {
         HStack(spacing: 12) {
-            PosterThumbnail(url: savedEpisode.thumbnailUrl, width: 84, height: 112)
+            PosterThumbnail(url: followedShow.posterUrl, width: 84, height: 112)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(savedEpisode.showTitle)
+                Text(followedShow.showTitle)
                     .font(ProfileTypography.rowTitle)
                     .foregroundStyle(.primary)
                     .lineLimit(2)
 
-                Text("Episode \(savedEpisode.episodeNumber)")
+                Text("Resume Episode \(restartEpisodeNumber)")
                     .font(ProfileTypography.rowSubtitle)
                     .foregroundStyle(.secondary)
 
-                Text("Saved \(savedEpisode.savedAt.formatted(.relative(presentation: .named)))")
+                Text("Followed \(followedShow.followedAt.formatted(.relative(presentation: .named)))")
                     .font(ProfileTypography.rowMetadata)
                     .foregroundStyle(.tertiary)
             }
@@ -618,13 +701,13 @@ private final class EpisodeOpeningViewModel: ObservableObject {
         }
     }
 
-    func open(_ savedEpisode: SavedEpisode) async {
+    func open(_ followedShow: FollowedShow) async {
         isLoading = true
         defer { isLoading = false }
 
         do {
-            initialEpisodeID = savedEpisode.episodeID
-            selectedShowDetail = try await apiClient.fetchShow(id: savedEpisode.showID)
+            initialEpisodeID = progressStore.lastWatchedEpisodeID(for: followedShow.showID) ?? followedShow.latestEpisodeID
+            selectedShowDetail = try await apiClient.fetchShow(id: followedShow.showID)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -648,7 +731,7 @@ private final class EpisodeOpeningViewModel: ObservableObject {
     }
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
-        progressStore.setLastWatchedEpisodeID(episode.id, for: show.id)
+        progressStore.setLastWatchedEpisode(episode, for: show.id)
     }
 }
 
@@ -716,7 +799,7 @@ private final class ShowSearchViewModel: ObservableObject {
     }
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
-        progressStore.setLastWatchedEpisodeID(episode.id, for: show.id)
+        progressStore.setLastWatchedEpisode(episode, for: show.id)
     }
 }
 

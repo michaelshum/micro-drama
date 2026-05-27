@@ -23,6 +23,10 @@ struct APIClient {
         self.decoder = decoder
     }
 
+    func fetchConfig() async throws -> AppConfig {
+        try await fetch("/config")
+    }
+
     func fetchShows() async throws -> [Show] {
         try await fetch("/shows")
     }
@@ -43,4 +47,3 @@ struct APIClient {
         return try decoder.decode(T.self, from: data)
     }
 }
-

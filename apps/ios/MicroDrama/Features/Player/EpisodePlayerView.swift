@@ -10,8 +10,10 @@ struct EpisodePlayerView: View {
     @State private var dragOffset: CGFloat = 0
     @State private var isEpisodeListPresented = false
     @State private var isSpeedSheetPresented = false
+    @State private var isNotificationSoftAskPresented = false
     @State private var playbackRate: Float = 1.0
-    @ObservedObject private var myListStore = MyListEpisodeStore.shared
+    @ObservedObject private var followedShowStore = FollowedShowStore.shared
+    @ObservedObject private var notificationStore = NotificationPermissionStore.shared
 
     init(
         show: ShowDetail,
@@ -41,9 +43,9 @@ struct EpisodePlayerView: View {
                                 showTitle: show.title,
                                 episode: episode,
                                 isActive: index == currentIndex,
-                                isSaved: myListStore.isSaved(episode),
+                                isFollowing: followedShowStore.isFollowing(show),
                                 playbackRate: playbackRate,
-                                onSave: { toggleSave(for: episode) },
+                                onFollow: { toggleFollow(for: episode) },
                                 onEpisodesTapped: { isEpisodeListPresented = true },
                                 onVideoFinished: moveToNextEpisode
                             )
@@ -104,8 +106,28 @@ struct EpisodePlayerView: View {
             .presentationDetents([.height(270)])
             .presentationDragIndicator(.visible)
         }
+        .sheet(isPresented: $isNotificationSoftAskPresented) {
+            NotificationSoftAskSheet(
+                showTitle: show.title,
+                onNotify: {
+                    isNotificationSoftAskPresented = false
+                    Task {
+                        await notificationStore.requestAuthorization()
+                    }
+                },
+                onNotNow: {
+                    notificationStore.markSoftAskShown()
+                    isNotificationSoftAskPresented = false
+                }
+            )
+            .presentationDetents([.height(270)])
+            .presentationDragIndicator(.visible)
+        }
         .onAppear {
             recordCurrentEpisode()
+            Task {
+                await notificationStore.refreshAuthorizationStatus()
+            }
         }
         .onChange(of: currentIndex) { _, _ in
             recordCurrentEpisode()
@@ -124,8 +146,10 @@ struct EpisodePlayerView: View {
         .interactiveSpring(response: 0.32, dampingFraction: 0.9)
     }
 
-    private func toggleSave(for episode: Episode) {
-        myListStore.toggle(show: show, episode: episode)
+    private func toggleFollow(for episode: Episode) {
+        let didFollow = followedShowStore.toggle(show: show, episode: episode)
+        guard didFollow, notificationStore.canShowSoftAsk else { return }
+        isNotificationSoftAskPresented = true
     }
 
     private func recordCurrentEpisode() {
@@ -183,9 +207,9 @@ private struct EpisodePage: View {
     let showTitle: String
     let episode: Episode
     let isActive: Bool
-    let isSaved: Bool
+    let isFollowing: Bool
     let playbackRate: Float
-    let onSave: () -> Void
+    let onFollow: () -> Void
     let onEpisodesTapped: () -> Void
     let onVideoFinished: () -> Void
 
@@ -260,8 +284,8 @@ private struct EpisodePage: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     ActionRail(
-                        isSaved: isSaved,
-                        onSave: onSave,
+                        isFollowing: isFollowing,
+                        onFollow: onFollow,
                         onEpisodesTapped: onEpisodesTapped
                     )
                 }
@@ -307,8 +331,8 @@ private struct EpisodePage: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         ActionRail(
-                            isSaved: isSaved,
-                            onSave: onSave,
+                            isFollowing: isFollowing,
+                            onFollow: onFollow,
                             onEpisodesTapped: onEpisodesTapped
                         )
                     }
@@ -978,19 +1002,19 @@ private struct EpisodeThumbnailView: View {
 }
 
 private struct ActionRail: View {
-    let isSaved: Bool
-    let onSave: () -> Void
+    let isFollowing: Bool
+    let onFollow: () -> Void
     let onEpisodesTapped: () -> Void
 
     var body: some View {
         VStack(spacing: 18) {
             ActionRailButton(
-                systemName: isSaved ? "bookmark.fill" : "bookmark",
-                title: isSaved ? "Saved" : "Save",
-                tint: isSaved ? .yellow : .white,
-                action: onSave
+                systemName: isFollowing ? "checkmark.circle.fill" : "plus.circle",
+                title: isFollowing ? "Following" : "Follow",
+                tint: isFollowing ? .green : .white,
+                action: onFollow
             )
-            .accessibilityLabel(isSaved ? "Remove from My List" : "Save")
+            .accessibilityLabel(isFollowing ? "Unfollow show" : "Follow show")
 
             ActionRailButton(
                 systemName: "list.bullet",
@@ -1007,6 +1031,51 @@ private struct ActionRail: View {
         .foregroundStyle(.white)
         .shadow(radius: 5)
         .frame(width: 64)
+    }
+}
+
+private struct NotificationSoftAskSheet: View {
+    let showTitle: String
+    let onNotify: () -> Void
+    let onNotNow: () -> Void
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Image(systemName: "bell.badge.fill")
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundStyle(.blue)
+                .frame(width: 54, height: 54)
+                .background(Color.blue.opacity(0.12), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+            VStack(spacing: 7) {
+                Text("Get notified about new episodes?")
+                    .font(.title3.weight(.bold))
+                    .multilineTextAlignment(.center)
+
+                Text("We'll let you know when more \(showTitle) is ready to watch.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(spacing: 10) {
+                Button("Notify Me", action: onNotify)
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity)
+
+                Button("Not Now", action: onNotNow)
+                    .buttonStyle(.plain)
+                    .controlSize(.large)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 22)
+        .padding(.bottom, 18)
     }
 }
 
