@@ -11,6 +11,7 @@ struct EpisodePlayerView: View {
     @State private var isEpisodeListPresented = false
     @State private var isSpeedSheetPresented = false
     @State private var isNotificationSoftAskPresented = false
+    @State private var unlockedEpisodeIDs: Set<String> = []
     @State private var playbackRate: Float = 1.0
     @ObservedObject private var followedShowStore = FollowedShowStore.shared
     @ObservedObject private var notificationStore = NotificationPermissionStore.shared
@@ -43,10 +44,12 @@ struct EpisodePlayerView: View {
                                 showTitle: show.title,
                                 episode: episode,
                                 isActive: index == currentIndex,
+                                isUnlocked: unlockedEpisodeIDs.contains(episode.id),
                                 isFollowing: followedShowStore.isFollowing(show),
                                 playbackRate: playbackRate,
                                 onFollow: { toggleFollow(for: episode) },
                                 onEpisodesTapped: { isEpisodeListPresented = true },
+                                onRewardedUnlock: { unlockedEpisodeIDs.insert(episode.id) },
                                 onVideoFinished: moveToNextEpisode
                             )
                             .frame(width: proxy.size.width, height: pageHeight)
@@ -207,24 +210,28 @@ private struct EpisodePage: View {
     let showTitle: String
     let episode: Episode
     let isActive: Bool
+    let isUnlocked: Bool
     let isFollowing: Bool
     let playbackRate: Float
     let onFollow: () -> Void
     let onEpisodesTapped: () -> Void
+    let onRewardedUnlock: () -> Void
     let onVideoFinished: () -> Void
 
+    @ObservedObject private var rewardedAd = RewardedEpisodeUnlockAd.shared
     @State private var playbackProgress: Double = 0
     @State private var playbackDuration: Double = 0
     @State private var isScrubbing = false
     @State private var seekRequest: PlaybackSeekRequest?
     @State private var toggleRequest: PlaybackToggleRequest?
     @State private var lockedOfferAlert: LockedOffer?
+    @State private var isAdErrorPresented = false
     @State private var isUnlockDrawerPresented = false
     @State private var unlockDrawerDragOffset: CGFloat = 0
 
     var body: some View {
         ZStack {
-            if episode.isLocked {
+            if isEpisodeLocked {
                 LockedEpisodeBackgroundView(episode: episode)
             } else if isActive {
                 PlayerSurface(
@@ -249,7 +256,7 @@ private struct EpisodePage: View {
             .ignoresSafeArea()
             .allowsHitTesting(false)
 
-            if isActive && !episode.isLocked {
+            if isActive && !isEpisodeLocked {
                 Color.clear
                     .contentShape(Rectangle())
                     .onTapGesture {
@@ -257,12 +264,13 @@ private struct EpisodePage: View {
                     }
             }
 
-            if episode.isLocked {
+            if isEpisodeLocked {
                 if !isUnlockDrawerPresented {
                     LockedEpisodeOverlay(
                         episode: episode,
                         onUnlockNow: { presentUnlockDrawer() },
-                        onWatchAd: { lockedOfferAlert = .watchAd }
+                        isAdLoading: rewardedAd.isLoading,
+                        onWatchAd: showRewardedAdUnlock
                     )
                     .padding(.horizontal, 18)
                     .frame(maxHeight: .infinity, alignment: .center)
@@ -356,20 +364,35 @@ private struct EpisodePage: View {
                 dismissButton: .default(Text("OK"))
             )
         }
+        .alert("Unable to show ad", isPresented: $isAdErrorPresented) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(rewardedAd.lastErrorMessage ?? "The rewarded ad is still loading. Please try again in a moment.")
+        }
         .onAppear {
-            if isActive && episode.isLocked {
+            if isActive && isEpisodeLocked {
                 presentUnlockDrawer(animated: false)
+                Task {
+                    await rewardedAd.loadIfNeeded()
+                }
             }
         }
         .onChange(of: isActive) { _, isActive in
-            guard episode.isLocked else { return }
+            guard isEpisodeLocked else { return }
 
             if isActive {
                 presentUnlockDrawer()
+                Task {
+                    await rewardedAd.loadIfNeeded()
+                }
             } else {
                 dismissUnlockDrawer()
             }
         }
+    }
+
+    private var isEpisodeLocked: Bool {
+        episode.isLocked && !isUnlocked
     }
 
     private var unlockDrawerDragGesture: some Gesture {
@@ -405,6 +428,21 @@ private struct EpisodePage: View {
         withAnimation(.interactiveSpring(response: 0.28, dampingFraction: 0.9)) {
             unlockDrawerDragOffset = 0
             isUnlockDrawerPresented = false
+        }
+    }
+
+    private func showRewardedAdUnlock() {
+        guard rewardedAd.isReady else {
+            isAdErrorPresented = true
+            Task {
+                await rewardedAd.loadIfNeeded()
+            }
+            return
+        }
+
+        rewardedAd.show {
+            onRewardedUnlock()
+            dismissUnlockDrawer()
         }
     }
 }
@@ -693,6 +731,7 @@ private struct LockedEpisodeBackgroundView: View {
 private struct LockedEpisodeOverlay: View {
     let episode: Episode
     let onUnlockNow: () -> Void
+    let isAdLoading: Bool
     let onWatchAd: () -> Void
 
     var body: some View {
@@ -733,7 +772,10 @@ private struct LockedEpisodeOverlay: View {
                 .accessibilityLabel("Unlock Now")
 
                 Button(action: onWatchAd) {
-                    Label("Watch an ad to unlock for free", systemImage: "play.rectangle.fill")
+                    Label(
+                        isAdLoading ? "Loading ad..." : "Watch an ad to unlock for free",
+                        systemImage: "play.rectangle.fill"
+                    )
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
@@ -745,6 +787,7 @@ private struct LockedEpisodeOverlay: View {
                         )
                 }
                 .buttonStyle(.plain)
+                .disabled(isAdLoading)
                 .accessibilityLabel("Watch an ad to unlock for free")
             }
         }

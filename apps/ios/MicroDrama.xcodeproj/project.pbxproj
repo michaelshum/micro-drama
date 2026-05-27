@@ -14,6 +14,8 @@
 		0A0001052C00000100000001 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0002052C00000100000001 /* HomeView.swift */; };
 		0A0001062C00000100000001 /* EpisodePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0002062C00000100000001 /* EpisodePlayerView.swift */; };
 		0A0001072C00000100000001 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0002072C00000100000001 /* ProfileView.swift */; };
+		0A0001082C00000100000001 /* RewardedEpisodeUnlockAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */; };
+		0A0001092C00000100000001 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 0A000B022C00000100000001 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,7 @@
 		0A0002072C00000100000001 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		0A0002082C00000100000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A0002092C00000100000001 /* MicroDrama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MicroDrama.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardedEpisodeUnlockAd.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A0001092C00000100000001 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +74,7 @@
 		0A0004042C00000100000001 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				0A0004132C00000100000001 /* Ads */,
 				0A0004052C00000100000001 /* API */,
 				0A0004062C00000100000001 /* Models */,
 			);
@@ -142,6 +147,14 @@
 			path = Profile;
 			sourceTree = "<group>";
 		};
+		0A0004132C00000100000001 /* Ads */ = {
+			isa = PBXGroup;
+			children = (
+				0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */,
+			);
+			path = Ads;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -158,6 +171,9 @@
 			dependencies = (
 			);
 			name = MicroDrama;
+			packageProductDependencies = (
+				0A000B022C00000100000001 /* GoogleMobileAds */,
+			);
 			productName = MicroDrama;
 			productReference = 0A0002092C00000100000001 /* MicroDrama.app */;
 			productType = "com.apple.product-type.application";
@@ -186,6 +202,9 @@
 				Base,
 			);
 			mainGroup = 0A0004012C00000100000001;
+			packageReferences = (
+				0A000B012C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = 0A0004092C00000100000001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -217,6 +236,7 @@
 				0A0001052C00000100000001 /* HomeView.swift in Sources */,
 				0A0001062C00000100000001 /* EpisodePlayerView.swift in Sources */,
 				0A0001072C00000100000001 /* ProfileView.swift in Sources */,
+				0A0001082C00000100000001 /* RewardedEpisodeUnlockAd.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +429,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0A000B012C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0A000B022C00000100000001 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A000B012C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0A0008012C00000100000001 /* Project object */;
 }
