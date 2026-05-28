@@ -10,6 +10,7 @@ const port = Number(process.env.PORT || 3000);
 const playbackTokenTtlSeconds = Number(process.env.PLAYBACK_TOKEN_TTL_SECONDS || 30 * 60);
 
 let catalogCache;
+let signingCredentialsCache;
 
 async function loadCatalog() {
   if (!catalogCache || process.env.NODE_ENV !== "production") {
@@ -43,7 +44,7 @@ function isPublished(item) {
   return item.status === "published";
 }
 
-function publicEpisode(req, episode, show) {
+function publicEpisode(req, episode, show, imageUrl) {
   return {
     id: episode.id,
     showId: episode.showId,
@@ -52,7 +53,7 @@ function publicEpisode(req, episode, show) {
     title: episode.title,
     description: episode.description,
     durationSeconds: episode.durationSeconds,
-    thumbnailUrl: absoluteUrl(req, `/episodes/${episode.id}/thumbnail`),
+    thumbnailUrl: imageUrl(episode, `/episodes/${episode.id}/thumbnail`),
     playbackPath: `/episodes/${episode.id}/playback`,
     isLocked: episode.isLocked,
     isFreePreview: episode.isFreePreview,
@@ -60,14 +61,14 @@ function publicEpisode(req, episode, show) {
   };
 }
 
-function publicShow(req, show, episodeCount) {
+function publicShow(req, show, episodeCount, imageUrl) {
   return {
     id: show.id,
     title: show.title,
     description: show.description,
     genre: show.genre,
-    posterUrl: absoluteUrl(req, `/shows/${show.id}/poster`),
-    coverUrl: absoluteUrl(req, `/shows/${show.id}/cover`),
+    posterUrl: imageUrl({ posterUrl: show.posterUrl }, `/shows/${show.id}/poster`),
+    coverUrl: imageUrl({ coverUrl: show.coverUrl }, `/shows/${show.id}/cover`),
     episodeCount
   };
 }
@@ -98,6 +99,10 @@ function cloudflareVideoUidFromUrl(value) {
   } catch {
     return null;
   }
+}
+
+function thumbnailVideoUid(item) {
+  return item.providerAssetId || cloudflareVideoUidFromUrl(item.thumbnailUrl || item.posterUrl || item.coverUrl);
 }
 
 function normalizeSigningKey(value) {
@@ -148,14 +153,43 @@ function normalizeBearerToken(value) {
   return value?.trim().replace(/^Bearer\s+/i, "");
 }
 
-function generateCloudflareStreamToken(videoUid) {
+function getStreamSigningCredentials() {
   const keyId = process.env.CLOUDFLARE_STREAM_SIGNING_KEY_ID;
-  const privateKey = normalizeSigningKey(process.env.CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY);
+  const rawPrivateKey = process.env.CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY;
 
-  if (!keyId || !privateKey) {
+  if (!keyId || !rawPrivateKey) {
     return null;
   }
 
+  if (
+    signingCredentialsCache?.keyId === keyId &&
+    signingCredentialsCache?.rawPrivateKey === rawPrivateKey
+  ) {
+    return signingCredentialsCache.credentials;
+  }
+
+  const credentials = {
+    keyId,
+    privateKey: normalizeSigningKey(rawPrivateKey)
+  };
+
+  signingCredentialsCache = {
+    keyId,
+    rawPrivateKey,
+    credentials
+  };
+
+  return credentials;
+}
+
+function generateCloudflareStreamToken(videoUid) {
+  const credentials = getStreamSigningCredentials();
+
+  if (!credentials) {
+    return null;
+  }
+
+  const { keyId, privateKey } = credentials;
   const now = Math.floor(Date.now() / 1000);
   const header = {
     alg: "RS256",
@@ -230,6 +264,37 @@ async function buildCloudflareAssetUrl(videoUid, assetPath) {
   };
 }
 
+function buildLocallySignedCloudflareAssetUrl(videoUid, assetPath) {
+  const ticket = generateCloudflareStreamToken(videoUid);
+
+  if (!ticket) {
+    return null;
+  }
+
+  return `https://videodelivery.net/${ticket.token}${assetPath}`;
+}
+
+function createImageUrlBuilder(req) {
+  const urlsByVideoUid = new Map();
+
+  return function imageUrl(item, fallbackPath) {
+    const videoUid = thumbnailVideoUid(item);
+    if (!videoUid) {
+      return absoluteUrl(req, fallbackPath);
+    }
+
+    if (!urlsByVideoUid.has(videoUid)) {
+      urlsByVideoUid.set(
+        videoUid,
+        buildLocallySignedCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg") ||
+          absoluteUrl(req, fallbackPath)
+      );
+    }
+
+    return urlsByVideoUid.get(videoUid);
+  };
+}
+
 async function buildPlaybackTicket(episode) {
   if (episode.provider !== "cloudflare_stream" || !episode.providerAssetId) {
     throw new Error(`Unsupported playback provider for episode ${episode.id}`);
@@ -247,7 +312,7 @@ async function buildPlaybackTicket(episode) {
 }
 
 async function buildThumbnailTicket(item) {
-  const videoUid = item.providerAssetId || cloudflareVideoUidFromUrl(item.thumbnailUrl || item.posterUrl || item.coverUrl);
+  const videoUid = thumbnailVideoUid(item);
   if (!videoUid) {
     const error = new Error("Cloudflare Stream thumbnail asset is not configured");
     error.statusCode = 404;
@@ -292,6 +357,7 @@ async function handleRequest(req, res) {
     const episodes = catalog.episodes.filter(isPublished);
     const showsById = new Map(shows.map((show) => [show.id, show]));
     const episodesById = new Map(episodes.map((episode) => [episode.id, episode]));
+    const imageUrl = createImageUrlBuilder(req);
 
     if (path === "/health") {
       sendJson(res, 200, { ok: true });
@@ -309,7 +375,7 @@ async function handleRequest(req, res) {
         200,
         shows.map((show) => {
           const episodeCount = episodes.filter((episode) => episode.showId === show.id).length;
-          return publicShow(req, show, episodeCount);
+          return publicShow(req, show, episodeCount, imageUrl);
         })
       );
       return;
@@ -328,8 +394,8 @@ async function handleRequest(req, res) {
         .sort((a, b) => a.episodeNumber - b.episodeNumber);
 
       sendJson(res, 200, {
-        ...publicShow(req, show, showEpisodes.length),
-        episodes: showEpisodes.map((episode) => publicEpisode(req, episode, show))
+        ...publicShow(req, show, showEpisodes.length, imageUrl),
+        episodes: showEpisodes.map((episode) => publicEpisode(req, episode, show, imageUrl))
       });
       return;
     }
@@ -371,7 +437,7 @@ async function handleRequest(req, res) {
       const showEpisodes = episodes
         .filter((episode) => episode.showId === show.id)
         .sort((a, b) => a.episodeNumber - b.episodeNumber)
-        .map((episode) => publicEpisode(req, episode, show));
+        .map((episode) => publicEpisode(req, episode, show, imageUrl));
 
       sendJson(res, 200, showEpisodes);
       return;
@@ -385,7 +451,7 @@ async function handleRequest(req, res) {
         return;
       }
 
-      sendJson(res, 200, publicEpisode(req, episode, showsById.get(episode.showId)));
+      sendJson(res, 200, publicEpisode(req, episode, showsById.get(episode.showId), imageUrl));
       return;
     }
 
@@ -427,7 +493,7 @@ async function handleRequest(req, res) {
       const feedEpisodes = feed.episodeIds
         .map((episodeId) => episodesById.get(episodeId))
         .filter(Boolean)
-        .map((episode) => publicEpisode(req, episode, showsById.get(episode.showId)));
+        .map((episode) => publicEpisode(req, episode, showsById.get(episode.showId), imageUrl));
 
       sendJson(res, 200, {
         id: feed.id,
