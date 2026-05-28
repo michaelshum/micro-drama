@@ -77,22 +77,43 @@ function normalizeSigningKey(value) {
     return null;
   }
 
-  const trimmed = value.trim();
+  const trimmed = value.trim().replace(/^(['"`])([\s\S]*)\1$/, "$2");
   const normalizedPem = trimmed.replace(/\\n/g, "\n");
-
-  if (normalizedPem.includes("-----BEGIN")) {
-    return normalizedPem;
-  }
+  const candidates = [normalizedPem];
 
   try {
-    const parsed = JSON.parse(normalizedPem);
-    return createPrivateKey({
-      key: parsed,
-      format: "jwk"
-    });
+    const decoded = Buffer.from(normalizedPem, "base64").toString("utf8").trim();
+    if (decoded.includes("-----BEGIN") || decoded.startsWith("{")) {
+      candidates.push(decoded.replace(/\\n/g, "\n"));
+    }
   } catch {
-    return normalizedPem;
+    // Not base64-encoded key material.
   }
+
+  let lastError;
+  for (const candidate of candidates) {
+    try {
+      const parsed = JSON.parse(candidate);
+      if (typeof parsed === "string") {
+        return normalizeSigningKey(parsed);
+      }
+
+      return createPrivateKey({
+        key: parsed,
+        format: "jwk"
+      });
+    } catch (error) {
+      lastError = error;
+    }
+
+    try {
+      return createPrivateKey(candidate);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError;
 }
 
 function normalizeBearerToken(value) {
@@ -162,7 +183,20 @@ async function buildPlaybackTicket(episode) {
     throw new Error(`Unsupported playback provider for episode ${episode.id}`);
   }
 
-  let ticket = generateCloudflareStreamToken(episode.providerAssetId);
+  let ticket;
+  try {
+    ticket = generateCloudflareStreamToken(episode.providerAssetId);
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        event: "cloudflare_stream_signing_key_invalid",
+        message:
+          "CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY could not be parsed. Check for missing PEM headers, truncated key material, or accidental quotes.",
+        reason: error.message
+      })
+    );
+  }
+
   if (!ticket) {
     ticket = await fetchCloudflareStreamToken(episode.providerAssetId);
   }
