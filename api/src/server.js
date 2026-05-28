@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { createSign } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -6,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const catalogPath = join(__dirname, "..", "data", "catalog.json");
 const port = Number(process.env.PORT || 3000);
+const playbackTokenTtlSeconds = Number(process.env.PLAYBACK_TOKEN_TTL_SECONDS || 30 * 60);
 
 let catalogCache;
 
@@ -43,7 +45,7 @@ function publicEpisode(episode, show) {
     description: episode.description,
     durationSeconds: episode.durationSeconds,
     thumbnailUrl: episode.thumbnailUrl,
-    playbackUrl: episode.playbackUrl,
+    playbackPath: `/episodes/${episode.id}/playback`,
     isLocked: episode.isLocked,
     isFreePreview: episode.isFreePreview,
     publishedAt: episode.publishedAt
@@ -64,6 +66,116 @@ function publicShow(show, episodeCount) {
 
 function notFound(res) {
   sendJson(res, 404, { error: "not_found" });
+}
+
+function base64Url(input) {
+  return Buffer.from(input).toString("base64url");
+}
+
+function normalizePrivateKey(value) {
+  return value?.replace(/\\n/g, "\n");
+}
+
+function generateCloudflareStreamToken(videoUid) {
+  const keyId = process.env.CLOUDFLARE_STREAM_SIGNING_KEY_ID;
+  const privateKey = normalizePrivateKey(process.env.CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY);
+
+  if (!keyId || !privateKey) {
+    return null;
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const header = {
+    alg: "RS256",
+    kid: keyId,
+    typ: "JWT"
+  };
+  const payload = {
+    sub: videoUid,
+    kid: keyId,
+    nbf: now - 30,
+    exp: now + playbackTokenTtlSeconds
+  };
+  const signingInput = `${base64Url(JSON.stringify(header))}.${base64Url(JSON.stringify(payload))}`;
+  const signature = createSign("RSA-SHA256").update(signingInput).sign(privateKey).toString("base64url");
+
+  return {
+    token: `${signingInput}.${signature}`,
+    expiresAt: new Date(payload.exp * 1000).toISOString()
+  };
+}
+
+async function fetchCloudflareStreamToken(videoUid) {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_STREAM_API_TOKEN;
+
+  if (!accountId || !apiToken) {
+    return null;
+  }
+
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream/${videoUid}/token`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiToken}`
+      }
+    }
+  );
+
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok || !body.success || !body.result?.token) {
+    throw new Error(`Cloudflare Stream token request failed with ${response.status}`);
+  }
+
+  return {
+    token: body.result.token,
+    expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+  };
+}
+
+async function buildPlaybackTicket(episode) {
+  if (episode.provider !== "cloudflare_stream" || !episode.providerAssetId) {
+    throw new Error(`Unsupported playback provider for episode ${episode.id}`);
+  }
+
+  let ticket = generateCloudflareStreamToken(episode.providerAssetId);
+  if (!ticket) {
+    ticket = await fetchCloudflareStreamToken(episode.providerAssetId);
+  }
+
+  if (!ticket) {
+    if (process.env.ALLOW_UNSIGNED_PLAYBACK === "true" && episode.playbackUrl) {
+      return {
+        playbackUrl: episode.playbackUrl,
+        expiresAt: null
+      };
+    }
+
+    const error = new Error("Cloudflare Stream signing is not configured");
+    error.statusCode = 503;
+    throw error;
+  }
+
+  return {
+    playbackUrl: `https://videodelivery.net/${ticket.token}/manifest/video.m3u8`,
+    expiresAt: ticket.expiresAt
+  };
+}
+
+function logPlaybackTicketRequest(req, episode, ticket) {
+  console.log(
+    JSON.stringify({
+      event: "playback_ticket_issued",
+      episodeId: episode.id,
+      provider: episode.provider,
+      providerAssetId: episode.providerAssetId,
+      expiresAt: ticket.expiresAt,
+      ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+      userAgent: req.headers["user-agent"] || null,
+      requestedAt: new Date().toISOString()
+    })
+  );
 }
 
 async function handleRequest(req, res) {
@@ -157,6 +269,20 @@ async function handleRequest(req, res) {
       return;
     }
 
+    const playbackMatch = path.match(/^\/episodes\/([^/]+)\/playback$/);
+    if (playbackMatch) {
+      const episode = episodesById.get(playbackMatch[1]);
+      if (!episode) {
+        notFound(res);
+        return;
+      }
+
+      const ticket = await buildPlaybackTicket(episode);
+      logPlaybackTicketRequest(req, episode, ticket);
+      sendJson(res, 200, ticket);
+      return;
+    }
+
     if (path === "/feed") {
       const feedId = url.searchParams.get("feed") || catalog.app.defaultFeed;
       const feed = catalog.feeds.find((candidate) => candidate.id === feedId);
@@ -181,7 +307,7 @@ async function handleRequest(req, res) {
     notFound(res);
   } catch (error) {
     console.error(error);
-    sendJson(res, 500, { error: "internal_server_error" });
+    sendJson(res, error.statusCode || 500, { error: "internal_server_error" });
   }
 }
 

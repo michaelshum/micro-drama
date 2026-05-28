@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "cloudflare:videos": "node scripts/list-cloudflare-videos.js"
+    "cloudflare:videos": "node scripts/list-cloudflare-videos.js",
+    "cloudflare:require-signed": "node scripts/require-signed-stream-videos.js"
   },
   "engines": {
     "node": ">=20"

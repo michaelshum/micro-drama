@@ -9,3 +9,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: CLOUDFLARE_ACCOUNT_ID
+        sync: false
+      - key: CLOUDFLARE_STREAM_API_TOKEN
+        sync: false
+      - key: CLOUDFLARE_STREAM_SIGNING_KEY_ID
+        sync: false
+      - key: CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY
+        sync: false
+      - key: PLAYBACK_TOKEN_TTL_SECONDS
+        value: 1800
