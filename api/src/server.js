@@ -207,20 +207,7 @@ async function fetchCloudflareStreamToken(videoUid) {
 }
 
 async function buildCloudflareStreamToken(videoUid) {
-  let ticket;
-  try {
-    ticket = generateCloudflareStreamToken(videoUid);
-  } catch (error) {
-    console.error(
-      JSON.stringify({
-        event: "cloudflare_stream_signing_key_invalid",
-        message:
-          "CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY could not be parsed. Check for missing PEM headers, truncated key material, or accidental quotes.",
-        reason: error.message
-      })
-    );
-  }
-
+  let ticket = generateCloudflareStreamToken(videoUid);
   if (!ticket) {
     ticket = await fetchCloudflareStreamToken(videoUid);
   }
@@ -228,17 +215,10 @@ async function buildCloudflareStreamToken(videoUid) {
   return ticket;
 }
 
-async function buildCloudflareAssetUrl(videoUid, assetPath, fallbackUrl) {
+async function buildCloudflareAssetUrl(videoUid, assetPath) {
   const ticket = await buildCloudflareStreamToken(videoUid);
 
   if (!ticket) {
-    if (process.env.ALLOW_UNSIGNED_PLAYBACK === "true" && fallbackUrl) {
-      return {
-        url: fallbackUrl,
-        expiresAt: null
-      };
-    }
-
     const error = new Error("Cloudflare Stream signing is not configured");
     error.statusCode = 503;
     throw error;
@@ -257,8 +237,7 @@ async function buildPlaybackTicket(episode) {
 
   const asset = await buildCloudflareAssetUrl(
     episode.providerAssetId,
-    "/manifest/video.m3u8",
-    episode.playbackUrl
+    "/manifest/video.m3u8"
   );
 
   return {
@@ -275,8 +254,7 @@ async function buildThumbnailTicket(item) {
     throw error;
   }
 
-  const fallbackUrl = item.thumbnailUrl || item.posterUrl || item.coverUrl;
-  return buildCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg", fallbackUrl);
+  return buildCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg");
 }
 
 function logPlaybackTicketRequest(req, episode, ticket) {
