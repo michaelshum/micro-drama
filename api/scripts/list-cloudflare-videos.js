@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 await loadDotEnvLocal();
 
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-const apiToken = process.env.CLOUDFLARE_STREAM_API_TOKEN;
+const apiToken = normalizeBearerToken(process.env.CLOUDFLARE_STREAM_API_TOKEN);
 const namePrefixes = (process.env.CLOUDFLARE_STREAM_NAME_PREFIX || "")
   .split(",")
   .map((prefix) => prefix.trim())
@@ -39,6 +39,10 @@ async function loadDotEnvLocal() {
       }
     }
   }
+}
+
+function normalizeBearerToken(value) {
+  return value?.trim().replace(/^Bearer\s+/i, "");
 }
 
 if (!accountId || !apiToken) {

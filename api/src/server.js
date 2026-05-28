@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { createSign } from "node:crypto";
+import { createPrivateKey, createSign } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -72,13 +72,36 @@ function base64Url(input) {
   return Buffer.from(input).toString("base64url");
 }
 
-function normalizePrivateKey(value) {
-  return value?.replace(/\\n/g, "\n");
+function normalizeSigningKey(value) {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  const normalizedPem = trimmed.replace(/\\n/g, "\n");
+
+  if (normalizedPem.includes("-----BEGIN")) {
+    return normalizedPem;
+  }
+
+  try {
+    const parsed = JSON.parse(normalizedPem);
+    return createPrivateKey({
+      key: parsed,
+      format: "jwk"
+    });
+  } catch {
+    return normalizedPem;
+  }
+}
+
+function normalizeBearerToken(value) {
+  return value?.trim().replace(/^Bearer\s+/i, "");
 }
 
 function generateCloudflareStreamToken(videoUid) {
   const keyId = process.env.CLOUDFLARE_STREAM_SIGNING_KEY_ID;
-  const privateKey = normalizePrivateKey(process.env.CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY);
+  const privateKey = normalizeSigningKey(process.env.CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY);
 
   if (!keyId || !privateKey) {
     return null;
@@ -107,7 +130,7 @@ function generateCloudflareStreamToken(videoUid) {
 
 async function fetchCloudflareStreamToken(videoUid) {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-  const apiToken = process.env.CLOUDFLARE_STREAM_API_TOKEN;
+  const apiToken = normalizeBearerToken(process.env.CLOUDFLARE_STREAM_API_TOKEN);
 
   if (!accountId || !apiToken) {
     return null;
