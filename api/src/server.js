@@ -31,11 +31,19 @@ function sendJson(res, statusCode, body) {
   res.end(JSON.stringify(body));
 }
 
+function sendRedirect(res, location) {
+  res.writeHead(302, {
+    Location: location,
+    "Cache-Control": "no-store"
+  });
+  res.end();
+}
+
 function isPublished(item) {
   return item.status === "published";
 }
 
-function publicEpisode(episode, show) {
+function publicEpisode(req, episode, show) {
   return {
     id: episode.id,
     showId: episode.showId,
@@ -44,7 +52,7 @@ function publicEpisode(episode, show) {
     title: episode.title,
     description: episode.description,
     durationSeconds: episode.durationSeconds,
-    thumbnailUrl: episode.thumbnailUrl,
+    thumbnailUrl: absoluteUrl(req, `/episodes/${episode.id}/thumbnail`),
     playbackPath: `/episodes/${episode.id}/playback`,
     isLocked: episode.isLocked,
     isFreePreview: episode.isFreePreview,
@@ -52,14 +60,14 @@ function publicEpisode(episode, show) {
   };
 }
 
-function publicShow(show, episodeCount) {
+function publicShow(req, show, episodeCount) {
   return {
     id: show.id,
     title: show.title,
     description: show.description,
     genre: show.genre,
-    posterUrl: show.posterUrl,
-    coverUrl: show.coverUrl,
+    posterUrl: absoluteUrl(req, `/shows/${show.id}/poster`),
+    coverUrl: absoluteUrl(req, `/shows/${show.id}/cover`),
     episodeCount
   };
 }
@@ -70,6 +78,26 @@ function notFound(res) {
 
 function base64Url(input) {
   return Buffer.from(input).toString("base64url");
+}
+
+function absoluteUrl(req, path) {
+  const protocol = req.headers["x-forwarded-proto"] || "http";
+  const host = req.headers["x-forwarded-host"] || req.headers.host;
+  return `${protocol}://${host}${path}`;
+}
+
+function cloudflareVideoUidFromUrl(value) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+    const [, videoUid] = url.pathname.split("/");
+    return videoUid || null;
+  } catch {
+    return null;
+  }
 }
 
 function normalizeSigningKey(value) {
@@ -178,14 +206,10 @@ async function fetchCloudflareStreamToken(videoUid) {
   };
 }
 
-async function buildPlaybackTicket(episode) {
-  if (episode.provider !== "cloudflare_stream" || !episode.providerAssetId) {
-    throw new Error(`Unsupported playback provider for episode ${episode.id}`);
-  }
-
+async function buildCloudflareStreamToken(videoUid) {
   let ticket;
   try {
-    ticket = generateCloudflareStreamToken(episode.providerAssetId);
+    ticket = generateCloudflareStreamToken(videoUid);
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -198,13 +222,19 @@ async function buildPlaybackTicket(episode) {
   }
 
   if (!ticket) {
-    ticket = await fetchCloudflareStreamToken(episode.providerAssetId);
+    ticket = await fetchCloudflareStreamToken(videoUid);
   }
 
+  return ticket;
+}
+
+async function buildCloudflareAssetUrl(videoUid, assetPath, fallbackUrl) {
+  const ticket = await buildCloudflareStreamToken(videoUid);
+
   if (!ticket) {
-    if (process.env.ALLOW_UNSIGNED_PLAYBACK === "true" && episode.playbackUrl) {
+    if (process.env.ALLOW_UNSIGNED_PLAYBACK === "true" && fallbackUrl) {
       return {
-        playbackUrl: episode.playbackUrl,
+        url: fallbackUrl,
         expiresAt: null
       };
     }
@@ -215,9 +245,38 @@ async function buildPlaybackTicket(episode) {
   }
 
   return {
-    playbackUrl: `https://videodelivery.net/${ticket.token}/manifest/video.m3u8`,
+    url: `https://videodelivery.net/${ticket.token}${assetPath}`,
     expiresAt: ticket.expiresAt
   };
+}
+
+async function buildPlaybackTicket(episode) {
+  if (episode.provider !== "cloudflare_stream" || !episode.providerAssetId) {
+    throw new Error(`Unsupported playback provider for episode ${episode.id}`);
+  }
+
+  const asset = await buildCloudflareAssetUrl(
+    episode.providerAssetId,
+    "/manifest/video.m3u8",
+    episode.playbackUrl
+  );
+
+  return {
+    playbackUrl: asset.url,
+    expiresAt: asset.expiresAt
+  };
+}
+
+async function buildThumbnailTicket(item) {
+  const videoUid = item.providerAssetId || cloudflareVideoUidFromUrl(item.thumbnailUrl || item.posterUrl || item.coverUrl);
+  if (!videoUid) {
+    const error = new Error("Cloudflare Stream thumbnail asset is not configured");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const fallbackUrl = item.thumbnailUrl || item.posterUrl || item.coverUrl;
+  return buildCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg", fallbackUrl);
 }
 
 function logPlaybackTicketRequest(req, episode, ticket) {
@@ -272,7 +331,7 @@ async function handleRequest(req, res) {
         200,
         shows.map((show) => {
           const episodeCount = episodes.filter((episode) => episode.showId === show.id).length;
-          return publicShow(show, episodeCount);
+          return publicShow(req, show, episodeCount);
         })
       );
       return;
@@ -291,9 +350,35 @@ async function handleRequest(req, res) {
         .sort((a, b) => a.episodeNumber - b.episodeNumber);
 
       sendJson(res, 200, {
-        ...publicShow(show, showEpisodes.length),
-        episodes: showEpisodes.map((episode) => publicEpisode(episode, show))
+        ...publicShow(req, show, showEpisodes.length),
+        episodes: showEpisodes.map((episode) => publicEpisode(req, episode, show))
       });
+      return;
+    }
+
+    const showPosterMatch = path.match(/^\/shows\/([^/]+)\/poster$/);
+    if (showPosterMatch) {
+      const show = showsById.get(showPosterMatch[1]);
+      if (!show) {
+        notFound(res);
+        return;
+      }
+
+      const ticket = await buildThumbnailTicket({ posterUrl: show.posterUrl });
+      sendRedirect(res, ticket.url);
+      return;
+    }
+
+    const showCoverMatch = path.match(/^\/shows\/([^/]+)\/cover$/);
+    if (showCoverMatch) {
+      const show = showsById.get(showCoverMatch[1]);
+      if (!show) {
+        notFound(res);
+        return;
+      }
+
+      const ticket = await buildThumbnailTicket({ coverUrl: show.coverUrl });
+      sendRedirect(res, ticket.url);
       return;
     }
 
@@ -308,7 +393,7 @@ async function handleRequest(req, res) {
       const showEpisodes = episodes
         .filter((episode) => episode.showId === show.id)
         .sort((a, b) => a.episodeNumber - b.episodeNumber)
-        .map((episode) => publicEpisode(episode, show));
+        .map((episode) => publicEpisode(req, episode, show));
 
       sendJson(res, 200, showEpisodes);
       return;
@@ -322,7 +407,20 @@ async function handleRequest(req, res) {
         return;
       }
 
-      sendJson(res, 200, publicEpisode(episode, showsById.get(episode.showId)));
+      sendJson(res, 200, publicEpisode(req, episode, showsById.get(episode.showId)));
+      return;
+    }
+
+    const episodeThumbnailMatch = path.match(/^\/episodes\/([^/]+)\/thumbnail$/);
+    if (episodeThumbnailMatch) {
+      const episode = episodesById.get(episodeThumbnailMatch[1]);
+      if (!episode) {
+        notFound(res);
+        return;
+      }
+
+      const ticket = await buildThumbnailTicket(episode);
+      sendRedirect(res, ticket.url);
       return;
     }
 
@@ -351,7 +449,7 @@ async function handleRequest(req, res) {
       const feedEpisodes = feed.episodeIds
         .map((episodeId) => episodesById.get(episodeId))
         .filter(Boolean)
-        .map((episode) => publicEpisode(episode, showsById.get(episode.showId)));
+        .map((episode) => publicEpisode(req, episode, showsById.get(episode.showId)));
 
       sendJson(res, 200, {
         id: feed.id,
