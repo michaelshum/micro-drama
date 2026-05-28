@@ -23,6 +23,8 @@ final class HomeViewModel: ObservableObject {
 
         do {
             shows = try await apiClient.fetchShows()
+        } catch where error.isCancellation {
+            return
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -35,6 +37,8 @@ final class HomeViewModel: ObservableObject {
         do {
             initialEpisodeID = progressStore.lastWatchedEpisodeID(for: show.id)
             selectedShowDetail = try await apiClient.fetchShow(id: show.id)
+        } catch where error.isCancellation {
+            return
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -56,6 +60,21 @@ final class HomeViewModel: ObservableObject {
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
+    }
+}
+
+private extension Error {
+    var isCancellation: Bool {
+        if self is CancellationError {
+            return true
+        }
+
+        if let urlError = self as? URLError, urlError.code == .cancelled {
+            return true
+        }
+
+        let nsError = self as NSError
+        return nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled
     }
 }
 
@@ -121,6 +140,10 @@ final class ShowEpisodeProgressStore {
 
     var hasSeenInitialExperience: Bool {
         defaults.bool(forKey: initialExperienceSeenKey)
+    }
+
+    var hasWatchHistory: Bool {
+        !allProgress().isEmpty || !legacyProgress().isEmpty || lastWatchedEpisode != nil
     }
 
     func markInitialExperienceSeen() {
@@ -238,6 +261,7 @@ struct HomeView: View {
                         .padding(.top, 12)
                         .padding(.bottom, 24)
                     }
+                    .scrollBounceBehavior(.always, axes: .vertical)
                     .refreshable {
                         await viewModel.loadShows(forceRefresh: true)
                     }

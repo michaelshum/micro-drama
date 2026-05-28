@@ -56,6 +56,7 @@ struct FollowedShow: Identifiable, Codable, Hashable {
 
     let showID: String
     let showTitle: String
+    let showGenre: String?
     let posterUrl: URL
     let latestEpisodeID: String
     let latestEpisodeNumber: Int
@@ -64,6 +65,7 @@ struct FollowedShow: Identifiable, Codable, Hashable {
     init(show: ShowDetail, episode: Episode, followedAt: Date = Date()) {
         showID = show.id
         showTitle = show.title
+        showGenre = show.genre
         posterUrl = show.posterUrl
         latestEpisodeID = episode.id
         latestEpisodeNumber = episode.episodeNumber

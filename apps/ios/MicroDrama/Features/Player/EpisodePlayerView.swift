@@ -1,5 +1,7 @@
 import AVFoundation
+import StoreKit
 import SwiftUI
+import UIKit
 
 struct EpisodePlayerView: View {
     let show: ShowDetail
@@ -11,10 +13,12 @@ struct EpisodePlayerView: View {
     @State private var isEpisodeListPresented = false
     @State private var isSpeedSheetPresented = false
     @State private var isNotificationSoftAskPresented = false
+    @State private var isReviewSoftAskPresented = false
     @State private var unlockedEpisodeIDs: Set<String> = []
     @State private var playbackRate: Float = 1.0
     @ObservedObject private var followedShowStore = FollowedShowStore.shared
     @ObservedObject private var notificationStore = NotificationPermissionStore.shared
+    @ObservedObject private var reviewPromptStore = AppReviewPromptStore.shared
 
     init(
         show: ShowDetail,
@@ -43,14 +47,14 @@ struct EpisodePlayerView: View {
                             EpisodePage(
                                 showTitle: show.title,
                                 episode: episode,
-                                isActive: index == currentIndex,
+                                isActive: index == currentIndex && !isReviewSoftAskPresented,
                                 isUnlocked: unlockedEpisodeIDs.contains(episode.id),
                                 isFollowing: followedShowStore.isFollowing(show),
                                 playbackRate: playbackRate,
                                 onFollow: { toggleFollow(for: episode) },
                                 onEpisodesTapped: { isEpisodeListPresented = true },
                                 onRewardedUnlock: { unlockedEpisodeIDs.insert(episode.id) },
-                                onVideoFinished: moveToNextEpisode
+                                onVideoFinished: finishCurrentEpisode
                             )
                             .frame(width: proxy.size.width, height: pageHeight)
                             .offset(y: CGFloat(index - currentIndex) * pageHeight + dragOffset)
@@ -126,6 +130,22 @@ struct EpisodePlayerView: View {
             .presentationDetents([.height(270)])
             .presentationDragIndicator(.visible)
         }
+        .sheet(isPresented: $isReviewSoftAskPresented) {
+            ReviewSoftAskSheet(
+                appName: AppReviewPromptStore.appName,
+                onLeaveRating: {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                        AppReviewRequester.requestReview()
+                    }
+                },
+                onRated: {
+                    isReviewSoftAskPresented = false
+                    reviewPromptStore.markReviewRequested()
+                }
+            )
+            .presentationDetents([.height(300)])
+            .presentationDragIndicator(.visible)
+        }
         .onAppear {
             recordCurrentEpisode()
             Task {
@@ -179,6 +199,19 @@ struct EpisodePlayerView: View {
         }
     }
 
+    private func finishCurrentEpisode() {
+        guard let episode = show.episodes[safe: currentIndex] else { return }
+        let shouldPromptForReview = reviewPromptStore.recordCompletedEpisode(
+            episode,
+            isFollowingShow: followedShowStore.isFollowing(show)
+        )
+
+        moveToNextEpisode()
+
+        guard shouldPromptForReview else { return }
+        isReviewSoftAskPresented = true
+    }
+
     private func moveToPreviousEpisode() {
         guard currentIndex > 0 else { return }
         withAnimation(pageAnimation) {
@@ -203,6 +236,165 @@ struct EpisodePlayerView: View {
 
     private func isVerticalDrag(_ translation: CGSize) -> Bool {
         abs(translation.height) > abs(translation.width)
+    }
+}
+
+@MainActor
+final class AppReviewPromptStore: ObservableObject {
+    static let shared = AppReviewPromptStore()
+
+    private let defaults: UserDefaults
+    private let completedEpisodeIDsKey = "reviewPromptCompletedEpisodeIDs"
+    private let activeDayIDsKey = "reviewPromptActiveDayIDs"
+    private let lastDeferredAtKey = "reviewPromptLastDeferredAt"
+    private let lastPresentedAtKey = "reviewPromptLastPresentedAt"
+    private let didRequestReviewKey = "reviewPromptDidRequestReview"
+    private let lastPromptedAppVersionKey = "reviewPromptLastPromptedAppVersion"
+    private let minimumCompletedEpisodes = 5
+    private let minimumActiveDays = 2
+    private let deferCooldown: TimeInterval = 14 * 24 * 60 * 60
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    func recordCompletedEpisode(
+        _ episode: Episode,
+        isFollowingShow: Bool,
+        now: Date = Date()
+    ) -> Bool {
+        var completedEpisodeIDs = Set(defaults.stringArray(forKey: completedEpisodeIDsKey) ?? [])
+        completedEpisodeIDs.insert(episode.id)
+        defaults.set(Array(completedEpisodeIDs), forKey: completedEpisodeIDsKey)
+
+        var activeDayIDs = Set(defaults.stringArray(forKey: activeDayIDsKey) ?? [])
+        activeDayIDs.insert(Self.dayID(for: now))
+        defaults.set(Array(activeDayIDs), forKey: activeDayIDsKey)
+
+        guard isFollowingShow,
+              completedEpisodeIDs.count >= minimumCompletedEpisodes,
+              activeDayIDs.count >= minimumActiveDays,
+              canPresentPrompt(now: now) else {
+            return false
+        }
+
+        markPromptPresented(now: now)
+        return true
+    }
+
+    func markReviewRequested() {
+        defaults.set(true, forKey: didRequestReviewKey)
+    }
+
+    func deferPrompt(now: Date = Date()) {
+        defaults.set(now, forKey: lastDeferredAtKey)
+    }
+
+    private func canPresentPrompt(now: Date) -> Bool {
+        guard !defaults.bool(forKey: didRequestReviewKey),
+              defaults.string(forKey: lastPromptedAppVersionKey) != Self.appVersion else {
+            return false
+        }
+
+        guard let lastDeferredAt = defaults.object(forKey: lastDeferredAtKey) as? Date else {
+            return true
+        }
+
+        return now.timeIntervalSince(lastDeferredAt) >= deferCooldown
+    }
+
+    private func markPromptPresented(now: Date) {
+        defaults.set(now, forKey: lastPresentedAtKey)
+        defaults.set(Self.appVersion, forKey: lastPromptedAppVersionKey)
+    }
+
+    private static func dayID(for date: Date) -> String {
+        let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        let year = components.year ?? 0
+        let month = components.month ?? 0
+        let day = components.day ?? 0
+        return "\(year)-\(month)-\(day)"
+    }
+
+    static var appName: String {
+        Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
+            ?? Bundle.main.infoDictionary?["CFBundleName"] as? String
+            ?? "MicroDrama"
+    }
+
+    private static var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+    }
+}
+
+private enum AppReviewRequester {
+    @MainActor
+    static func requestReview() {
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) else {
+            return
+        }
+
+        SKStoreReviewController.requestReview(in: scene)
+    }
+}
+
+private struct ReviewSoftAskSheet: View {
+    let appName: String
+    let onLeaveRating: () -> Void
+    let onRated: () -> Void
+
+    @State private var hasStartedRating = false
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Image(systemName: "star.bubble.fill")
+                .font(.system(size: 36, weight: .semibold))
+                .foregroundStyle(.yellow, .blue)
+                .accessibilityHidden(true)
+
+            VStack(spacing: 8) {
+                Text("Enjoying \(appName)?")
+                    .font(.title3.bold())
+                    .multilineTextAlignment(.center)
+
+                Text("Leave a rating! We're a small team, so a rating goes a really long way.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(spacing: 10) {
+                Button {
+                    hasStartedRating = true
+                    onLeaveRating()
+                } label: {
+                    Text("Leave a rating")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .background(.blue, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+                .buttonStyle(.plain)
+
+                if hasStartedRating {
+                    Button(action: onRated) {
+                        Text("I rated")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 42)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 24)
+        .padding(.bottom, 18)
     }
 }
 
@@ -233,9 +425,11 @@ private struct EpisodePage: View {
         ZStack {
             if isEpisodeLocked {
                 LockedEpisodeBackgroundView(episode: episode)
-            } else if isActive {
+            } else {
                 PlayerSurface(
                     url: episode.playbackUrl,
+                    thumbnailUrl: episode.thumbnailUrl,
+                    isActive: isActive,
                     playbackRate: playbackRate,
                     progress: $playbackProgress,
                     duration: $playbackDuration,
@@ -244,8 +438,6 @@ private struct EpisodePage: View {
                     toggleRequest: toggleRequest,
                     onFinished: onVideoFinished
                 )
-            } else {
-                EpisodeThumbnailView(episode: episode)
             }
 
             LinearGradient(
@@ -516,6 +708,8 @@ private struct PlaybackProgressBar: View {
 
 private struct PlayerSurface: View {
     let url: URL
+    let thumbnailUrl: URL
+    let isActive: Bool
     let playbackRate: Float
     @Binding var progress: Double
     @Binding var duration: Double
@@ -526,17 +720,25 @@ private struct PlayerSurface: View {
 
     @State private var player: AVPlayer?
     @State private var endObserver: NSObjectProtocol?
+    @State private var itemStatusObserver: NSKeyValueObservation?
     @State private var timeObserver: Any?
     @State private var isPaused = false
+    @State private var isReadyForDisplay = false
 
     var body: some View {
         Group {
             if let player {
                 ZStack {
-                    PlayerLayerView(player: player)
+                    PlayerLayerView(player: player, isReadyForDisplay: $isReadyForDisplay)
                         .ignoresSafeArea()
 
-                    if isPaused {
+                    if !isReadyForDisplay {
+                        EpisodeThumbnailView(thumbnailUrl: thumbnailUrl)
+                            .ignoresSafeArea()
+                            .allowsHitTesting(false)
+                    }
+
+                    if isActive && isPaused {
                         Image(systemName: "play.fill")
                             .font(.system(size: 34, weight: .bold))
                             .foregroundStyle(.white)
@@ -546,22 +748,27 @@ private struct PlayerSurface: View {
                     }
                 }
                 .onAppear {
-                    playIfNeeded()
+                    syncPlaybackState()
                 }
                 .onDisappear {
                     player.pause()
                 }
             } else {
-                ProgressView()
-                    .tint(.white)
+                EpisodeThumbnailView(thumbnailUrl: thumbnailUrl)
             }
         }
         .task(id: url) {
             removeTimeObserver()
+            removeItemStatusObserver()
             removeEndObserver()
+            isReadyForDisplay = false
 
             let item = AVPlayerItem(url: url)
+            item.preferredForwardBufferDuration = 4
+            item.canUseNetworkResourcesForLiveStreamingWhilePaused = true
+
             let newPlayer = AVPlayer(playerItem: item)
+            newPlayer.automaticallyWaitsToMinimizeStalling = false
             endObserver = NotificationCenter.default.addObserver(
                 forName: .AVPlayerItemDidPlayToEndTime,
                 object: item,
@@ -574,10 +781,14 @@ private struct PlayerSurface: View {
             duration = 0
             isPaused = false
             addTimeObserver(to: newPlayer)
-            newPlayer.playImmediately(atRate: playbackRate)
+            observeItemReadiness(item, player: newPlayer)
+            syncPlaybackState(for: newPlayer)
+        }
+        .onChange(of: isActive) { _, _ in
+            syncPlaybackState()
         }
         .onChange(of: playbackRate) { _, _ in
-            playIfNeeded()
+            syncPlaybackState()
         }
         .onChange(of: seekRequest) { _, request in
             guard let request else { return }
@@ -590,6 +801,7 @@ private struct PlayerSurface: View {
         .onDisappear {
             player?.pause()
             removeTimeObserver()
+            removeItemStatusObserver()
             player = nil
             removeEndObserver()
         }
@@ -600,6 +812,20 @@ private struct PlayerSurface: View {
             NotificationCenter.default.removeObserver(endObserver)
             self.endObserver = nil
         }
+    }
+
+    private func observeItemReadiness(_ item: AVPlayerItem, player: AVPlayer) {
+        itemStatusObserver = item.observe(\.status, options: [.initial, .new]) { item, _ in
+            guard item.status == .readyToPlay else { return }
+            Task { @MainActor in
+                syncPlaybackState(for: player)
+            }
+        }
+    }
+
+    private func removeItemStatusObserver() {
+        itemStatusObserver?.invalidate()
+        itemStatusObserver = nil
     }
 
     private func addTimeObserver(to player: AVPlayer) {
@@ -625,7 +851,7 @@ private struct PlayerSurface: View {
     }
 
     private func togglePlayback() {
-        guard let player else { return }
+        guard let player, isActive else { return }
 
         withAnimation(.easeInOut(duration: 0.16)) {
             isPaused.toggle()
@@ -639,8 +865,24 @@ private struct PlayerSurface: View {
     }
 
     private func playIfNeeded() {
-        guard let player, !isPaused else { return }
+        guard let player, isActive, !isPaused else { return }
         player.playImmediately(atRate: playbackRate)
+    }
+
+    private func syncPlaybackState(for targetPlayer: AVPlayer? = nil) {
+        guard let currentPlayer = self.player else { return }
+        let player = targetPlayer ?? currentPlayer
+        guard player === currentPlayer else { return }
+
+        if isActive {
+            guard !isPaused else { return }
+            player.playImmediately(atRate: playbackRate)
+        } else {
+            player.pause()
+            if player.status == .readyToPlay {
+                player.preroll(atRate: playbackRate) { _ in }
+            }
+        }
     }
 
     private func seek(to progress: Double) {
@@ -673,17 +915,51 @@ private struct PlaybackToggleRequest: Equatable {
 
 private struct PlayerLayerView: UIViewRepresentable {
     let player: AVPlayer
+    @Binding var isReadyForDisplay: Bool
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
 
     func makeUIView(context: Context) -> PlayerUIView {
         let view = PlayerUIView()
         view.playerLayer.videoGravity = .resizeAspect
         view.playerLayer.player = player
+        context.coordinator.observeReadyForDisplay(on: view.playerLayer)
         return view
     }
 
     func updateUIView(_ uiView: PlayerUIView, context: Context) {
+        context.coordinator.parent = self
         uiView.playerLayer.videoGravity = .resizeAspect
-        uiView.playerLayer.player = player
+
+        if uiView.playerLayer.player !== player {
+            uiView.playerLayer.player = player
+            context.coordinator.observeReadyForDisplay(on: uiView.playerLayer)
+        } else {
+            context.coordinator.updateReadyForDisplay(uiView.playerLayer.isReadyForDisplay)
+        }
+    }
+
+    final class Coordinator {
+        var parent: PlayerLayerView
+        private var readyForDisplayObservation: NSKeyValueObservation?
+
+        init(_ parent: PlayerLayerView) {
+            self.parent = parent
+        }
+
+        func observeReadyForDisplay(on playerLayer: AVPlayerLayer) {
+            readyForDisplayObservation = playerLayer.observe(\.isReadyForDisplay, options: [.initial, .new]) { [weak self] layer, _ in
+                self?.updateReadyForDisplay(layer.isReadyForDisplay)
+            }
+        }
+
+        func updateReadyForDisplay(_ isReadyForDisplay: Bool) {
+            DispatchQueue.main.async {
+                self.parent.isReadyForDisplay = isReadyForDisplay
+            }
+        }
     }
 }
 
@@ -736,29 +1012,6 @@ private struct LockedEpisodeOverlay: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 42, height: 42)
-                    .background(.blue, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Episode \(episode.episodeNumber) is locked")
-                        .font(.title3.weight(.bold))
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
-
-                    Text("Unlock this episode to keep watching.")
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.78))
-                        .lineLimit(2)
-                }
-
-                Spacer(minLength: 0)
-            }
-
             VStack(spacing: 10) {
                 Button(action: onUnlockNow) {
                     Label("Unlock Now", systemImage: "lock.open.fill")
@@ -821,29 +1074,6 @@ private struct LockedPaywallDrawer: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .top, spacing: 12) {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 40, height: 40)
-                        .background(.blue, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Unlock Episode")
-                            .font(.title3.weight(.bold))
-                            .foregroundStyle(.primary)
-                            .lineLimit(1)
-
-                        Text("Episode \(episode.episodeNumber) is locked")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.82)
-                    }
-
-                    Spacer(minLength: 10)
-                }
-
                 VStack(spacing: 10) {
                     ForEach(offers) { offer in
                         LockedOfferRow(offer: offer) {
@@ -851,11 +1081,6 @@ private struct LockedPaywallDrawer: View {
                         }
                     }
                 }
-
-                Text("Purchases and ads are preview-only in this demo.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
@@ -962,9 +1187,9 @@ private enum LockedOffer: String, Identifiable {
         case .watchAd:
             "Unlock this episode after an ad"
         case .oneTimeUnlock:
-            "Keep access to this episode"
+            "Get access to this episode"
         case .weeklyUnlimited:
-            "Unlimited episodes for 7 days"
+            "Unlimited for one week"
         case .yearlyUnlimited:
             "Unlimited episodes all year"
         }
@@ -1026,10 +1251,18 @@ private enum LockedOffer: String, Identifiable {
 }
 
 private struct EpisodeThumbnailView: View {
-    let episode: Episode
+    let thumbnailUrl: URL
+
+    init(episode: Episode) {
+        thumbnailUrl = episode.thumbnailUrl
+    }
+
+    init(thumbnailUrl: URL) {
+        self.thumbnailUrl = thumbnailUrl
+    }
 
     var body: some View {
-        AsyncImage(url: episode.thumbnailUrl) { phase in
+        AsyncImage(url: thumbnailUrl) { phase in
             switch phase {
             case .success(let image):
                 image

@@ -257,9 +257,15 @@ private struct FollowedShowShelfCard: View {
         ShowEpisodeProgressStore.shared.lastWatchedEpisodeNumber(for: followedShow.showID)
             ?? followedShow.latestEpisodeNumber
     }
+    private var categoryText: String {
+        guard let showGenre = followedShow.showGenre, !showGenre.isEmpty else {
+            return "Show"
+        }
+        return showGenre
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 5) {
             PosterThumbnail(url: followedShow.posterUrl, width: cardWidth, height: ProfileLayout.homePosterHeight)
 
             Text(followedShow.showTitle)
@@ -269,9 +275,15 @@ private struct FollowedShowShelfCard: View {
                 .multilineTextAlignment(.leading)
                 .frame(width: cardWidth, alignment: .leading)
 
-            Text("Resume Episode \(restartEpisodeNumber)")
-                .font(ProfileTypography.rowMetadata)
+            Text("Episode \(restartEpisodeNumber)")
+                .font(ProfileTypography.shelfAction)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .frame(width: cardWidth, alignment: .leading)
+
+            Text(categoryText)
+                .font(ProfileTypography.shelfMetadata)
+                .foregroundStyle(.tertiary)
                 .lineLimit(1)
                 .frame(width: cardWidth, alignment: .leading)
         }
@@ -575,6 +587,12 @@ private struct FollowedShowRow: View {
         ShowEpisodeProgressStore.shared.lastWatchedEpisodeNumber(for: followedShow.showID)
             ?? followedShow.latestEpisodeNumber
     }
+    private var categoryText: String {
+        guard let showGenre = followedShow.showGenre, !showGenre.isEmpty else {
+            return "Show"
+        }
+        return showGenre
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -586,11 +604,11 @@ private struct FollowedShowRow: View {
                     .foregroundStyle(.primary)
                     .lineLimit(2)
 
-                Text("Resume Episode \(restartEpisodeNumber)")
-                    .font(ProfileTypography.rowSubtitle)
+                Text("Episode \(restartEpisodeNumber)")
+                    .font(ProfileTypography.rowAction)
                     .foregroundStyle(.secondary)
 
-                Text("Followed \(followedShow.followedAt.formatted(.relative(presentation: .named)))")
+                Text(categoryText)
                     .font(ProfileTypography.rowMetadata)
                     .foregroundStyle(.tertiary)
             }
@@ -808,8 +826,11 @@ private enum ProfileTypography {
     static let rowTitle = Font.body.weight(.semibold)
     static let previewTitle = Font.subheadline.weight(.semibold)
     static let rowSubtitle = Font.subheadline
+    static let rowAction = Font.subheadline.weight(.medium)
     static let rowMetadata = Font.caption
     static let shelfTitle = Font.caption.weight(.semibold)
+    static let shelfAction = Font.caption.weight(.medium)
+    static let shelfMetadata = Font.caption2
 }
 
 private enum ProfileLayout {

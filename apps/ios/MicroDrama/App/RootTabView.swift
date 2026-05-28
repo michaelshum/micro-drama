@@ -29,14 +29,14 @@ final class RootTabViewModel: ObservableObject {
 
         do {
             if let recentlyWatchedEpisode = progressStore.recentlyWatchedEpisode(maxAge: recentResumeInterval) {
-                try await openStartupPlayer(
-                    showID: recentlyWatchedEpisode.showID,
-                    preferredEpisodeID: recentlyWatchedEpisode.episodeID
-                )
+                try await openRecentResumeIfPlayable(recentlyWatchedEpisode)
                 return
             }
 
-            guard !progressStore.hasSeenInitialExperience else { return }
+            guard !progressStore.hasSeenInitialExperience,
+                  !progressStore.hasWatchHistory else {
+                return
+            }
 
             let config = try await apiClient.fetchConfig()
             guard let initialExperience = config.initialExperience,
@@ -46,7 +46,8 @@ final class RootTabViewModel: ObservableObject {
 
             try await openStartupPlayer(
                 showID: initialExperience.showId,
-                preferredEpisodeID: initialExperience.episodeId
+                preferredEpisodeID: initialExperience.episodeId,
+                allowsLockedPreferredEpisode: false
             )
             if initialShowDetail != nil {
                 progressStore.markInitialExperienceSeen()
@@ -64,10 +65,28 @@ final class RootTabViewModel: ObservableObject {
         showDetail.episodes.first { !$0.isLocked }?.id
     }
 
-    private func openStartupPlayer(showID: String, preferredEpisodeID: String?) async throws {
+    private func openRecentResumeIfPlayable(_ recentlyWatchedEpisode: LastWatchedEpisode) async throws {
+        let showDetail = try await apiClient.fetchShow(id: recentlyWatchedEpisode.showID)
+        guard showDetail.episodes.contains(where: { episode in
+            episode.id == recentlyWatchedEpisode.episodeID && !episode.isLocked
+        }) else {
+            return
+        }
+
+        initialEpisodeID = recentlyWatchedEpisode.episodeID
+        initialShowDetail = showDetail
+    }
+
+    private func openStartupPlayer(
+        showID: String,
+        preferredEpisodeID: String?,
+        allowsLockedPreferredEpisode: Bool
+    ) async throws {
         let showDetail = try await apiClient.fetchShow(id: showID)
         initialEpisodeID = preferredEpisodeID.flatMap { episodeID in
-            showDetail.episodes.contains { $0.id == episodeID && !$0.isLocked } ? episodeID : nil
+            showDetail.episodes.contains { episode in
+                episode.id == episodeID && (allowsLockedPreferredEpisode || !episode.isLocked)
+            } ? episodeID : nil
         } ?? firstPlayableEpisodeID(in: showDetail)
 
         guard initialEpisodeID != nil else { return }
@@ -122,10 +141,12 @@ private struct StartupSplashView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            VStack(spacing: 14) {
-                Text("MicroDrama")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundStyle(.white)
+            VStack(spacing: 20) {
+                Image("SplashLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 132, height: 132)
+                    .accessibilityLabel("MicroDrama")
 
                 ProgressView()
                     .tint(.white)

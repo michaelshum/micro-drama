@@ -16,6 +16,7 @@
 		0A0001072C00000100000001 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0002072C00000100000001 /* ProfileView.swift */; };
 		0A0001082C00000100000001 /* RewardedEpisodeUnlockAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */; };
 		0A0001092C00000100000001 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 0A000B022C00000100000001 /* GoogleMobileAds */; };
+		0A00010A2C00000100000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A00020B2C00000100000001 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		0A0002082C00000100000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A0002092C00000100000001 /* MicroDrama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MicroDrama.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardedEpisodeUnlockAd.swift; sourceTree = "<group>"; };
+		0A00020B2C00000100000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 		0A0004082C00000100000001 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0A00020B2C00000100000001 /* Assets.xcassets */,
 				0A0002082C00000100000001 /* Info.plist */,
 			);
 			path = Resources;
@@ -219,6 +222,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A00010A2C00000100000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,10 +366,12 @@
 		0A0009022C00000100000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = XR9GHMJGD5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MicroDrama/Resources/Info.plist;
@@ -386,10 +392,12 @@
 		0A0009032C00000100000001 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = XR9GHMJGD5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MicroDrama/Resources/Info.plist;
