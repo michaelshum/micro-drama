@@ -37,7 +37,7 @@ MicroDrama/
   Resources/
 ```
 
-For the first implementation, the app should consume `GET /feed` and treat each episode's `playbackUrl` as an HLS URL playable by `AVPlayer`.
+The app consumes `GET /feed` and show detail endpoints for metadata. Each episode includes `playbackPath`; the player calls that endpoint when playback starts and uses the returned signed HLS URL with `AVPlayer`.
 
 Demo API base URL:
 

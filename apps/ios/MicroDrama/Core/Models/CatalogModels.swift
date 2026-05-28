@@ -32,10 +32,15 @@ struct Episode: Identifiable, Decodable, Hashable {
     let description: String
     let durationSeconds: Int
     let thumbnailUrl: URL
-    let playbackUrl: URL
+    let playbackPath: String
     let isLocked: Bool
     let isFreePreview: Bool
     let publishedAt: Date
+}
+
+struct PlaybackTicket: Decodable {
+    let playbackUrl: URL
+    let expiresAt: Date?
 }
 
 struct AppConfig: Decodable {
@@ -66,10 +71,25 @@ struct FollowedShow: Identifiable, Codable, Hashable {
         showID = show.id
         showTitle = show.title
         showGenre = show.genre
-        posterUrl = show.posterUrl
+        posterUrl = Self.stablePosterUrl(for: show.id)
         latestEpisodeID = episode.id
         latestEpisodeNumber = episode.episodeNumber
         self.followedAt = followedAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        showID = try container.decode(String.self, forKey: .showID)
+        showTitle = try container.decode(String.self, forKey: .showTitle)
+        showGenre = try container.decodeIfPresent(String.self, forKey: .showGenre)
+        latestEpisodeID = try container.decode(String.self, forKey: .latestEpisodeID)
+        latestEpisodeNumber = try container.decode(Int.self, forKey: .latestEpisodeNumber)
+        followedAt = try container.decode(Date.self, forKey: .followedAt)
+        posterUrl = Self.stablePosterUrl(for: showID)
+    }
+
+    private static func stablePosterUrl(for showID: String) -> URL {
+        APIClient.shared.url(for: "/shows/\(showID)/poster")
     }
 }
 

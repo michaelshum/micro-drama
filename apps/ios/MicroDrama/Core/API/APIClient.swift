@@ -35,8 +35,16 @@ struct APIClient {
         try await fetch("/shows/\(id)")
     }
 
+    func fetchPlaybackTicket(for episode: Episode) async throws -> PlaybackTicket {
+        try await fetch(episode.playbackPath)
+    }
+
+    func url(for path: String) -> URL {
+        baseURL.appending(path: path)
+    }
+
     private func fetch<T: Decodable>(_ path: String) async throws -> T {
-        let url = baseURL.appending(path: path)
+        let url = url(for: path)
         let (data, response) = try await URLSession.shared.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse,

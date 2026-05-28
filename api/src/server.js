@@ -8,6 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const catalogPath = join(__dirname, "..", "data", "catalog.json");
 const port = Number(process.env.PORT || 3000);
 const playbackTokenTtlSeconds = Number(process.env.PLAYBACK_TOKEN_TTL_SECONDS || 30 * 60);
+const imageTokenTtlSeconds = Number(process.env.IMAGE_TOKEN_TTL_SECONDS || 24 * 60 * 60);
 
 let catalogCache;
 let signingCredentialsCache;
@@ -182,7 +183,7 @@ function getStreamSigningCredentials() {
   return credentials;
 }
 
-function generateCloudflareStreamToken(videoUid) {
+function generateCloudflareStreamToken(videoUid, ttlSeconds = playbackTokenTtlSeconds) {
   const credentials = getStreamSigningCredentials();
 
   if (!credentials) {
@@ -200,7 +201,7 @@ function generateCloudflareStreamToken(videoUid) {
     sub: videoUid,
     kid: keyId,
     nbf: now - 30,
-    exp: now + playbackTokenTtlSeconds
+    exp: now + ttlSeconds
   };
   const signingInput = `${base64Url(JSON.stringify(header))}.${base64Url(JSON.stringify(payload))}`;
   const signature = createSign("RSA-SHA256").update(signingInput).sign(privateKey).toString("base64url");
@@ -240,8 +241,8 @@ async function fetchCloudflareStreamToken(videoUid) {
   };
 }
 
-async function buildCloudflareStreamToken(videoUid) {
-  let ticket = generateCloudflareStreamToken(videoUid);
+async function buildCloudflareStreamToken(videoUid, ttlSeconds = playbackTokenTtlSeconds) {
+  let ticket = generateCloudflareStreamToken(videoUid, ttlSeconds);
   if (!ticket) {
     ticket = await fetchCloudflareStreamToken(videoUid);
   }
@@ -249,8 +250,8 @@ async function buildCloudflareStreamToken(videoUid) {
   return ticket;
 }
 
-async function buildCloudflareAssetUrl(videoUid, assetPath) {
-  const ticket = await buildCloudflareStreamToken(videoUid);
+async function buildCloudflareAssetUrl(videoUid, assetPath, ttlSeconds = playbackTokenTtlSeconds) {
+  const ticket = await buildCloudflareStreamToken(videoUid, ttlSeconds);
 
   if (!ticket) {
     const error = new Error("Cloudflare Stream signing is not configured");
@@ -264,8 +265,8 @@ async function buildCloudflareAssetUrl(videoUid, assetPath) {
   };
 }
 
-function buildLocallySignedCloudflareAssetUrl(videoUid, assetPath) {
-  const ticket = generateCloudflareStreamToken(videoUid);
+function buildLocallySignedCloudflareAssetUrl(videoUid, assetPath, ttlSeconds = playbackTokenTtlSeconds) {
+  const ticket = generateCloudflareStreamToken(videoUid, ttlSeconds);
 
   if (!ticket) {
     return null;
@@ -286,7 +287,7 @@ function createImageUrlBuilder(req) {
     if (!urlsByVideoUid.has(videoUid)) {
       urlsByVideoUid.set(
         videoUid,
-        buildLocallySignedCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg") ||
+        buildLocallySignedCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg", imageTokenTtlSeconds) ||
           absoluteUrl(req, fallbackPath)
       );
     }
@@ -319,7 +320,7 @@ async function buildThumbnailTicket(item) {
     throw error;
   }
 
-  return buildCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg");
+  return buildCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg", imageTokenTtlSeconds);
 }
 
 function logPlaybackTicketRequest(req, episode, ticket) {

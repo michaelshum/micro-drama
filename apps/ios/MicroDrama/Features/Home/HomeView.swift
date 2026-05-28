@@ -1,4 +1,132 @@
+import Foundation
 import SwiftUI
+
+struct RemoteImage: View {
+    let url: URL
+
+    @State private var image: Image?
+    @State private var didFail = false
+
+    var body: some View {
+        ZStack {
+            Rectangle().fill(.quaternary)
+
+            if let image {
+                image
+                    .resizable()
+                    .scaledToFill()
+            } else if didFail {
+                Image(systemName: "photo")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+            } else {
+                ProgressView()
+            }
+        }
+        .task(id: url) {
+            await load()
+        }
+    }
+
+    private func load() async {
+        let cacheKey = url.imageCacheKey
+        if let cachedImage = ImageMemoryCache.shared.image(for: cacheKey) {
+            image = cachedImage
+            didFail = false
+            return
+        }
+
+        didFail = false
+
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200..<300).contains(httpResponse.statusCode),
+                  let uiImage = UIImage(data: data) else {
+                didFail = true
+                return
+            }
+
+            ImageMemoryCache.shared.insert(uiImage, for: cacheKey)
+            if let responseUrl = httpResponse.url {
+                ImageMemoryCache.shared.insert(uiImage, for: responseUrl.imageCacheKey)
+            }
+            image = Image(uiImage: uiImage)
+        } catch where error.isCancellation {
+            return
+        } catch {
+            didFail = true
+        }
+    }
+}
+
+@MainActor
+private final class ImageMemoryCache {
+    static let shared = ImageMemoryCache()
+
+    private var cache: [String: UIImage] = [:]
+
+    func image(for key: String) -> Image? {
+        cache[key].map(Image.init(uiImage:))
+    }
+
+    func insert(_ image: UIImage, for key: String) {
+        cache[key] = image
+    }
+}
+
+extension URL {
+    var imageCacheKey: String {
+        if let streamThumbnailKey {
+            return streamThumbnailKey
+        }
+
+        return absoluteString
+    }
+
+    private var streamThumbnailKey: String? {
+        guard let host,
+              host == "videodelivery.net" || host.hasSuffix(".cloudflarestream.com") else {
+            return nil
+        }
+
+        let components = pathComponents
+        guard components.count >= 4,
+              components[components.count - 2] == "thumbnails",
+              components[components.count - 1] == "thumbnail.jpg" else {
+            return nil
+        }
+
+        let tokenOrUid = components[1]
+        let videoUid = Self.videoUid(fromStreamToken: tokenOrUid) ?? tokenOrUid
+        return "cloudflare-stream-thumbnail:\(videoUid)"
+    }
+
+    private static func videoUid(fromStreamToken token: String) -> String? {
+        let segments = token.split(separator: ".")
+        guard segments.count >= 2 else { return nil }
+
+        var payload = String(segments[1])
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        let padding = payload.count % 4
+        if padding > 0 {
+            payload += String(repeating: "=", count: 4 - padding)
+        }
+
+        guard let data = Data(base64Encoded: payload),
+              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let subject = object["sub"] as? String,
+              !subject.isEmpty else {
+            return nil
+        }
+
+        return subject
+    }
+}
 
 @MainActor
 final class HomeViewModel: ObservableObject {
@@ -335,28 +463,7 @@ private struct ContinueWatchingCard: View {
     }
 
     private var posterImage: some View {
-        AsyncImage(url: show.posterUrl) { phase in
-            switch phase {
-            case .empty:
-                ZStack {
-                    Rectangle().fill(.quaternary)
-                    ProgressView()
-                }
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure:
-                ZStack {
-                    Rectangle().fill(.quaternary)
-                    Image(systemName: "photo")
-                        .font(.title2)
-                        .foregroundStyle(.secondary)
-                }
-            @unknown default:
-                Rectangle().fill(.quaternary)
-            }
-        }
+        RemoteImage(url: show.posterUrl)
         .frame(width: 150, height: 208)
         .clipped()
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -388,28 +495,7 @@ private struct ShowPosterCard: View {
             let posterWidth = proxy.size.width
             let posterHeight = posterWidth / posterAspectRatio
 
-            AsyncImage(url: show.posterUrl) { phase in
-                switch phase {
-                case .empty:
-                    ZStack {
-                        Rectangle().fill(.quaternary)
-                        ProgressView()
-                    }
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                case .failure:
-                    ZStack {
-                        Rectangle().fill(.quaternary)
-                        Image(systemName: "photo")
-                            .font(.title2)
-                            .foregroundStyle(.secondary)
-                    }
-                @unknown default:
-                    Rectangle().fill(.quaternary)
-                }
-            }
+            RemoteImage(url: show.posterUrl)
             .frame(width: posterWidth, height: posterHeight)
             .clipped()
         }

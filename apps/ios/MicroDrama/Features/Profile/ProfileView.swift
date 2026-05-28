@@ -2,7 +2,7 @@ import SwiftUI
 
 private enum InitialNotificationShow {
     static let fruitLoveIslandID = "show_demo_fruit_love_island"
-    static let fruitLoveIslandThumbnailURL = URL(string: "https://videodelivery.net/211482750ae557b749a98f27d74772d8/thumbnails/thumbnail.jpg")!
+    static let fruitLoveIslandThumbnailPath = "/shows/\(fruitLoveIslandID)/poster"
 }
 
 @MainActor
@@ -15,7 +15,7 @@ final class MockNotificationStore: ObservableObject {
             message: "Fruit Love Island has fresh episodes ready to watch.",
             sentAt: Calendar.current.date(byAdding: .hour, value: -5, to: Date()) ?? Date(),
             systemImage: "play.rectangle.fill",
-            thumbnailUrl: InitialNotificationShow.fruitLoveIslandThumbnailURL,
+            thumbnailUrl: APIClient.shared.url(for: InitialNotificationShow.fruitLoveIslandThumbnailPath),
             showID: InitialNotificationShow.fruitLoveIslandID
         ),
         ProfileNotification(
@@ -910,27 +910,7 @@ private struct PosterThumbnail: View {
     let height: CGFloat
 
     var body: some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case .empty:
-                ZStack {
-                    Rectangle().fill(.quaternary)
-                    ProgressView()
-                }
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure:
-                ZStack {
-                    Rectangle().fill(.quaternary)
-                    Image(systemName: "photo")
-                        .foregroundStyle(.secondary)
-                }
-            @unknown default:
-                Rectangle().fill(.quaternary)
-            }
-        }
+        RemoteImage(url: url)
         .frame(width: width, height: height)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }

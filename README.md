@@ -36,24 +36,28 @@ GET /feed
 GET /feed?feed=featured
 GET /shows
 GET /shows/:showId
+GET /shows/:showId/poster
+GET /shows/:showId/cover
 GET /shows/:showId/episodes
 GET /episodes/:episodeId
+GET /episodes/:episodeId/thumbnail
+GET /episodes/:episodeId/playback
 ```
 
 ## Catalog
 
-Edit `api/data/catalog.json` to update shows, episodes, feed ordering, Cloudflare Stream playback URLs, thumbnails, and lock states.
+Edit `api/data/catalog.json` to update shows, episodes, feed ordering, Cloudflare Stream asset IDs, thumbnails, and lock states.
 
-For Cloudflare Stream, each episode should eventually store:
+For Cloudflare Stream, each episode should store:
 
 ```json
 {
   "provider": "cloudflare_stream",
-  "providerAssetId": "cloudflare-video-uid",
-  "thumbnailUrl": "https://videodelivery.net/cloudflare-video-uid/thumbnails/thumbnail.jpg",
-  "playbackUrl": "https://videodelivery.net/cloudflare-video-uid/manifest/video.m3u8"
+  "providerAssetId": "cloudflare-video-uid"
 }
 ```
+
+Public metadata responses do not expose raw Stream manifests. Clients receive `playbackPath` and call that endpoint when playback starts. Thumbnails, posters, and covers are returned as signed Cloudflare image URLs when local signing is configured so image loading can go directly to Cloudflare. The image redirect endpoints remain available as a fallback.
 
 Uploaded Cloudflare Stream videos should use this name pattern:
 
@@ -75,10 +79,21 @@ Optional local config in `.env.local` at the repo root or in `api/.env.local`:
 ```bash
 CLOUDFLARE_ACCOUNT_ID=...
 CLOUDFLARE_STREAM_API_TOKEN=...
+CLOUDFLARE_STREAM_SIGNING_KEY_ID=...
+CLOUDFLARE_STREAM_SIGNING_PRIVATE_KEY=...
+PLAYBACK_TOKEN_TTL_SECONDS=1800
+IMAGE_TOKEN_TTL_SECONDS=86400
 CLOUDFLARE_STREAM_NAME_PREFIX=demo-fruit-love-island,demo-candy-love-island
 ```
 
 The script prints JSON with `showSlug`, `episodeNumber`, `cloudflareVideoUid`, `durationSeconds`, `playbackUrl`, and `thumbnailUrl`.
+
+For production, enable `requireSignedURLs` for all catalog videos in Cloudflare Stream:
+
+```bash
+cd api
+npm run cloudflare:require-signed
+```
 
 ## Render
 

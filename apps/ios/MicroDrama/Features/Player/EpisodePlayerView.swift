@@ -19,6 +19,7 @@ struct EpisodePlayerView: View {
     @ObservedObject private var followedShowStore = FollowedShowStore.shared
     @ObservedObject private var notificationStore = NotificationPermissionStore.shared
     @ObservedObject private var reviewPromptStore = AppReviewPromptStore.shared
+    @StateObject private var screenCaptureProtection = ScreenCaptureProtectionStore()
 
     init(
         show: ShowDetail,
@@ -50,6 +51,7 @@ struct EpisodePlayerView: View {
                                 isActive: index == currentIndex && !isReviewSoftAskPresented,
                                 isUnlocked: unlockedEpisodeIDs.contains(episode.id),
                                 isFollowing: followedShowStore.isFollowing(show),
+                                isScreenCaptured: screenCaptureProtection.isScreenCaptured,
                                 playbackRate: playbackRate,
                                 onFollow: { toggleFollow(for: episode) },
                                 onEpisodesTapped: { isEpisodeListPresented = true },
@@ -340,6 +342,35 @@ private enum AppReviewRequester {
     }
 }
 
+@MainActor
+private final class ScreenCaptureProtectionStore: ObservableObject {
+    @Published private(set) var isScreenCaptured = UIScreen.main.isCaptured
+
+    private var observer: NSObjectProtocol?
+
+    init(notificationCenter: NotificationCenter = .default) {
+        observer = notificationCenter.addObserver(
+            forName: UIScreen.capturedDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.refresh()
+            }
+        }
+    }
+
+    deinit {
+        if let observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    private func refresh() {
+        isScreenCaptured = UIScreen.main.isCaptured
+    }
+}
+
 private struct ReviewSoftAskSheet: View {
     let appName: String
     let onLeaveRating: () -> Void
@@ -404,6 +435,7 @@ private struct EpisodePage: View {
     let isActive: Bool
     let isUnlocked: Bool
     let isFollowing: Bool
+    let isScreenCaptured: Bool
     let playbackRate: Float
     let onFollow: () -> Void
     let onEpisodesTapped: () -> Void
@@ -427,9 +459,10 @@ private struct EpisodePage: View {
                 LockedEpisodeBackgroundView(episode: episode)
             } else {
                 PlayerSurface(
-                    url: episode.playbackUrl,
+                    episode: episode,
                     thumbnailUrl: episode.thumbnailUrl,
                     isActive: isActive,
+                    isPlaybackBlocked: isScreenCaptured,
                     playbackRate: playbackRate,
                     progress: $playbackProgress,
                     duration: $playbackDuration,
@@ -438,6 +471,20 @@ private struct EpisodePage: View {
                     toggleRequest: toggleRequest,
                     onFinished: onVideoFinished
                 )
+            }
+
+            if isScreenCaptured && !isEpisodeLocked {
+                ScreenCaptureProtectionOverlay()
+                    .zIndex(3)
+            }
+
+            if !isEpisodeLocked {
+                PlaybackWatermarkView(text: PlaybackWatermark.value)
+                    .padding(.top, 118)
+                    .padding(.horizontal, 18)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .zIndex(2)
+                    .allowsHitTesting(false)
             }
 
             LinearGradient(
@@ -681,6 +728,67 @@ private struct PlayerHeader: View {
     }
 }
 
+private enum PlaybackWatermark {
+    private static let storageKey = "playbackWatermarkID"
+
+    static var value: String {
+        let defaults = UserDefaults.standard
+        let rawID: String
+
+        if let existing = defaults.string(forKey: storageKey) {
+            rawID = existing
+        } else {
+            rawID = UUID().uuidString.replacingOccurrences(of: "-", with: "")
+            defaults.set(rawID, forKey: storageKey)
+        }
+
+        return "MD-\(rawID.prefix(8).uppercased())"
+    }
+}
+
+private struct PlaybackWatermarkView: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+            .foregroundStyle(.white.opacity(0.42))
+            .padding(.horizontal, 9)
+            .frame(height: 26)
+            .background(.black.opacity(0.18), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .stroke(.white.opacity(0.12), lineWidth: 1)
+            )
+            .accessibilityHidden(true)
+    }
+}
+
+private struct ScreenCaptureProtectionOverlay: View {
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 12) {
+                Image(systemName: "eye.slash.fill")
+                    .font(.system(size: 34, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.92))
+                    .accessibilityHidden(true)
+
+                Text("Playback paused")
+                    .font(.title3.bold())
+                    .foregroundStyle(.white)
+
+                Text("Turn off screen recording, mirroring, or AirPlay to continue watching.")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.72))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 28)
+            }
+        }
+    }
+}
+
 private struct PlaybackProgressBar: View {
     @Binding var progress: Double
     @Binding var isScrubbing: Bool
@@ -707,9 +815,10 @@ private struct PlaybackProgressBar: View {
 }
 
 private struct PlayerSurface: View {
-    let url: URL
+    let episode: Episode
     let thumbnailUrl: URL
     let isActive: Bool
+    let isPlaybackBlocked: Bool
     let playbackRate: Float
     @Binding var progress: Double
     @Binding var duration: Double
@@ -724,6 +833,7 @@ private struct PlayerSurface: View {
     @State private var timeObserver: Any?
     @State private var isPaused = false
     @State private var isReadyForDisplay = false
+    @State private var loadErrorMessage: String?
 
     var body: some View {
         Group {
@@ -754,37 +864,48 @@ private struct PlayerSurface: View {
                     player.pause()
                 }
             } else {
-                EpisodeThumbnailView(thumbnailUrl: thumbnailUrl)
+                ZStack {
+                    EpisodeThumbnailView(thumbnailUrl: thumbnailUrl)
+
+                    if let loadErrorMessage {
+                        VStack(spacing: 10) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 28, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .accessibilityHidden(true)
+
+                            Text(loadErrorMessage)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                        }
+                        .padding(18)
+                        .background(.black.opacity(0.52), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                }
             }
         }
-        .task(id: url) {
+        .task(id: episode.id) {
+            loadErrorMessage = nil
             removeTimeObserver()
             removeItemStatusObserver()
             removeEndObserver()
             isReadyForDisplay = false
+            player?.pause()
+            player = nil
 
-            let item = AVPlayerItem(url: url)
-            item.preferredForwardBufferDuration = 4
-            item.canUseNetworkResourcesForLiveStreamingWhilePaused = true
-
-            let newPlayer = AVPlayer(playerItem: item)
-            newPlayer.automaticallyWaitsToMinimizeStalling = false
-            endObserver = NotificationCenter.default.addObserver(
-                forName: .AVPlayerItemDidPlayToEndTime,
-                object: item,
-                queue: .main
-            ) { _ in
-                onFinished()
+            do {
+                let ticket = try await APIClient.shared.fetchPlaybackTicket(for: episode)
+                preparePlayer(url: ticket.playbackUrl)
+            } catch {
+                loadErrorMessage = "Unable to load playback."
             }
-            player = newPlayer
-            progress = 0
-            duration = 0
-            isPaused = false
-            addTimeObserver(to: newPlayer)
-            observeItemReadiness(item, player: newPlayer)
-            syncPlaybackState(for: newPlayer)
         }
         .onChange(of: isActive) { _, _ in
+            syncPlaybackState()
+        }
+        .onChange(of: isPlaybackBlocked) { _, _ in
             syncPlaybackState()
         }
         .onChange(of: playbackRate) { _, _ in
@@ -805,6 +926,34 @@ private struct PlayerSurface: View {
             player = nil
             removeEndObserver()
         }
+    }
+
+    private func preparePlayer(url: URL) {
+        removeTimeObserver()
+        removeItemStatusObserver()
+        removeEndObserver()
+        isReadyForDisplay = false
+
+        let item = AVPlayerItem(url: url)
+        item.preferredForwardBufferDuration = 4
+        item.canUseNetworkResourcesForLiveStreamingWhilePaused = true
+
+        let newPlayer = AVPlayer(playerItem: item)
+        newPlayer.automaticallyWaitsToMinimizeStalling = false
+        endObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: item,
+            queue: .main
+        ) { _ in
+            onFinished()
+        }
+        player = newPlayer
+        progress = 0
+        duration = 0
+        isPaused = false
+        addTimeObserver(to: newPlayer)
+        observeItemReadiness(item, player: newPlayer)
+        syncPlaybackState(for: newPlayer)
     }
 
     private func removeEndObserver() {
@@ -851,7 +1000,7 @@ private struct PlayerSurface: View {
     }
 
     private func togglePlayback() {
-        guard let player, isActive else { return }
+        guard let player, isActive, !isPlaybackBlocked else { return }
 
         withAnimation(.easeInOut(duration: 0.16)) {
             isPaused.toggle()
@@ -865,7 +1014,7 @@ private struct PlayerSurface: View {
     }
 
     private func playIfNeeded() {
-        guard let player, isActive, !isPaused else { return }
+        guard let player, isActive, !isPaused, !isPlaybackBlocked else { return }
         player.playImmediately(atRate: playbackRate)
     }
 
@@ -874,7 +1023,7 @@ private struct PlayerSurface: View {
         let player = targetPlayer ?? currentPlayer
         guard player === currentPlayer else { return }
 
-        if isActive {
+        if isActive && !isPlaybackBlocked {
             guard !isPaused else { return }
             player.playImmediately(atRate: playbackRate)
         } else {
@@ -978,16 +1127,8 @@ private struct LockedEpisodeBackgroundView: View {
 
     var body: some View {
         ZStack {
-            AsyncImage(url: episode.thumbnailUrl) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFit()
-                default:
-                    Color.black
-                }
-            }
+            RemoteImage(url: episode.thumbnailUrl)
+                .scaledToFit()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black)
             .ignoresSafeArea()
@@ -1262,16 +1403,8 @@ private struct EpisodeThumbnailView: View {
     }
 
     var body: some View {
-        AsyncImage(url: thumbnailUrl) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFit()
-            default:
-                Color.black
-            }
-        }
+        RemoteImage(url: thumbnailUrl)
+            .scaledToFit()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
     }

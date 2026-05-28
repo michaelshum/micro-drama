@@ -19,3 +19,5 @@ services:
         sync: false
       - key: PLAYBACK_TOKEN_TTL_SECONDS
         value: 1800
+      - key: IMAGE_TOKEN_TTL_SECONDS
+        value: 86400
