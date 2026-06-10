@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Micro Drama Recommendation Admin</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Micro Drama</p>
+          <h1>Recommendation Fields</h1>
+        </div>
+        <div class="toolbar">
+          <input id="searchInput" type="search" placeholder="Search shows" autocomplete="off">
+        </div>
+        <nav id="showList" class="show-list" aria-label="Shows"></nav>
+      </aside>
+
+      <main class="workspace">
+        <header id="showHeader" class="show-header"></header>
+        <section id="episodeTagger" class="episode-tagger"></section>
+        <form id="recommendationForm" class="form-grid" autocomplete="off"></form>
+        <section id="optionBank" class="option-bank"></section>
+      </main>
+    </div>
+
+    <template id="showButtonTemplate">
+      <button class="show-button" type="button">
+        <img alt="" class="show-thumb">
+        <span>
+          <strong class="show-title"></strong>
+          <small class="show-meta"></small>
+        </span>
+      </button>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js"></script>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

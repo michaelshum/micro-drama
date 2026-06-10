@@ -18,7 +18,128 @@
       "posterUrl": "https://videodelivery.net/ef47caa046a7b407aa908f4f9c1c2a12/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/ef47caa046a7b407aa908f4f9c1c2a12/thumbnails/thumbnail.jpg",
       "sortOrder": 1,
-      "status": "published"
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "romance",
+        "secondaryGenres": [
+          "reality-style",
+          "competition"
+        ],
+        "microGenres": [
+          "dating-competition",
+          "dating-show"
+        ],
+        "storyDrivers": [
+          "romantic-pursuit",
+          "partner-selection",
+          "elimination-pressure",
+          "social-strategy",
+          "jealousy",
+          "public-vote",
+          "alliances"
+        ],
+        "tropes": [
+          "elimination",
+          "confessional-interviews",
+          "new-arrival-disruption",
+          "heartbreak",
+          "love-triangle"
+        ],
+        "tone": [
+          "playful",
+          "flirty",
+          "dramatic",
+          "absurd",
+          "competitive",
+          "romantic"
+        ],
+        "emotionalFantasies": [
+          "romantic-validation",
+          "chosen-over-rival"
+        ],
+        "protagonistArchetypes": [],
+        "counterpartArchetypes": [],
+        "relationshipDynamics": [
+          "love-triangle",
+          "second-chance",
+          "couple-switching",
+          "competitive-dating"
+        ],
+        "conflictSetups": [
+          "new-arrival-disruption",
+          "romantic-rivalry",
+          "competition-elimination"
+        ],
+        "powerDynamics": [
+          "female-power-rise",
+          "male-lead-regret"
+        ],
+        "payoffTypes": [
+          "chosen-at-recoupling",
+          "rival-rejected",
+          "date-choice-reveal",
+          "groveling-apology",
+          "public-humiliation",
+          "public-romantic-claim",
+          "romantic-claim",
+          "villain-exposed"
+        ],
+        "pacingPromises": [
+          "cliffhanger-ending",
+          "setup-heavy",
+          "constant-reversals",
+          "escalation",
+          "payoff-episode",
+          "quick-romantic-spark"
+        ],
+        "endingPromises": [],
+        "setting": [
+          "island",
+          "villa"
+        ],
+        "characterSystem": [
+          "fruit-characters"
+        ],
+        "worldType": [
+          "food-world",
+          "fantasy-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "glossy-toy-render",
+          "pastel-candycore",
+          "bright-resort",
+          "romance-reality-style"
+        ],
+        "contentLineage": {
+          "type": "parody"
+        },
+        "referenceSignals": [
+          "dating-reality"
+        ],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "all",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-05-24T01:07:53.511Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_fruit_love_island",
@@ -28,7 +149,112 @@
       "posterUrl": "https://videodelivery.net/211482750ae557b749a98f27d74772d8/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/211482750ae557b749a98f27d74772d8/thumbnails/thumbnail.jpg",
       "sortOrder": 2,
-      "status": "published"
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "romance",
+        "secondaryGenres": [],
+        "microGenres": [
+          "dating-competition",
+          "dating-show",
+          "villa-romance",
+          "reality-competition"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [
+          "flirty",
+          "dramatic",
+          "absurd",
+          "romantic",
+          "competitive"
+        ],
+        "emotionalFantasies": [
+          "romantic-validation",
+          "chosen-over-rival",
+          "social-domination"
+        ],
+        "protagonistArchetypes": [
+          "flirty-contestant",
+          "romantic-underdog"
+        ],
+        "counterpartArchetypes": [
+          "tempting-new-arrival",
+          "charming-heartthrob",
+          "arrogant-rival"
+        ],
+        "relationshipDynamics": [
+          "love-triangle",
+          "couple-switching",
+          "competitive-dating"
+        ],
+        "conflictSetups": [
+          "new-arrival-disruption",
+          "romantic-rivalry",
+          "competition-elimination"
+        ],
+        "powerDynamics": [
+          "public-selection",
+          "rival-has-advantage",
+          "social-rank-shifting"
+        ],
+        "payoffTypes": [
+          "romantic-claim",
+          "chosen-at-recoupling",
+          "date-choice-reveal",
+          "family-acceptance",
+          "rival-rejected"
+        ],
+        "pacingPromises": [
+          "cliffhanger-ending",
+          "escalation",
+          "quick-romantic-spark",
+          "character-introduction",
+          "constant-reversals",
+          "payoff-episode"
+        ],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [
+          "fruit-characters",
+          "anthropomorphic-food"
+        ],
+        "worldType": [
+          "food-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "glossy-toy-render",
+          "bright-resort",
+          "cartoon-action",
+          "exaggerated-expressions"
+        ],
+        "contentLineage": {
+          "type": "parody"
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-05-24T01:06:58.391Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_basketball",
@@ -69,6 +295,150 @@
       "coverUrl": "https://videodelivery.net/bceb81b78fb45904c97751e19c70d56c/thumbnails/thumbnail.jpg",
       "sortOrder": 6,
       "status": "published"
+    },
+    {
+      "id": "show_demo_double_shelf_life_marks_greed",
+      "title": "Double Shelf Life: Mark's Greed",
+      "description": "Double Shelf Life: Mark's Greed micro-drama told in short vertical episodes.",
+      "genre": "Drama",
+      "posterUrl": "https://videodelivery.net/80a8a7f912bd9db5427fc86ca55874c4/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/80a8a7f912bd9db5427fc86ca55874c4/thumbnails/thumbnail.jpg",
+      "sortOrder": 7,
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "drama",
+        "secondaryGenres": [],
+        "microGenres": [
+          "betrayed-wife",
+          "cheating-husband",
+          "mistress-takedown",
+          "financial-betrayal",
+          "revenge",
+          "glow-up"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [],
+        "emotionalFantasies": [
+          "forbidden-desire",
+          "betrayed-wife",
+          "revenge",
+          "exploited-woman-takes-control",
+          "mistress-humiliation"
+        ],
+        "protagonistArchetypes": [
+          "betrayed-spouse",
+          "strategic-revenge-heroine",
+          "glow-up-heroine"
+        ],
+        "counterpartArchetypes": [
+          "cheating-husband",
+          "gold-digging-mistress",
+          "financial-abuser",
+          "smug-side-piece"
+        ],
+        "relationshipDynamics": [
+          "marital-betrayal",
+          "husband-mistress-affair",
+          "wife-secretly-knows",
+          "mistress-vs-wife"
+        ],
+        "conflictSetups": [
+          "affair-discovery",
+          "stolen-marital-assets",
+          "secret-debt",
+          "heirloom-violation"
+        ],
+        "powerDynamics": [
+          "female-power-rise",
+          "hidden-knowledge-advantage",
+          "wife-gains-leverage",
+          "villain-thinks-he-is-safe",
+          "mistress-overplays-hand"
+        ],
+        "payoffTypes": [
+          "evidence-confirmation",
+          "affair-confirmation",
+          "glow-up-transformation",
+          "public-humiliation",
+          "revenge-win",
+          "villain-exposed",
+          "mistress-takedown",
+          "asset-recovery",
+          "cheating-husband-punished"
+        ],
+        "pacingPromises": [
+          "escalation",
+          "cliffhanger-ending",
+          "setup-heavy",
+          "slow-build",
+          "payoff-episode",
+          "early-betrayal",
+          "fast-hook",
+          "cliffhanger-heavy",
+          "escalates-every-episode"
+        ],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [],
+        "worldType": [],
+        "visualStyle": [],
+        "contentLineage": {
+          "type": ""
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-09T04:39:35.845Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
+    },
+    {
+      "id": "show_demo_one_night_in_fruitopia",
+      "title": "One Night in Fruitopia",
+      "description": "One Night in Fruitopia micro-drama told in short vertical episodes.",
+      "genre": "Romance",
+      "posterUrl": "https://videodelivery.net/78d277a62e50f46ac02546ee2f63a01f/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/78d277a62e50f46ac02546ee2f63a01f/thumbnails/thumbnail.jpg",
+      "sortOrder": 8,
+      "status": "published"
+    },
+    {
+      "id": "show_demo_mad_durian_his_red_bride",
+      "title": "Mad Durian: His Red Bride",
+      "description": "Mad Durian: His Red Bride micro-drama told in short vertical episodes.",
+      "genre": "Romance",
+      "posterUrl": "https://videodelivery.net/8b24ba11828bd96919ae8b0940244bae/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/8b24ba11828bd96919ae8b0940244bae/thumbnails/thumbnail.jpg",
+      "sortOrder": 9,
+      "status": "published"
+    },
+    {
+      "id": "show_demo_the_eye_of_betrayal",
+      "title": "The Eye of Betrayal",
+      "description": "The Eye of Betrayal micro-drama told in short vertical episodes.",
+      "genre": "Drama",
+      "posterUrl": "https://videodelivery.net/3251c30eae3ed76b323d2ff0c6ef7316/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/3251c30eae3ed76b323d2ff0c6ef7316/thumbnails/thumbnail.jpg",
+      "sortOrder": 10,
+      "status": "published"
     }
   ],
   "episodes": [
@@ -85,7 +455,22 @@
       "isFreePreview": true,
       "sortOrder": 1,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.511Z"
+      "publishedAt": "2026-05-24T01:07:53.511Z",
+      "recommendation": {
+        "scriptNotes": "opening introduction to a candy love island dating competition show\n\n1. candylicious wants somebody sweet to her\n2. marshmella hoping somebody will pick her\n3. chocolatina interview where she's looking to win\n4. lollypoppa is confident and self-assured\n5. introducing donutello, puddino, cupcakeio, jawbreakson\n6. the show will have challenges and eliminations",
+        "activeAtoms": [
+          "character-introduction",
+          "personality-reveal",
+          "setting-establishment",
+          "first-impression"
+        ],
+        "emotionalBeat": "orientation",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_002",
@@ -100,7 +485,29 @@
       "isFreePreview": true,
       "sortOrder": 2,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.537Z"
+      "publishedAt": "2026-05-24T01:07:53.537Z",
+      "recommendation": {
+        "scriptNotes": "1. candylicious and marshmella talk about donutello who's too cool\n2. candylicious reveals her crush for donutello\n3. donutello reveals his crush for lollypopper\n4. lollypopper reveals her interest in jawbreakson\n5. everyone on the island votes - girls for the guy they don't want and guys for the girl they do want. \n6. cliffhanger that guy and girl with the most votes spend the night together. then episode ends on a cliffhanger without revealing who the votes are",
+        "activeAtoms": [
+          "relationship-seeding",
+          "crush-reveal",
+          "unrequited-crush",
+          "love-chain",
+          "public-vote",
+          "partner-selection",
+          "forced-pairing",
+          "cliffhanger-pairing",
+          "personality-reveal"
+        ],
+        "emotionalBeat": "romantic-tension",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "cliffhanger-ending",
+          "setup-heavy",
+          "slow-build"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_003",
@@ -115,7 +522,30 @@
       "isFreePreview": true,
       "sortOrder": 3,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.718Z"
+      "publishedAt": "2026-05-24T01:07:53.718Z",
+      "recommendation": {
+        "scriptNotes": "1. reveal for which two characters spend the night in the love room: donutello and candylicious\n2. donutello reveals his distaste for getting paired with candylicious, who he didn't want\n3. candylicious and donutello hook up\n4. donutello still doesn't want candylicious but knows you have to play the game as a couple to stay on the island\n5. lollypopper notes how donutello clearly wants her but she still wants someone else\n6. cliffhanger that two new characters will be joining, but no reveal on who they are",
+        "activeAtoms": [
+          "cliffhanger-pairing",
+          "forced-pairing",
+          "romantic-spark",
+          "unrequited-crush",
+          "love-chain",
+          "social-strategy",
+          "temptation",
+          "new-arrival-disruption"
+        ],
+        "emotionalBeat": "romantic-tension",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "chosen-at-recoupling"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "cliffhanger-ending",
+          "constant-reversals"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_004",
@@ -130,7 +560,31 @@
       "isFreePreview": false,
       "sortOrder": 4,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.716Z"
+      "publishedAt": "2026-05-24T01:07:53.716Z",
+      "recommendation": {
+        "scriptNotes": "1. introducing taffylina - her looks, personality\n2. introducing fudgiano - his looks, personality\n3. chocolatina reveal for her interest in fudgiano\n4. donutello expressing interest in taffylina\n5. taffylina flirting with donutello, looking to win the game\n6. taffylina and fudgiano both choosing people for a private date\n7. cliffhanger not revealing who they chose",
+        "activeAtoms": [
+          "character-introduction",
+          "personality-reveal",
+          "first-impression",
+          "new-arrival-disruption",
+          "crush-reveal",
+          "romantic-spark",
+          "relationship-seeding",
+          "partner-selection",
+          "social-strategy",
+          "temptation"
+        ],
+        "emotionalBeat": "anticipation",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "character-introduction",
+          "setup-heavy",
+          "cliffhanger-ending",
+          "quick-romantic-spark"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_005",
@@ -145,7 +599,35 @@
       "isFreePreview": false,
       "sortOrder": 5,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.531Z"
+      "publishedAt": "2026-05-24T01:07:53.531Z",
+      "recommendation": {
+        "scriptNotes": "1. fudgiano picked candylicious\n2. taffylina picked donutello\n3. candylicious tells fudgiano she's interested in someone else\n4. donutello and taffylina hook up\n5. taffylina talks about her interest in finding a partner\n6. chocolatina talks about how she feels slighted fudgiano didn't pick her, since they're both chocolate\n7. candylicious confesses to jawbreakson that she turned down fudgiano and has feelings for donutello\n8. lollypoppa has a lot of jealousy that candylicious is talking to everyone, especially jawbreakson who she is interested in \n9. reveal that the island recorded everything that happened. cliffhanger that everyone is going to watch that footage in the next episode",
+        "activeAtoms": [
+          "partner-selection",
+          "romantic-spark",
+          "relationship-seeding",
+          "crush-reveal",
+          "unrequited-crush",
+          "love-chain",
+          "jealousy",
+          "rivalry-escalation",
+          "social-strategy",
+          "temptation",
+          "secret-reveal",
+          "cliffhanger-exposure"
+        ],
+        "emotionalBeat": "romantic-tension",
+        "narrativeRole": "twist",
+        "payoffTypes": [
+          "date-choice-reveal"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "twist-heavy",
+          "cliffhanger-ending",
+          "constant-reversals"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_006",
@@ -160,7 +642,31 @@
       "isFreePreview": false,
       "sortOrder": 6,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.532Z"
+      "publishedAt": "2026-05-24T01:07:53.532Z",
+      "recommendation": {
+        "scriptNotes": "1. everyone watches candylicious turn fudgiano down. she says it's because she likes donutello\n2. everyone watches taffylina and donutello hook up. taffylina says she would never play with someone else's man, and she didn't know\n3. chocolatina accuses donutello of being a bad guy\n4. candylicious cries to marshmallow who reassures her she did nothing wrong\n5. cupcake encourages flan to be there for candylicious and be her hero\n6. cliffhanger that next episode someone is going home",
+        "activeAtoms": [
+          "secret-reveal",
+          "public-humiliation",
+          "rivalry-escalation",
+          "betrayal",
+          "heartbreak",
+          "tearful-confession",
+          "relationship-seeding",
+          "elimination-pressure"
+        ],
+        "emotionalBeat": "public-humiliation",
+        "narrativeRole": "payoff",
+        "payoffTypes": [
+          "public-humiliation",
+          "villain-exposed"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "cliffhanger-ending",
+          "twist-heavy"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_007",
@@ -175,7 +681,34 @@
       "isFreePreview": false,
       "sortOrder": 7,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:54.104Z"
+      "publishedAt": "2026-05-24T01:07:54.104Z",
+      "recommendation": {
+        "scriptNotes": "recoupling episode\n\n1. donutello realizing everyone is mad at him\n2. puddino asking marshmella how candylicious is doing\n3. taffylina saying it's not her style to go after someone already in a relationship\n4. lollypoppa talking to jawbreakson but he only says a few words. she's mad that he doesn't talk to her\n5. recoupling: girls have an option to choose a person each. if a guy isn't chosen, he goes home\n6. chocolatina convinces the girls to all not pick donutello\n7. donutello talks to candylicious to try and convince her to pick him\n8. chocolatina talks to candylicious and tells her not to pick donutello\n9. marshmella talks to jawbreakson and he is warm to her, while lollypoppa sees that\n10. fudgiano talks to chocolatina to try and get her to pick him, but she's mad that he thought of her as a backup\n11. ladies make their picks. cliffhanger ending where they reveal someone wasn't chosen, but not who",
+        "activeAtoms": [
+          "elimination-pressure",
+          "partner-selection",
+          "social-strategy",
+          "power-struggle",
+          "female-power-rise",
+          "male-lead-regret",
+          "public-humiliation",
+          "rivalry-escalation",
+          "jealousy",
+          "unrequited-crush",
+          "relationship-seeding",
+          "romantic-validation",
+          "cliffhanger-pairing"
+        ],
+        "emotionalBeat": "romantic-tension",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "cliffhanger-ending",
+          "twist-heavy",
+          "constant-reversals",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_008",
@@ -190,7 +723,35 @@
       "isFreePreview": false,
       "sortOrder": 8,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.523Z"
+      "publishedAt": "2026-05-24T01:07:53.523Z",
+      "recommendation": {
+        "scriptNotes": "reveal for previous coupling episode cliffhanger\n\n1. couples announced. taffylina and cupcake (no donutello, she's not interested in cupcake), lollypoppa and jawbreakson and marshmella (lollypoppa mad), chocolatina and puddino (chocolatina sees marshmella interested in jawbreakson), candylicious and donutello. fudgiano not chosen, is kicked out\n2. candylicious says everyone deserves a second chance and that she went with her heart after donutello apologized\n3. chocolatina and taffylicious are upset and want to show her not to fall for the same guy twice\n4. marshmella says that jawbreakson talking to her how he was scared to go home is why she picked him\n5. cupcake asking why he was picked - taffylina explaining no donutello\n6. puddino saying he's happy he was picked - chocolatina saying she hopes he doesn't have feelings and it was just because he was a default pick\n7. candylicious reconnecting with donutello\n8. cliffhanger that from now on the viewer helps decide what the story is",
+        "activeAtoms": [
+          "partner-selection",
+          "elimination-pressure",
+          "love-triangle",
+          "jealousy",
+          "rivalry-escalation",
+          "unrequited-crush",
+          "forced-pairing",
+          "social-strategy",
+          "romantic-validation"
+        ],
+        "emotionalBeat": "romantic-choice",
+        "narrativeRole": "payoff",
+        "payoffTypes": [
+          "chosen-at-recoupling",
+          "rival-rejected",
+          "groveling-apology",
+          "public-romantic-claim"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "constant-reversals",
+          "cliffhanger-ending",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_009",
@@ -205,7 +766,30 @@
       "isFreePreview": false,
       "sortOrder": 9,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.719Z"
+      "publishedAt": "2026-05-24T01:07:53.719Z",
+      "recommendation": {
+        "scriptNotes": "1. chocolatina and taffylicious trying to tell candylicious donutello is a bad guy\n2. marshmella asks if something's happening between jawbreakson and lollypoppa and he says no\n3. puddino finds out chocolatina chose him by default and is mad\n4. guys and girls get split into different houses. donutello promises he'll stay loyal to candylicious\n5. guys get sent to the new house, casa sweety. we end without seeing them enter yet",
+        "activeAtoms": [
+          "setting-establishment",
+          "jealousy",
+          "forced-pairing",
+          "romantic-validation",
+          "temptation",
+          "world-rules-introduction",
+          "stakes-introduction",
+          "relationship-seeding",
+          "friend-warning"
+        ],
+        "emotionalBeat": "anticipation",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "cliffhanger-ending",
+          "slow-build",
+          "setup-heavy",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_010",
@@ -220,7 +804,31 @@
       "isFreePreview": false,
       "sortOrder": 10,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:54.428Z"
+      "publishedAt": "2026-05-24T01:07:54.428Z",
+      "recommendation": {
+        "scriptNotes": "1. donutello saying he'll stay loyal to candylicious\n2. introducing skotcha, caramella, macarina, sugarella\n3. puddino meeting caramella, still mad at chocolatina\n4. sugarella flirting with donutello\n5. jawbreakson talking to skotcha\n6. new guys introduced to the girls: torroni, mielito, caramello, tea, biscuit\n7. mielito interested in candylicious. chocolatina and taffylicious encouraging her to go for him\n8. cliffhanger that there will be challenges the next episode",
+        "activeAtoms": [
+          "character-introduction",
+          "first-impression",
+          "romantic-spark",
+          "romantic-validation",
+          "new-arrival-disruption",
+          "temptation",
+          "relationship-seeding",
+          "power-struggle",
+          "social-strategy"
+        ],
+        "emotionalBeat": "temptation-test",
+        "narrativeRole": "inciting-incident",
+        "payoffTypes": [],
+        "pacingTags": [
+          "character-introduction",
+          "setup-heavy",
+          "quick-romantic-spark",
+          "cliffhanger-ending",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_011",
@@ -235,7 +843,29 @@
       "isFreePreview": false,
       "sortOrder": 11,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:54.206Z"
+      "publishedAt": "2026-05-24T01:07:54.206Z",
+      "recommendation": {
+        "scriptNotes": "1. mielito and candylicious more talking\n2. sugarella and donutello he says candylicious isn't serious. she is interested\n3. jawbreakson being asked by macarina if donutello is a good guy\n4. caramella asking cupcake about the girls in the villa. she wants to lock in puddino before they go back\n5. tea being interested in taffylina but her turning him down\n6. caramello showing interest in chocolatina but she wants him to work more for her affection\n7. torrino interested in marshmella\n8. biscuit going for lollypoppa, who is still interested in jawbreakson\n9. skotcha  still going for jawbreakson\n10. cliffhanger for the challenges that are coming next episode",
+        "activeAtoms": [
+          "relationship-seeding",
+          "social-strategy",
+          "romantic-spark",
+          "temptation",
+          "unrequited-crush",
+          "love-triangle",
+          "friend-warning",
+          "romantic-pursuit"
+        ],
+        "emotionalBeat": "temptation-test",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "cliffhanger-ending",
+          "quick-romantic-spark"
+        ]
+      }
     },
     {
       "id": "ep_demo_candy_love_island_012",
@@ -250,7 +880,179 @@
       "isFreePreview": false,
       "sortOrder": 12,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:53.724Z"
+      "publishedAt": "2026-05-24T01:07:53.724Z",
+      "recommendation": {
+        "scriptNotes": "1. challenge: girl gets spun and gets assigned a boy to kiss. sugarella matchces with donutello and they kiss. however candylicious turns down mielito because of her loyalty to donutello\n2. taffylicious warns candylicious that donutello is going to justify cheating by using the game\n3. jawbreakson matches with skotcha. he turns her down, knowing it eliminates her\n4. puddino and caremllo match and kiss\n5. chocolatina and caremllo talking\n6. candylicious asking marshmella her opinion of mielito and she says go for it. they kiss\n7. cliffhanger for what happens next episode",
+        "activeAtoms": [
+          "temptation",
+          "romantic-validation",
+          "relationship-seeding",
+          "elimination-pressure",
+          "partner-selection",
+          "love-triangle",
+          "chosen-over-rival",
+          "romantic-pursuit",
+          "friend-warning",
+          "romantic-spark",
+          "social-strategy"
+        ],
+        "emotionalBeat": "temptation-test",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "romantic-claim",
+          "rival-rejected"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "escalation",
+          "constant-reversals",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_candy_love_island_013",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 13,
+      "title": "Episode 13",
+      "description": "Candy Love Island Episode 13.",
+      "durationSeconds": 180,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "984c6d20bff6433a87c1df11fbee8c84",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 13,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. macarina saying her type is funny and kind. cupcakeio says \"a guy like me\". they laugh\n2. caramella asking puddino if there's someone waiting for her at the villa. he says no, since chocolatina chose him by default, not for love\n3. sugarella telling donutello getting back to the villa will be amazing. he's awkward about it since he has candylicious there\n4. biscotto asking lollypoppa if he's her type. she says no. she's thinking about jawbreakson still\n5. skotcha asking jawbreakson if he likes her. he says she's a nice girl and beautiful. she says \"we're a couple then!\". he looks unconvinced\n6. torrino asks marshmella what her type is. she says it's more of a feeling. she thinks he's sweet but he's not her style\n7. chocolatina says caramello is smooth but she knows he's a player\n8. taffylina laughing about teacup talking to her, but he's not even a candy\n9. announcement that casa sweety ends, and if there is no coupling then girls will get sent home\n10. sugarella and donutello kiss. she wants to make sure she locks in a ticket to the villa\n11. jawbreakson tells skotcha he won't choose her, since he has someone back at the villa\n12. puddino tells caramella she doesn't need to worry about being chosen\n13. macarina asks cupcakio if he has someone at the villa and he says yes. she asks to be his second one. he's worried she just wants to go to the villa\n14. cliffhanger for who the boys end up choosing",
+        "activeAtoms": [
+          "partner-selection",
+          "cliffhanger-pairing",
+          "elimination-pressure",
+          "social-strategy",
+          "relationship-seeding",
+          "romantic-spark",
+          "romantic-validation",
+          "love-triangle",
+          "unrequited-crush",
+          "temptation",
+          "romantic-pursuit"
+        ],
+        "emotionalBeat": "romantic-choice",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "cliffhanger-ending",
+          "slow-build",
+          "low-conflict"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_candy_love_island_014",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 14,
+      "title": "Episode 14",
+      "description": "Candy Love Island Episode 14.",
+      "durationSeconds": 180,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "89c291a1c30f0baf07aa99c0e91f6b9d",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 14,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z"
+    },
+    {
+      "id": "ep_demo_candy_love_island_015",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 15,
+      "title": "Episode 15",
+      "description": "Candy Love Island Episode 15.",
+      "durationSeconds": 171,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "6b73a24c864b081dfc3faa4746d18986",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 15,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z"
+    },
+    {
+      "id": "ep_demo_candy_love_island_016",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 16,
+      "title": "Episode 16",
+      "description": "Candy Love Island Episode 16.",
+      "durationSeconds": 133,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "72e07429526b74c404be045d901af03a",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 16,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z"
+    },
+    {
+      "id": "ep_demo_candy_love_island_017",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 17,
+      "title": "Episode 17",
+      "description": "Candy Love Island Episode 17.",
+      "durationSeconds": 139,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "7cca4e45353b011bef5cd0077f95d553",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 17,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z"
+    },
+    {
+      "id": "ep_demo_candy_love_island_018",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 18,
+      "title": "Episode 18",
+      "description": "Candy Love Island Episode 18.",
+      "durationSeconds": 109,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "c81ac94b45933e1558600a12e3389b87",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 18,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z"
+    },
+    {
+      "id": "ep_demo_candy_love_island_019",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 19,
+      "title": "Episode 19",
+      "description": "Candy Love Island Episode 19.",
+      "durationSeconds": 140,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a6d2dbb50304bf0b5843ab24f7e6fcfa",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 19,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z"
+    },
+    {
+      "id": "ep_demo_candy_love_island_020",
+      "showId": "show_demo_candy_love_island",
+      "episodeNumber": 20,
+      "title": "Episode 20",
+      "description": "Candy Love Island Episode 20.",
+      "durationSeconds": 130,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "06bfa29d26a63da74e2813b74b49840b",
+      "isLocked": true,
+      "isFreePreview": false,
+      "sortOrder": 20,
+      "status": "published",
+      "publishedAt": "2026-06-09T00:46:53.000Z"
     },
     {
       "id": "ep_demo_fruit_love_island_001",
@@ -265,7 +1067,34 @@
       "isFreePreview": true,
       "sortOrder": 1,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:00.835Z"
+      "publishedAt": "2026-05-24T01:07:00.835Z",
+      "recommendation": {
+        "scriptNotes": "fruit love island:\n\n1. introduction to fruit love island: pineapple and watermelon both want banana.\n2. coupling ceremony: watermelon picks banana, but pineapple also picks banana. pineapple then kisses banana, then watermelon punches pineapple\n3. the couples couple off\n4. no cliffhanger",
+        "activeAtoms": [
+          "character-introduction",
+          "personality-reveal",
+          "relationship-seeding",
+          "setting-establishment",
+          "partner-selection",
+          "jealousy",
+          "love-triangle",
+          "chosen-over-rival",
+          "physical-confrontation",
+          "rivalry-escalation"
+        ],
+        "emotionalBeat": "rivalry-escalation",
+        "narrativeRole": "hook",
+        "payoffTypes": [
+          "romantic-claim",
+          "chosen-at-recoupling"
+        ],
+        "pacingTags": [
+          "setup-heavy",
+          "character-introduction",
+          "world-building",
+          "quick-romantic-spark"
+        ]
+      }
     },
     {
       "id": "ep_demo_fruit_love_island_002",
@@ -280,7 +1109,23 @@
       "isFreePreview": true,
       "sortOrder": 2,
       "status": "published",
-      "publishedAt": "2026-05-24T01:06:58.391Z"
+      "publishedAt": "2026-05-24T01:06:58.391Z",
+      "recommendation": {
+        "scriptNotes": "tropical beach party\n\n0. cherry confesses to mango that orange is hot. mango warns her that is watermelon's man\n1. party scene. cherry gets asked who's hotter between grape and orange, she says orange\n2. watermelon mad that banana and pineapple are dancing\n3. watermelon banana fight,  banana breaks it up\n5. cliffhanger that a new character is joining, we don't know who it is",
+        "activeAtoms": [
+          "romantic-spark",
+          "relationship-seeding",
+          "love-triangle",
+          "jealousy",
+          "physical-confrontation"
+        ],
+        "emotionalBeat": "jealousy-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_fruit_love_island_003",
@@ -295,7 +1140,34 @@
       "isFreePreview": true,
       "sortOrder": 3,
       "status": "published",
-      "publishedAt": "2026-05-24T01:06:58.924Z"
+      "publishedAt": "2026-05-24T01:06:58.924Z",
+      "recommendation": {
+        "scriptNotes": "1. new character strawberry arrives to the island\n2. banana is interested in her, they hook up\n3. watermelon not happy about them hooking up\n4. one islander at a time chooses who they have the best chemistry with\n5. strawberry picks kiwi. they hook up\n6. they get a sunset date. mango upset about it, apparently they were together. he says he wants to keep things open\n7. cliffhanger for recoupling and dumping next episode",
+        "activeAtoms": [
+          "character-introduction",
+          "relationship-seeding",
+          "romantic-spark",
+          "temptation",
+          "partner-selection",
+          "jealousy",
+          "romantic-pursuit",
+          "new-arrival-disruption",
+          "love-triangle"
+        ],
+        "emotionalBeat": "temptation-test",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "romantic-claim",
+          "date-choice-reveal"
+        ],
+        "pacingTags": [
+          "quick-romantic-spark",
+          "character-introduction",
+          "cliffhanger-ending",
+          "escalation",
+          "constant-reversals"
+        ]
+      }
     },
     {
       "id": "ep_demo_fruit_love_island_004",
@@ -310,7 +1182,33 @@
       "isFreePreview": false,
       "sortOrder": 4,
       "status": "published",
-      "publishedAt": "2026-05-24T01:06:58.858Z"
+      "publishedAt": "2026-05-24T01:06:58.858Z",
+      "recommendation": {
+        "scriptNotes": "1. strawberry kisses kiwi but he turns her down because he still likes mango\n2. kiwi comes back to mango and they hook up\n3. cherry and something else hook up\n4. pineapple worried banana going to break up with her\n5. recoupling - kiwi picks mango, something picks cherry, grape picks watermelon, banana picks strawberry\n6. pineapple is out, she and watermelon fight again",
+        "activeAtoms": [
+          "partner-selection",
+          "elimination-pressure",
+          "social-strategy",
+          "physical-confrontation",
+          "romantic-validation",
+          "romantic-spark",
+          "love-triangle",
+          "heartbreak",
+          "rivalry-escalation"
+        ],
+        "emotionalBeat": "romantic-choice",
+        "narrativeRole": "payoff",
+        "payoffTypes": [
+          "romantic-claim",
+          "chosen-at-recoupling",
+          "rival-rejected"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "constant-reversals",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_fruit_love_island_005",
@@ -325,7 +1223,26 @@
       "isFreePreview": false,
       "sortOrder": 5,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:00.884Z"
+      "publishedAt": "2026-05-24T01:07:00.884Z",
+      "recommendation": {
+        "scriptNotes": "1. kiwi and mango go on a date. they talk about how kiwi picked her over strawberry. good vibes\n2. watermelon and grapes have a good time and hook up\n3. banana and strawberry giggle and hook up\n4. cherry and orange go on a date. cherry reveals she has a daughter. he accepts her\n5. cliffhanger that there's a new character coming next episode. cliffhanger that soon viewers can vote on what happens next",
+        "activeAtoms": [
+          "romantic-validation",
+          "secret-reveal"
+        ],
+        "emotionalBeat": "romantic-spark",
+        "narrativeRole": "breather",
+        "payoffTypes": [
+          "romantic-claim",
+          "family-acceptance"
+        ],
+        "pacingTags": [
+          "slow-build",
+          "quick-romantic-spark",
+          "cliffhanger-ending",
+          "low-conflict"
+        ]
+      }
     },
     {
       "id": "ep_demo_fruit_love_island_006",
@@ -340,7 +1257,35 @@
       "isFreePreview": false,
       "sortOrder": 6,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:00.813Z"
+      "publishedAt": "2026-05-24T01:07:00.813Z",
+      "recommendation": {
+        "scriptNotes": "1. challenge: sweet kiss challenge. give a kiss to the person you find most attractive. all couples kiss\n2. intro to coconut, new character\n3. coconut picks watermelon\n4. grape and coconut get into a fight\n5. watermelon says she still likes grape but didn't like seeing him get beat up\n6. coconut starts talking to mango. kiwi is worried\n7. cliffhanger that coconut gets private dates with every girl in the island in the next episode",
+        "activeAtoms": [
+          "character-introduction",
+          "personality-reveal",
+          "relationship-seeding",
+          "romantic-spark",
+          "love-triangle",
+          "physical-confrontation",
+          "romantic-pursuit",
+          "partner-selection",
+          "new-arrival-disruption",
+          "rivalry-escalation"
+        ],
+        "emotionalBeat": "rivalry-escalation",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "romantic-claim"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "quick-romantic-spark",
+          "character-introduction",
+          "cliffhanger-ending",
+          "escalation",
+          "constant-reversals"
+        ]
+      }
     },
     {
       "id": "ep_demo_fruit_love_island_007",
@@ -355,7 +1300,30 @@
       "isFreePreview": false,
       "sortOrder": 7,
       "status": "published",
-      "publishedAt": "2026-05-24T01:06:58.527Z"
+      "publishedAt": "2026-05-24T01:06:58.527Z",
+      "recommendation": {
+        "scriptNotes": "1. coconut goes on all his dates\n2. mango says she likes kiwi but she's still open\n3. strawberry hooks up with coconut immediately",
+        "activeAtoms": [
+          "romantic-pursuit",
+          "temptation",
+          "romantic-spark",
+          "relationship-seeding",
+          "love-triangle",
+          "new-arrival-disruption"
+        ],
+        "emotionalBeat": "temptation-test",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "date-choice-reveal",
+          "romantic-claim"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "quick-romantic-spark",
+          "escalation",
+          "slow-build"
+        ]
+      }
     },
     {
       "id": "ep_demo_fruit_love_island_008",
@@ -370,7 +1338,25 @@
       "isFreePreview": false,
       "sortOrder": 8,
       "status": "published",
-      "publishedAt": "2026-05-24T01:07:00.730Z"
+      "publishedAt": "2026-05-24T01:07:00.730Z",
+      "recommendation": {
+        "scriptNotes": "1. girls find out cherry is a mom\n2. viewers get to decide which girl coconut gets paired with, and previous boys she hooked up with are dumped from the show\n3. cliffhanger saying viewers get to pick",
+        "activeAtoms": [
+          "world-rules-introduction",
+          "stakes-introduction",
+          "secret-reveal",
+          "public-vote",
+          "partner-selection",
+          "elimination-pressure"
+        ],
+        "emotionalBeat": "anticipation",
+        "narrativeRole": "twist",
+        "payoffTypes": [],
+        "pacingTags": [
+          "cliffhanger-ending",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_basketball_001",
@@ -911,6 +1897,977 @@
       "sortOrder": 12,
       "status": "published",
       "publishedAt": "2026-05-26T19:46:26.2469Z"
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_001",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "Double Shelf Life: Mark's Greed Episode 1.",
+      "durationSeconds": 59,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "80a8a7f912bd9db5427fc86ca55874c4",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Linda sells her 24k gold heirloom to a rat pawn shop for $50 to fund Mark's dream\n2. Mark thinks to himself that Linda is gullible\n3. Mark heads out to a lingerie store and buys $3000 lingerie\n4. Cliffhanger that ends with Mark saying \"tonight is going to be unforgettable\"",
+        "activeAtoms": [
+          "character-introduction",
+          "personality-reveal",
+          "stakes-introduction",
+          "betrayal",
+          "secret-reveal",
+          "forbidden-desire",
+          "self-sacrifice",
+          "financial-exploitation"
+        ],
+        "emotionalBeat": "betrayal-reveal",
+        "narrativeRole": "hook",
+        "payoffTypes": [],
+        "pacingTags": [
+          "fast-hook",
+          "early-betrayal",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_002",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "Double Shelf Life: Mark's Greed Episode 2.",
+      "durationSeconds": 71,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "8cfc5fdb4d276d43e84af6576a3ad411",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Mark gives the lingerie to \"orange\", his side piece, who knows Linda is his wife\n2. Mark insulting Linda to Orange. Confesses that he is still with Linda to fund his and Orange's lifestyle\n3. Orange wants Mark to leave his wife. She leaves an eyelash on his shirt for Linda to discover\n4. They sleep together\n5. Cliffhanger of her eyelash on the front of Mark's shirt",
+        "activeAtoms": [
+          "character-introduction",
+          "personality-reveal",
+          "relationship-seeding",
+          "betrayal",
+          "forbidden-desire",
+          "secret-reveal",
+          "financial-exploitation",
+          "power-struggle",
+          "mistress-provocation",
+          "affair-evidence-planted"
+        ],
+        "emotionalBeat": "betrayal-reveal",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "affair-confirmation"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "early-betrayal",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_003",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "Double Shelf Life: Mark's Greed Episode 3.",
+      "durationSeconds": 76,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "63df3245d15d111a454f13ac3147d726",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Linda is doing laundry and her back is killing her. She thinks Mark works so hard for their family.\n2. Linda discovers Orange's eyelash. She smells it and thinks back to multiple occasions where Mark has been shady. She realizes he is a liar.\n3. She becomes upset that she gave up so much for him and vows to get back at him",
+        "activeAtoms": [
+          "betrayal",
+          "secret-reveal",
+          "heartbreak",
+          "self-sacrifice",
+          "financial-exploitation",
+          "female-power-rise",
+          "revenge-vow",
+          "betrayal-discovery"
+        ],
+        "emotionalBeat": "betrayal-discovery",
+        "narrativeRole": "inciting-incident",
+        "payoffTypes": [],
+        "pacingTags": [
+          "payoff-episode",
+          "escalation",
+          "setup-heavy",
+          "slow-build"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_004",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "Double Shelf Life: Mark's Greed Episode 4.",
+      "durationSeconds": 70,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "01df687f494be015dd04a5093ec71bbc",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Mark comes home and Linda greets him normally, not revealing that she knows what he's done\n2. She tells him he smells different, like cheap citrus. He blames it on joining a new gym, which she pretends to believe. He thinks he's in the clear\n3. Linda waits until Mark is asleep, and inspects his phone\n4. She sees that Orange called him \"daddy\" and vows that he will never have kids",
+        "activeAtoms": [
+          "revenge-vow",
+          "power-struggle",
+          "female-power-rise",
+          "hidden-knowledge-advantage",
+          "evidence-discovery",
+          "lying"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_005",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "Double Shelf Life: Mark's Greed Episode 5.",
+      "durationSeconds": 72,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ca18c392ac847a224b2825b63c0815b0",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Linda tracks Mark, who said he was going to a startup seminar\n2. She sees him with Orange, who he gave Linda's grandma's necklace to\n3. Mark and Orange kiss. Linda regrets the ten years of marriage she wasted on him\n4. Mark and Orange drive off in a Ferrari to go shopping\n5. Linda vows that Mark will have no future",
+        "activeAtoms": [
+          "betrayal",
+          "heartbreak",
+          "revenge-vow",
+          "lying",
+          "evidence-discovery",
+          "financial-exploitation",
+          "self-sacrifice",
+          "female-power-rise",
+          "forbidden-desire"
+        ],
+        "emotionalBeat": "heartbreak",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "evidence-confirmation"
+        ],
+        "pacingTags": [
+          "escalation",
+          "setup-heavy",
+          "slow-build",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_006",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "Double Shelf Life: Mark's Greed Episode 6.",
+      "durationSeconds": 72,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "e394a437898d0261d90f411984cfed2c",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Linda returns home heartbroken. She steels herself and vows not to cry and be weak.\n2. She cuts off her old peel, suffering in pain, but emerges on the other side beautiful",
+        "activeAtoms": [
+          "female-power-rise",
+          "self-sacrifice",
+          "glow-up-transformation",
+          "self-reinvention"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "reversal",
+        "payoffTypes": [
+          "glow-up-transformation"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "escalation",
+          "slow-build"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_007",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "Double Shelf Life: Mark's Greed Episode 7.",
+      "durationSeconds": 72,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "e9236fc2c3a8e680ba9603c63b983982",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Linda pays for a VIP booth to spy on the orange\n2. She hears the orange talking about the diamonds and designer bags that Mark bought with Linda's retirement pension and life savings\n3. She records the conversation and hears that Mark promised Orange that he would leave Linda nothing\n4. She vows that soon Orange won't even be able to breath",
+        "activeAtoms": [
+          "betrayal",
+          "revenge-vow",
+          "evidence-discovery",
+          "financial-exploitation",
+          "female-power-rise",
+          "covert-investigation",
+          "hidden-knowledge-advantage"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "evidence-confirmation"
+        ],
+        "pacingTags": [
+          "setup-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_008",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "Double Shelf Life: Mark's Greed Episode 8.",
+      "durationSeconds": 71,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "256990805a6fef10fa4a6ca2a8115587",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Linda logs into her bank account to see Mark emptied their joint account\n2. She sees he took out a 500,000 loan with the mob pledged against their house\n3. She stores the evidence and resolves to deal with it tonight\n4. She calls her attorney and asks for an asset transfer",
+        "activeAtoms": [
+          "evidence-discovery",
+          "financial-exploitation",
+          "hidden-knowledge-advantage",
+          "female-power-rise",
+          "stakes-introduction"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "twist-heavy",
+          "setup-heavy",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_009",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "Double Shelf Life: Mark's Greed Episode 9.",
+      "durationSeconds": 77,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ea7efe9abf44f5fc10d391d74dbb1b3e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Linda cooks up a huge meal for Mark\n2. Mark devours the meal as Linda reminds him tomorrow is their 10 year wedding anniversary\n3. She says they should do a nice home cooked dinner tomorrow\n4. She encourages him to invite his secretary Anna, the orange",
+        "activeAtoms": [
+          "female-power-rise",
+          "hidden-knowledge-advantage",
+          "trap-setting",
+          "controlled-confrontation-setup"
+        ],
+        "emotionalBeat": "anticipation",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_010",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "Double Shelf Life: Mark's Greed Episode 10.",
+      "durationSeconds": 72,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "df1a88e3d6aeb6a9b5f3cdbd63438e89",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Anna arrives for dinner and tells Linda to be careful with her expensive coat\n2. Anna acts familiar with Mark and he reacts uncomfortably\n3. Linda proposes a toast to loyalty and reveals a strange main course",
+        "activeAtoms": [
+          "hidden-knowledge-advantage",
+          "controlled-confrontation-setup",
+          "mistress-provocation",
+          "female-power-rise"
+        ],
+        "emotionalBeat": "anticipation",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_011",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "Double Shelf Life: Mark's Greed Episode 11.",
+      "durationSeconds": 69,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "9b9ec5f9d3493f5d54979437cc34a881",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Anna flexes her diamond bracelet that Mark bought for her\n2. Mark plays footsie with Anna under the table\n3. Linda stomps on Mark's foot\n4. Linda proposes a toast to honesty",
+        "activeAtoms": [
+          "female-power-rise",
+          "hidden-knowledge-advantage",
+          "controlled-confrontation-setup",
+          "mistress-provocation",
+          "financial-exploitation"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_double_shelf_life_marks_greed_012",
+      "showId": "show_demo_double_shelf_life_marks_greed",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "Double Shelf Life: Mark's Greed Episode 12.",
+      "durationSeconds": 66,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a3179eeb35c5e56b505ac475eaf5c3fe",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 12,
+      "status": "published",
+      "publishedAt": "2026-06-09T04:39:35.845Z",
+      "recommendation": {
+        "scriptNotes": "1. Mark changes the subject to dessert \n2. He tries to hand a diamond ring to Anna but drops it and Linda picks it up\n3. Mark tries to recover by saying it was for Linda. Anna is furious",
+        "activeAtoms": [
+          "forbidden-desire",
+          "financial-exploitation",
+          "lying",
+          "hidden-knowledge-advantage",
+          "trap-setting",
+          "cover-story-backfire",
+          "mistress-entitlement"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "twist-heavy",
+          "slow-build",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_001",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "One Night in Fruitopia Episode 1.",
+      "durationSeconds": 70,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "78d277a62e50f46ac02546ee2f63a01f",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_002",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "One Night in Fruitopia Episode 2.",
+      "durationSeconds": 65,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ca2ac67a348d37d362d4a250c77ed638",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_003",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "One Night in Fruitopia Episode 3.",
+      "durationSeconds": 76,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "18734961d7b3e6ec3e6d80896a09fcb1",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_004",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "One Night in Fruitopia Episode 4.",
+      "durationSeconds": 57,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "2b635828a4b9d6a8d8df3a1584e310bc",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_005",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "One Night in Fruitopia Episode 5.",
+      "durationSeconds": 61,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "7224e3fb9eb8e16bd3356bb720678983",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_006",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "One Night in Fruitopia Episode 6.",
+      "durationSeconds": 64,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "32511f8b6e7d4a1f86ba1bc43f27f4e6",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_007",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "One Night in Fruitopia Episode 7.",
+      "durationSeconds": 54,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "29b082f1ec4a78d8780c4c4883f19855",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_008",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "One Night in Fruitopia Episode 8.",
+      "durationSeconds": 58,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "6ee9a695b558ddbb6c863b22ce1362f0",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_009",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "One Night in Fruitopia Episode 9.",
+      "durationSeconds": 56,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "0eb97bfe38f060ca177e33cc9fbfecca",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_010",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "One Night in Fruitopia Episode 10.",
+      "durationSeconds": 74,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "78540703930a1acc4b11a2d17c04dcb3",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_011",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "One Night in Fruitopia Episode 11.",
+      "durationSeconds": 82,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "0f2c294843a38b35eb6bccf997802fb4",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_one_night_in_fruitopia_012",
+      "showId": "show_demo_one_night_in_fruitopia",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "One Night in Fruitopia Episode 12.",
+      "durationSeconds": 74,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "5c508894913b17b8fbfb5c780068b6f2",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 12,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_001",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "Mad Durian: His Red Bride Episode 1.",
+      "durationSeconds": 48,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "8b24ba11828bd96919ae8b0940244bae",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_002",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "Mad Durian: His Red Bride Episode 2.",
+      "durationSeconds": 69,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "c7736c6421062f2a1302f9c2eca757bf",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_003",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "Mad Durian: His Red Bride Episode 3.",
+      "durationSeconds": 56,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "aaa220b6c24d787829e8a50815a85767",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_004",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "Mad Durian: His Red Bride Episode 4.",
+      "durationSeconds": 69,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a61c0cad99719149450d5071e929bab7",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_005",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "Mad Durian: His Red Bride Episode 5.",
+      "durationSeconds": 63,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "e388ecb21704d61b37ed2d409c8bd360",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_006",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "Mad Durian: His Red Bride Episode 6.",
+      "durationSeconds": 69,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "206f1432e2a931aaa919f2e743be977e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_007",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "Mad Durian: His Red Bride Episode 7.",
+      "durationSeconds": 67,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "d21c260b76116f393fd4232285c902a3",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_008",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "Mad Durian: His Red Bride Episode 8.",
+      "durationSeconds": 58,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "bb1714d593e7591c9b08f3f721fb3bd8",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_009",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "Mad Durian: His Red Bride Episode 9.",
+      "durationSeconds": 65,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "3bf490546464a8471e0ff903e0aaf510",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_010",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "Mad Durian: His Red Bride Episode 10.",
+      "durationSeconds": 59,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "bde87d0deb4c063be9de1428afbee623",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_011",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "Mad Durian: His Red Bride Episode 11.",
+      "durationSeconds": 75,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "5bf74fe0eeb1d075695fb891af8cee5f",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_mad_durian_his_red_bride_012",
+      "showId": "show_demo_mad_durian_his_red_bride",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "Mad Durian: His Red Bride Episode 12.",
+      "durationSeconds": 60,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "16b08fba28a0c8c7d878cf8fc4bfa797",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 12,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_001",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "The Eye of Betrayal Episode 1.",
+      "durationSeconds": 57,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "3251c30eae3ed76b323d2ff0c6ef7316",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_002",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "The Eye of Betrayal Episode 2.",
+      "durationSeconds": 47,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a2fa0124adfb836bfe53a7751ad0cd05",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_003",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "The Eye of Betrayal Episode 3.",
+      "durationSeconds": 45,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "44fe1315769ff801b0c37178e0ebd34a",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_004",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "The Eye of Betrayal Episode 4.",
+      "durationSeconds": 57,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "d4509c35a8109bad0be20a8b74424270",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_005",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "The Eye of Betrayal Episode 5.",
+      "durationSeconds": 60,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "1b0fd77c760c76ecb73cb73f994bc64b",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_006",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "The Eye of Betrayal Episode 6.",
+      "durationSeconds": 58,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "14225c4ed18ffa79d3e38216a553cce6",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_007",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "The Eye of Betrayal Episode 7.",
+      "durationSeconds": 57,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "4501b57a99f494c6bbbf5a376ae1fb97",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_008",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "The Eye of Betrayal Episode 8.",
+      "durationSeconds": 46,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "81946a7bc271c6b61861a980cfcabe07",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_009",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "The Eye of Betrayal Episode 9.",
+      "durationSeconds": 44,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "3f629c1ba19affbfec55307a692c36ac",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_010",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "The Eye of Betrayal Episode 10.",
+      "durationSeconds": 47,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "d7462e62174c63fefaa4fb55e7ba1822",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_011",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "The Eye of Betrayal Episode 11.",
+      "durationSeconds": 56,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "2785063f5c0c7415ea17a3622da223b4",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
+    },
+    {
+      "id": "ep_demo_the_eye_of_betrayal_012",
+      "showId": "show_demo_the_eye_of_betrayal",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "The Eye of Betrayal Episode 12.",
+      "durationSeconds": 59,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "2e0db87ea23d9716e8f94fb6a8d6129e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 12,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z"
     }
   ],
   "feeds": [
@@ -973,7 +2930,55 @@
         "ep_demo_harry_potter_ww2_009",
         "ep_demo_harry_potter_ww2_010",
         "ep_demo_harry_potter_ww2_011",
-        "ep_demo_harry_potter_ww2_012"
+        "ep_demo_harry_potter_ww2_012",
+        "ep_demo_double_shelf_life_marks_greed_001",
+        "ep_demo_double_shelf_life_marks_greed_002",
+        "ep_demo_double_shelf_life_marks_greed_003",
+        "ep_demo_double_shelf_life_marks_greed_004",
+        "ep_demo_double_shelf_life_marks_greed_005",
+        "ep_demo_double_shelf_life_marks_greed_006",
+        "ep_demo_double_shelf_life_marks_greed_007",
+        "ep_demo_double_shelf_life_marks_greed_008",
+        "ep_demo_double_shelf_life_marks_greed_009",
+        "ep_demo_double_shelf_life_marks_greed_010",
+        "ep_demo_double_shelf_life_marks_greed_011",
+        "ep_demo_double_shelf_life_marks_greed_012",
+        "ep_demo_one_night_in_fruitopia_001",
+        "ep_demo_one_night_in_fruitopia_002",
+        "ep_demo_one_night_in_fruitopia_003",
+        "ep_demo_one_night_in_fruitopia_004",
+        "ep_demo_one_night_in_fruitopia_005",
+        "ep_demo_one_night_in_fruitopia_006",
+        "ep_demo_one_night_in_fruitopia_007",
+        "ep_demo_one_night_in_fruitopia_008",
+        "ep_demo_one_night_in_fruitopia_009",
+        "ep_demo_one_night_in_fruitopia_010",
+        "ep_demo_one_night_in_fruitopia_011",
+        "ep_demo_one_night_in_fruitopia_012",
+        "ep_demo_mad_durian_his_red_bride_001",
+        "ep_demo_mad_durian_his_red_bride_002",
+        "ep_demo_mad_durian_his_red_bride_003",
+        "ep_demo_mad_durian_his_red_bride_004",
+        "ep_demo_mad_durian_his_red_bride_005",
+        "ep_demo_mad_durian_his_red_bride_006",
+        "ep_demo_mad_durian_his_red_bride_007",
+        "ep_demo_mad_durian_his_red_bride_008",
+        "ep_demo_mad_durian_his_red_bride_009",
+        "ep_demo_mad_durian_his_red_bride_010",
+        "ep_demo_mad_durian_his_red_bride_011",
+        "ep_demo_mad_durian_his_red_bride_012",
+        "ep_demo_the_eye_of_betrayal_001",
+        "ep_demo_the_eye_of_betrayal_002",
+        "ep_demo_the_eye_of_betrayal_003",
+        "ep_demo_the_eye_of_betrayal_004",
+        "ep_demo_the_eye_of_betrayal_005",
+        "ep_demo_the_eye_of_betrayal_006",
+        "ep_demo_the_eye_of_betrayal_007",
+        "ep_demo_the_eye_of_betrayal_008",
+        "ep_demo_the_eye_of_betrayal_009",
+        "ep_demo_the_eye_of_betrayal_010",
+        "ep_demo_the_eye_of_betrayal_011",
+        "ep_demo_the_eye_of_betrayal_012"
       ]
     }
   ]
