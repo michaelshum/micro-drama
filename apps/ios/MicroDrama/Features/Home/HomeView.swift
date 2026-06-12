@@ -178,10 +178,16 @@ final class HomeViewModel: ObservableObject {
 
     private let apiClient: APIClient
     private let progressStore: ShowEpisodeProgressStore
+    private let tasteOnboardingStore: TasteOnboardingStore
 
-    init(apiClient: APIClient = .shared, progressStore: ShowEpisodeProgressStore = .shared) {
+    init(
+        apiClient: APIClient = .shared,
+        progressStore: ShowEpisodeProgressStore = .shared,
+        tasteOnboardingStore: TasteOnboardingStore = .shared
+    ) {
         self.apiClient = apiClient
         self.progressStore = progressStore
+        self.tasteOnboardingStore = tasteOnboardingStore
     }
 
     func loadShows(forceRefresh: Bool = false) async {
@@ -222,6 +228,32 @@ final class HomeViewModel: ObservableObject {
             }
     }
 
+    func personalizedRecommendationSection() -> PersonalizedRecommendationSection? {
+        guard let profile = tasteOnboardingStore.profile else { return nil }
+
+        let continueWatchingShowIDs = Set(continueWatchingShows().map(\.id))
+        let showsByID = Dictionary(uniqueKeysWithValues: shows.map { ($0.id, $0) })
+        let recommendedShowIDs = orderedUniqueShowIDs([profile.matchedShowID] + profile.alternateShowIDs)
+        let recommendedShows = recommendedShowIDs.compactMap { showID -> Show? in
+            guard !continueWatchingShowIDs.contains(showID) else { return nil }
+            return showsByID[showID]
+        }
+
+        guard !recommendedShows.isEmpty else { return nil }
+
+        return PersonalizedRecommendationSection(
+            title: personalizedRecommendationTitle(for: profile, recommendedShows: recommendedShows),
+            shows: recommendedShows
+        )
+    }
+
+    func catalogShows(excluding personalizedSection: PersonalizedRecommendationSection?) -> [Show] {
+        guard let personalizedSection else { return shows }
+
+        let personalizedShowIDs = Set(personalizedSection.shows.map(\.id))
+        return shows.filter { !personalizedShowIDs.contains($0.id) }
+    }
+
     func lastWatchedEpisodeNumber(for showID: String) -> Int? {
         progressStore.lastWatchedEpisodeNumber(for: showID)
     }
@@ -229,6 +261,37 @@ final class HomeViewModel: ObservableObject {
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
     }
+
+    private func orderedUniqueShowIDs(_ showIDs: [String]) -> [String] {
+        var seenShowIDs: Set<String> = []
+        return showIDs.filter { showID in
+            seenShowIDs.insert(showID).inserted
+        }
+    }
+
+    private func personalizedRecommendationTitle(
+        for profile: TasteProfile,
+        recommendedShows: [Show]
+    ) -> String {
+        let recommendedShowIDs = Set(recommendedShows.map(\.id))
+        let selectedAnchors = TasteAnchor.allCases.filter { anchor in
+            profile.selectedAnchorIDs.contains(anchor.id)
+        }
+        let matchingAnchor = selectedAnchors.first { anchor in
+            anchor.preferredShowIDs.contains { recommendedShowIDs.contains($0) }
+        }
+
+        if let matchingAnchor {
+            return "Because you like \(matchingAnchor.title)"
+        }
+
+        return "Picked for You"
+    }
+}
+
+struct PersonalizedRecommendationSection {
+    let title: String
+    let shows: [Show]
 }
 
 private extension Error {
@@ -378,6 +441,8 @@ struct HomeView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 24) {
                             let continueWatchingShows = viewModel.continueWatchingShows()
+                            let personalizedSection = viewModel.personalizedRecommendationSection()
+                            let catalogShows = viewModel.catalogShows(excluding: personalizedSection)
 
                             if !continueWatchingShows.isEmpty {
                                 VStack(alignment: .leading, spacing: 12) {
@@ -406,13 +471,37 @@ struct HomeView: View {
                                 }
                             }
 
+                            if let personalizedSection {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text(personalizedSection.title)
+                                        .font(.headline)
+                                        .padding(.horizontal, 16)
+
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack(spacing: 12) {
+                                            ForEach(personalizedSection.shows) { show in
+                                                Button {
+                                                    Task {
+                                                        await viewModel.open(show)
+                                                    }
+                                                } label: {
+                                                    PersonalizedRecommendationCard(show: show)
+                                                }
+                                                .buttonStyle(.plain)
+                                            }
+                                        }
+                                        .padding(.horizontal, 16)
+                                    }
+                                }
+                            }
+
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("All Shows")
+                                Text(personalizedSection == nil ? "All Shows" : "More Shows")
                                     .font(.headline)
                                     .padding(.horizontal, 16)
 
                                 LazyVGrid(columns: showGridColumns, alignment: .leading, spacing: 16) {
-                                    ForEach(viewModel.shows) { show in
+                                    ForEach(catalogShows) { show in
                                         Button {
                                             Task {
                                                 await viewModel.open(show)
@@ -476,6 +565,28 @@ struct HomeView: View {
                 viewModel.errorMessage = nil
             }
         }
+    }
+}
+
+private struct PersonalizedRecommendationCard: View {
+    let show: Show
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            RemoteImage(url: show.posterUrl)
+                .frame(width: 120, height: 167)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+            Text(show.title)
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(.primary)
+                .lineLimit(2)
+                .lineSpacing(1)
+                .multilineTextAlignment(.leading)
+                .frame(width: 120, alignment: .leading)
+        }
+        .frame(width: 120, alignment: .leading)
     }
 }
 
