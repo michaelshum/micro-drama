@@ -146,6 +146,14 @@ textarea {
   font-size: 12px;
 }
 
+.show-rating {
+  display: block;
+  margin-top: 2px;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .workspace {
   overflow-y: auto;
   padding: 28px;

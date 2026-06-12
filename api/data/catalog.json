@@ -287,6 +287,7 @@
           "freshnessWindowDays": 14
         },
         "editorial": {
+          "qualityLabel": 3,
           "qualityScore": 0.7,
           "coldStartPriority": 5,
           "featuredBoost": 1
@@ -666,6 +667,7 @@
           "freshnessWindowDays": 14
         },
         "editorial": {
+          "qualityLabel": 3,
           "qualityScore": 0.7,
           "coldStartPriority": 5,
           "featuredBoost": 1
@@ -818,6 +820,7 @@
           "freshnessWindowDays": 14
         },
         "editorial": {
+          "qualityLabel": 2,
           "qualityScore": 0.7,
           "coldStartPriority": 5,
           "featuredBoost": 1
@@ -1316,28 +1319,150 @@
       "sortOrder": 12,
       "status": "published",
       "recommendation": {
-        "primaryGenre": "",
-        "secondaryGenres": [],
-        "microGenres": [],
-        "storySignals": [],
-        "storyDrivers": [],
-        "tropes": [],
-        "tone": [],
-        "emotionalFantasies": [],
-        "protagonistArchetypes": [],
-        "counterpartArchetypes": [],
-        "relationshipDynamics": [],
-        "conflictSetups": [],
-        "powerDynamics": [],
-        "payoffTypes": [],
-        "pacingPromises": [],
-        "endingPromises": [],
-        "setting": [],
-        "characterSystem": [],
-        "worldType": [],
-        "visualStyle": [],
+        "primaryGenre": "drama",
+        "secondaryGenres": [
+          "melodrama",
+          "workplace",
+          "soap-opera"
+        ],
+        "microGenres": [
+          "class-gap-romance",
+          "dark-romance",
+          "dangerous-ceo-romance",
+          "financial-betrayal"
+        ],
+        "storySignals": [
+          "fish-out-of-water",
+          "wealth-gap",
+          "secret-keeping",
+          "mystery-reveal",
+          "financial-exploitation",
+          "hidden-knowledge-advantage",
+          "evidence-gathering",
+          "business-rescue",
+          "luxury-life",
+          "power-imbalance",
+          "surveillance-control"
+        ],
+        "storyDrivers": [
+          "status-climbing",
+          "secret-keeping",
+          "mystery-reveal",
+          "power-struggle",
+          "wealth-gap",
+          "temptation",
+          "betrayal",
+          "survival-pressure"
+        ],
+        "tropes": [
+          "fish-out-of-water",
+          "power-imbalance",
+          "secret-affair",
+          "luxury-life",
+          "underdog",
+          "power-struggle",
+          "forbidden-love"
+        ],
+        "tone": [
+          "dramatic",
+          "tense",
+          "dark",
+          "suspenseful",
+          "sexy",
+          "romantic",
+          "glamorous"
+        ],
+        "emotionalFantasies": [
+          "status-transformation",
+          "luxury-escape",
+          "dangerous-desire",
+          "forbidden-desire",
+          "being-protected",
+          "public-vindication",
+          "survival-against-odds"
+        ],
+        "protagonistArchetypes": [
+          "ambitious-underdog",
+          "humiliated-outsider",
+          "survivor",
+          "romantic-underdog"
+        ],
+        "counterpartArchetypes": [
+          "secretly-soft-ceo",
+          "protective-alpha",
+          "possessive-ceo",
+          "villainous-family",
+          "elite-matriarch"
+        ],
+        "relationshipDynamics": [
+          "boss-subordinate",
+          "rich-poor-romance",
+          "protector-protected",
+          "forbidden-affair",
+          "betrayer-victim"
+        ],
+        "conflictSetups": [
+          "debt-pressure",
+          "class-humiliation",
+          "career-sabotage",
+          "affair-discovery",
+          "secret-debt",
+          "powerful-family-opposes",
+          "public-scandal"
+        ],
+        "powerDynamics": [
+          "status-gap",
+          "wealth-gap",
+          "boss-holds-power",
+          "family-controls-fate",
+          "outsider-gains-leverage",
+          "protector-has-power",
+          "hidden-knowledge-advantage"
+        ],
+        "payoffTypes": [
+          "evidence-confirmation",
+          "hidden-agenda-reveal",
+          "dramatic-rescue",
+          "status-reveal",
+          "wealth-reveal",
+          "romantic-claim",
+          "villain-exposed"
+        ],
+        "pacingPromises": [
+          "fast-hook",
+          "cliffhanger-heavy",
+          "mystery-box",
+          "escalates-every-episode",
+          "twist-heavy"
+        ],
+        "endingPromises": [
+          "open-ended"
+        ],
+        "setting": [
+          "workplace",
+          "luxury-world",
+          "city"
+        ],
+        "characterSystem": [
+          "fruit-characters",
+          "anthropomorphic-food"
+        ],
+        "worldType": [
+          "food-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "industrial-factory-interior",
+          "luxury-corporate-interior",
+          "corporate-romance-visuals",
+          "dark-luxury-interior",
+          "anthropomorphic-fruit",
+          "glossy-character-render",
+          "cinematic-melodrama"
+        ],
         "contentLineage": {
-          "type": ""
+          "type": "original"
         },
         "referenceSignals": [],
         "format": {
@@ -1660,7 +1785,7 @@
           "freshnessWindowDays": 14
         },
         "editorial": {
-          "qualityLabel": 4,
+          "qualityLabel": 3,
           "qualityScore": 0.7,
           "coldStartPriority": 5,
           "featuredBoost": 1

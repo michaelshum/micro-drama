@@ -25,7 +25,7 @@ const explanations = {
   audience: "Eligibility, language, and safety filters.",
   release: "Freshness controls for rows and cold-start rotation.",
   editorial: "Manual ranking controls while the catalog is small.",
-  qualityLabel: "Manual 1-5 quality label for quick editorial screening.",
+  qualityLabel: "Manual 1-5 quality label for quick editorial screening. Higher numbers are better.",
   similarShowIds: "Direct override for small catalog recommendations."
 };
 
@@ -963,8 +963,14 @@ function renderShowList() {
     node.querySelector(".show-thumb").src = show.posterUrl;
     node.querySelector(".show-title").textContent = show.title;
     node.querySelector(".show-meta").textContent = `${show.genre} / ${show.status} / ${show.stats.episodeCount} episodes`;
+    node.querySelector(".show-rating").textContent = formatManualRating(show);
     showList.appendChild(node);
   });
+}
+
+function formatManualRating(show) {
+  const rating = Number(show.recommendation?.editorial?.qualityLabel);
+  return Number.isFinite(rating) ? `Manual rating: ${rating}/5 (higher is better)` : "Manual rating: Not set";
 }
 
 function renderHeader() {
@@ -1384,7 +1390,7 @@ function renderForm() {
     createSection("Editorial", explanations.editorial, [
       createStaticSelectField({
         path: "editorial.qualityLabel",
-        label: "Quality",
+        label: "Quality (higher is better)",
         hint: explanations.qualityLabel,
         values: [
           { value: 1, label: "1" },

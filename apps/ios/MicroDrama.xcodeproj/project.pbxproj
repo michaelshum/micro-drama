@@ -17,6 +17,7 @@
 		0A0001082C00000100000001 /* RewardedEpisodeUnlockAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */; };
 		0A0001092C00000100000001 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 0A000B022C00000100000001 /* GoogleMobileAds */; };
 		0A00010A2C00000100000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A00020B2C00000100000001 /* Assets.xcassets */; };
+		0A00010B2C00000100000001 /* TasteOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020C2C00000100000001 /* TasteOnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		0A0002092C00000100000001 /* MicroDrama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MicroDrama.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardedEpisodeUnlockAd.swift; sourceTree = "<group>"; };
 		0A00020B2C00000100000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0A00020C2C00000100000001 /* TasteOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteOnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				0A0004102C00000100000001 /* Home */,
+				0A0004142C00000100000001 /* Onboarding */,
 				0A0004112C00000100000001 /* Player */,
 				0A0004122C00000100000001 /* Profile */,
 			);
@@ -156,6 +159,14 @@
 				0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */,
 			);
 			path = Ads;
+			sourceTree = "<group>";
+		};
+		0A0004142C00000100000001 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				0A00020C2C00000100000001 /* TasteOnboardingView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -241,6 +252,7 @@
 				0A0001062C00000100000001 /* EpisodePlayerView.swift in Sources */,
 				0A0001072C00000100000001 /* ProfileView.swift in Sources */,
 				0A0001082C00000100000001 /* RewardedEpisodeUnlockAd.swift in Sources */,
+				0A00010B2C00000100000001 /* TasteOnboardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

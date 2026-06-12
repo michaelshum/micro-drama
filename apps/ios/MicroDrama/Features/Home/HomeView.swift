@@ -7,6 +7,16 @@ struct RemoteImage: View {
     @State private var image: Image?
     @State private var didFail = false
 
+    static func prefetch(urls: [URL]) async {
+        await withTaskGroup(of: Void.self) { group in
+            for url in urls {
+                group.addTask {
+                    await prefetch(url: url)
+                }
+            }
+        }
+    }
+
     var body: some View {
         ZStack {
             Rectangle().fill(.quaternary)
@@ -61,6 +71,32 @@ struct RemoteImage: View {
             didFail = true
         }
     }
+
+    private static func prefetch(url: URL) async {
+        let cacheKey = url.imageCacheKey
+        if ImageMemoryCache.shared.hasImage(for: cacheKey) {
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200..<300).contains(httpResponse.statusCode),
+                  let uiImage = UIImage(data: data) else {
+                return
+            }
+
+            ImageMemoryCache.shared.insert(uiImage, for: cacheKey)
+            if let responseUrl = httpResponse.url {
+                ImageMemoryCache.shared.insert(uiImage, for: responseUrl.imageCacheKey)
+            }
+        } catch {
+            return
+        }
+    }
 }
 
 @MainActor
@@ -71,6 +107,10 @@ private final class ImageMemoryCache {
 
     func image(for key: String) -> Image? {
         cache[key].map(Image.init(uiImage:))
+    }
+
+    func hasImage(for key: String) -> Bool {
+        cache[key] != nil
     }
 
     func insert(_ image: UIImage, for key: String) {

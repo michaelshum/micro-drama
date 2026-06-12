@@ -4,19 +4,23 @@ import SwiftUI
 final class RootTabViewModel: ObservableObject {
     @Published var initialShowDetail: ShowDetail?
     @Published var isPreparingInitialExperience = true
+    @Published var isTasteOnboardingPresented = false
     var initialEpisodeID: String?
 
     private let apiClient: APIClient
     private let progressStore: ShowEpisodeProgressStore
+    private let tasteOnboardingStore: TasteOnboardingStore
     private var didAttemptInitialExperience = false
     private let recentResumeInterval: TimeInterval = 60 * 60
 
     init(
         apiClient: APIClient = .shared,
-        progressStore: ShowEpisodeProgressStore = .shared
+        progressStore: ShowEpisodeProgressStore = .shared,
+        tasteOnboardingStore: TasteOnboardingStore = .shared
     ) {
         self.apiClient = apiClient
         self.progressStore = progressStore
+        self.tasteOnboardingStore = tasteOnboardingStore
     }
 
     func openInitialExperienceIfNeeded() async {
@@ -38,15 +42,31 @@ final class RootTabViewModel: ObservableObject {
                 return
             }
 
-            let config = try await apiClient.fetchConfig()
-            guard let initialExperience = config.initialExperience,
-                  initialExperience.enabled else {
+            if let profile = tasteOnboardingStore.profile {
+                try await openStartupPlayer(
+                    showID: profile.matchedShowID,
+                    preferredEpisodeID: nil,
+                    allowsLockedPreferredEpisode: false
+                )
                 return
             }
 
+            isTasteOnboardingPresented = true
+        } catch {
+            return
+        }
+    }
+
+    func completeTasteOnboarding(_ result: TasteOnboardingResult) async {
+        tasteOnboardingStore.save(result)
+        isTasteOnboardingPresented = false
+        isPreparingInitialExperience = true
+        defer { isPreparingInitialExperience = false }
+
+        do {
             try await openStartupPlayer(
-                showID: initialExperience.showId,
-                preferredEpisodeID: initialExperience.episodeId,
+                showID: result.matchedShowID,
+                preferredEpisodeID: nil,
                 allowsLockedPreferredEpisode: false
             )
             if initialShowDetail != nil {
@@ -101,6 +121,12 @@ struct RootTabView: View {
         Group {
             if viewModel.shouldShowStartupSplash {
                 StartupSplashView()
+            } else if viewModel.isTasteOnboardingPresented {
+                TasteOnboardingView { result in
+                    Task {
+                        await viewModel.completeTasteOnboarding(result)
+                    }
+                }
             } else {
                 TabView {
                     HomeView()

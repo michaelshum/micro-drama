@@ -17,6 +17,8 @@ The admin reads and writes `api/data/catalog.json`. Each show's recommendation m
 
 Reusable field suggestions are stored in `api/data/recommendation-options.json`. Token fields can accept new values that are not already in the option bank; when a show is saved, those values are added to that field's suggestions. The Option Bank panel can also add or remove suggestions directly.
 
+Manual show quality ratings use a 1-5 scale where higher numbers are better.
+
 Episode playback uses the same Cloudflare Stream signing credentials as the API. Add these to `.env.local` at the repo root or `api/.env.local`:
 
 ```bash
