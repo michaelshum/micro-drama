@@ -2,6 +2,7 @@ const explanations = {
   primaryGenre: "Coarse first-pass similarity signal.",
   secondaryGenres: "Format and flavor adjacencies, not a repeat of primary genre.",
   microGenres: "Shelf-ready categories such as dating-competition or billionaire-romance.",
+  storySignals: "High-signal show-wide taste tags that cut across genre, trope, and story engine.",
   storyDrivers: "Plot engines such as partner-selection, elimination-pressure, or status-climbing.",
   tropes: "Repeatable story mechanics that drive taste similarity.",
   tone: "Mood matching for short-form recommendations.",
@@ -24,6 +25,7 @@ const explanations = {
   audience: "Eligibility, language, and safety filters.",
   release: "Freshness controls for rows and cold-start rotation.",
   editorial: "Manual ranking controls while the catalog is small.",
+  qualityLabel: "Manual 1-5 quality label for quick editorial screening.",
   similarShowIds: "Direct override for small catalog recommendations."
 };
 
@@ -31,6 +33,7 @@ const optionLabels = {
   primaryGenre: "Primary genre",
   secondaryGenres: "Secondary genres",
   microGenres: "Micro genres",
+  storySignals: "Story signals",
   storyDrivers: "Story drivers",
   tropes: "Tropes",
   tone: "Tone",
@@ -64,6 +67,7 @@ const optionLabels = {
 const visibleOptionFields = [
   "primaryGenre",
   "microGenres",
+  "storySignals",
   "emotionalFantasies",
   "protagonistArchetypes",
   "counterpartArchetypes",
@@ -85,6 +89,73 @@ const visibleOptionFields = [
 ];
 
 const optionBuckets = {
+  storySignals: {
+    "Billionaire / Luxury Romance": [
+      "billionaire-lover",
+      "wealth-gap",
+      "luxury-life",
+      "power-imbalance",
+      "business-rescue",
+      "forced-proximity"
+    ],
+    "Second-Chance / Recognition": [
+      "one-night-stand",
+      "morning-after-shock",
+      "anonymous-connection",
+      "lost-connection-reunion",
+      "recognition-hook",
+      "he-never-forgot-her",
+      "keepsake-token",
+      "protective-distance"
+    ],
+    "Emotional Wounds / Growth": [
+      "heartbreak",
+      "fish-out-of-water",
+      "personal-transformation",
+      "secret-keeping",
+      "mystery-reveal",
+      "romantic-pursuit"
+    ],
+    "Dating Game": [
+      "dating-game",
+      "partner-selection",
+      "recoupling",
+      "public-vote",
+      "elimination-pressure",
+      "confessional-interviews",
+      "new-arrival-disruption",
+      "love-triangle",
+      "couple-switching",
+      "jealousy-spiral",
+      "viewer-choice"
+    ],
+    "Marital Betrayal / Revenge": [
+      "betrayed-wife",
+      "cheating-husband",
+      "mistress-takedown",
+      "financial-exploitation",
+      "hidden-knowledge-advantage",
+      "evidence-gathering",
+      "revenge-trap",
+      "glow-up-transformation",
+      "wife-secretly-knows",
+      "villain-thinks-he-is-safe"
+    ],
+    "Parody / Remix": [
+      "parody-recognition",
+      "fashion-remix",
+      "prestige-show-remix",
+      "wizard-fantasy-remix"
+    ],
+    "Sports / Action / History": [
+      "sports-underdog",
+      "training-grind",
+      "team-competition",
+      "war-fantasy",
+      "alternate-history"
+    ],
+    "New / Uncategorized": []
+  },
   microGenres: {
     "Dating / Reality": [
       "dating-competition",
@@ -362,7 +433,59 @@ const optionBuckets = {
     "New / Uncategorized": []
   },
   activeAtoms: {
-    "Setup & World": [
+    "Dating Competition": [
+      "partner-selection",
+      "new-arrival-disruption",
+      "public-vote",
+      "forced-pairing",
+      "cliffhanger-pairing",
+      "elimination-pressure",
+      "social-strategy",
+      "love-triangle",
+      "jealousy",
+      "rivalry-escalation",
+      "romantic-spark",
+      "romantic-claim",
+      "chosen-over-rival",
+      "physical-confrontation"
+    ],
+    "Billionaire Romance / Second-Chance": [
+      "one-night-stand",
+      "morning-after-shock",
+      "anonymous-connection",
+      "keepsake-gift",
+      "reencounter-setup",
+      "reencounter-reveal",
+      "he-never-forgot-her",
+      "wealth-reveal",
+      "status-reveal",
+      "power-imbalance",
+      "forced-proximity",
+      "romantic-validation",
+      "mutual-longing",
+      "anonymous-caregiving",
+      "life-hardship",
+      "class-humiliation"
+    ],
+    "Mistress Revenge / Betrayed Wife": [
+      "lying",
+      "financial-exploitation",
+      "mistress-provocation",
+      "mistress-entitlement",
+      "affair-evidence-planted",
+      "betrayal-discovery",
+      "evidence-discovery",
+      "hidden-knowledge-advantage",
+      "covert-investigation",
+      "revenge-vow",
+      "trap-setting",
+      "controlled-confrontation-setup",
+      "cover-story-backfire",
+      "glow-up-transformation",
+      "self-reinvention",
+      "self-sacrifice"
+    ],
+    "Universal Setup": [
       "character-introduction",
       "personality-reveal",
       "relationship-seeding",
@@ -372,28 +495,19 @@ const optionBuckets = {
       "first-impression",
       "status-quo-introduction"
     ],
-    "Dating Game Mechanics": [
-      "partner-selection",
-      "new-arrival-disruption",
-      "public-vote",
-      "forced-pairing",
-      "cliffhanger-pairing",
-      "elimination-pressure",
-      "social-strategy"
-    ],
-    "Romance & Desire": [
+    "Universal Romance / Desire": [
       "crush-reveal",
       "romantic-spark",
       "romantic-validation",
+      "romantic-pursuit",
       "forbidden-desire",
       "temptation",
-      "romantic-pursuit",
       "love-chain",
       "unrequited-crush",
       "love-triangle",
       "chosen-over-rival"
     ],
-    "Conflict, Jealousy & Advice": [
+    "Universal Conflict / Emotion": [
       "jealousy",
       "rivalry-escalation",
       "betrayal",
@@ -403,22 +517,7 @@ const optionBuckets = {
       "friend-warning",
       "physical-confrontation"
     ],
-    "Betrayal & Affair": [
-      "lying",
-      "financial-exploitation",
-      "forbidden-desire",
-      "mistress-provocation",
-      "mistress-entitlement",
-      "cover-story-backfire"
-    ],
-    "Evidence & Investigation": [
-      "betrayal-discovery",
-      "evidence-discovery",
-      "affair-evidence-planted",
-      "covert-investigation",
-      "hidden-knowledge-advantage"
-    ],
-    "Reveal & Exposure": [
+    "Universal Reveal / Exposure": [
       "secret-reveal",
       "secret-identity-reveal",
       "cliffhanger-exposure",
@@ -427,17 +526,16 @@ const optionBuckets = {
       "status-reveal",
       "wealth-reveal"
     ],
-    "Revenge Setup & Traps": [
-      "revenge-vow",
-      "trap-setting",
-      "controlled-confrontation-setup"
-    ],
-    "Transformation": [
+    "Universal Consequence / Transformation": [
+      "pregnancy-discovery",
+      "pregnancy-loss",
+      "life-hardship",
       "self-sacrifice",
       "self-reinvention",
-      "glow-up-transformation"
+      "glow-up-transformation",
+      "class-humiliation"
     ],
-    "Power, Regret & Rescue": [
+    "Universal Power / Payoff": [
       "female-power-rise",
       "male-lead-regret",
       "groveling-apology",
@@ -449,7 +547,7 @@ const optionBuckets = {
   },
   emotionalBeats: {
     "Setup Feelings": ["orientation", "curiosity", "anticipation", "first-impression", "light-intrigue"],
-    "Romance": ["romantic-spark", "romantic-choice", "romantic-tension", "temptation-test"],
+    "Romance": ["romantic-spark", "romantic-choice", "romantic-tension", "temptation-test", "romantic-validation"],
     "Conflict": ["jealousy-spike", "rivalry-escalation", "heartbreak", "tearful-confession", "betrayal-reveal", "betrayal-discovery"],
     "Reveal & Payoff": ["secret-reveal", "public-vindication", "public-humiliation", "status-reversal", "revenge-payoff", "power-shift"],
     "Shock / Danger / Comedy": ["cliffhanger-shock", "danger-spike", "comic-relief"],
@@ -457,8 +555,9 @@ const optionBuckets = {
   },
   payoffTypes: {
     "Dating Game Reveals": ["chosen-at-recoupling", "date-choice-reveal", "rival-rejected", "romantic-claim", "public-romantic-claim"],
-    "Exposure & Justice": ["public-humiliation", "secret-identity-reveal", "villain-exposed", "revenge-win", "rival-defeated", "affair-confirmation", "evidence-confirmation", "mistress-takedown", "cheating-husband-punished"],
+    "Exposure & Justice": ["public-humiliation", "secret-identity-reveal", "hidden-agenda-reveal", "villain-exposed", "revenge-win", "rival-defeated", "affair-confirmation", "evidence-confirmation", "mistress-takedown", "cheating-husband-punished"],
     "Status & Achievement": ["status-reveal", "wealth-reveal", "career-win", "competition-win", "asset-recovery"],
+    "Recognition / Reunion": ["reencounter-reveal", "romantic-validation", "he-never-forgot-her"],
     "Transformation": ["glow-up-transformation"],
     "Romance / Family": ["groveling-apology", "proposal-or-commitment", "family-acceptance"],
     "Action": ["dramatic-rescue"],
@@ -480,6 +579,118 @@ const optionBuckets = {
   }
 };
 
+const episodeAtomStoryPalettes = {
+  "Dating Competition": [
+    "partner-selection",
+    "new-arrival-disruption",
+    "public-vote",
+    "forced-pairing",
+    "cliffhanger-pairing",
+    "elimination-pressure",
+    "love-triangle",
+    "jealousy",
+    "rivalry-escalation",
+    "romantic-spark",
+    "chosen-over-rival",
+    "physical-confrontation"
+  ],
+  "Billionaire Romance / Second-Chance": [
+    "one-night-stand",
+    "morning-after-shock",
+    "relationship-seeding",
+    "romantic-spark",
+    "anonymous-connection",
+    "keepsake-gift",
+    "reencounter-setup",
+    "reencounter-reveal",
+    "he-never-forgot-her",
+    "wealth-reveal",
+    "status-reveal",
+    "power-imbalance",
+    "forced-proximity",
+    "romantic-validation",
+    "mutual-longing",
+    "anonymous-caregiving",
+    "life-hardship",
+    "class-humiliation"
+  ],
+  "Mistress Revenge / Betrayed Wife": [
+    "lying",
+    "betrayal",
+    "heartbreak",
+    "financial-exploitation",
+    "mistress-provocation",
+    "mistress-entitlement",
+    "affair-evidence-planted",
+    "betrayal-discovery",
+    "evidence-discovery",
+    "hidden-knowledge-advantage",
+    "covert-investigation",
+    "revenge-vow",
+    "trap-setting",
+    "controlled-confrontation-setup",
+    "cover-story-backfire",
+    "glow-up-transformation",
+    "self-reinvention",
+    "self-sacrifice",
+    "female-power-rise"
+  ]
+};
+
+const episodeAtomStorySignals = {
+  "Dating Competition": [
+    "dating-game",
+    "partner-selection",
+    "recoupling",
+    "public-vote",
+    "elimination-pressure",
+    "confessional-interviews",
+    "new-arrival-disruption",
+    "love-triangle",
+    "couple-switching",
+    "jealousy-spiral",
+    "viewer-choice",
+    "dating-competition",
+    "dating-show",
+    "reality-competition",
+    "villa-romance"
+  ],
+  "Billionaire Romance / Second-Chance": [
+    "billionaire-lover",
+    "power-imbalance",
+    "luxury-life",
+    "fish-out-of-water",
+    "wealth-gap",
+    "recognition-hook",
+    "one-night-stand",
+    "morning-after-shock",
+    "anonymous-connection",
+    "keepsake-token",
+    "he-never-forgot-her",
+    "forced-proximity",
+    "protective-distance",
+    "business-rescue",
+    "lost-connection-reunion",
+    "billionaire-romance",
+    "class-gap-romance"
+  ],
+  "Mistress Revenge / Betrayed Wife": [
+    "betrayed-wife",
+    "cheating-husband",
+    "mistress-takedown",
+    "financial-exploitation",
+    "hidden-knowledge-advantage",
+    "evidence-gathering",
+    "revenge-trap",
+    "glow-up-transformation",
+    "wife-secretly-knows",
+    "villain-thinks-he-is-safe",
+    "financial-betrayal",
+    "revenge",
+    "glow-up"
+  ]
+};
+
 let shows = [];
 let episodesByShowId = {};
 let options = {};
@@ -497,7 +708,15 @@ const episodeTagger = document.querySelector("#episodeTagger");
 const form = document.querySelector("#recommendationForm");
 const optionBank = document.querySelector("#optionBank");
 const searchInput = document.querySelector("#searchInput");
+const statusFilterSelect = document.querySelector("#statusFilterSelect");
 const showButtonTemplate = document.querySelector("#showButtonTemplate");
+const allStatusesFilterValue = "all";
+const showStatusOptions = [
+  { value: "published", label: "Published" },
+  { value: "hidden", label: "Hidden" },
+  { value: "draft", label: "Draft" },
+  { value: "archived", label: "Archived" }
+];
 
 function getSelectedShow() {
   return shows.find((show) => show.id === selectedShowId);
@@ -536,6 +755,11 @@ function recommendationArray(path) {
 
 function setRecommendationValue(path, value) {
   setPath(getSelectedShow().recommendation, path, value);
+  setDirty(true);
+}
+
+function setShowValue(path, value) {
+  setPath(getSelectedShow(), path, value);
   setDirty(true);
 }
 
@@ -669,6 +893,21 @@ function createSelectField({ path, label, hint, optionKey, span = "" }) {
   `;
 }
 
+function createStaticSelectField({ path, label, hint, values, span = "" }) {
+  const id = `field-${path.replaceAll(".", "-")}`;
+  const className = ["field", span].filter(Boolean).join(" ");
+  const value = String(recommendationValue(path) || "");
+  return `
+    <div class="${className}">
+      <label for="${id}">${label}<span>${path}</span></label>
+      <select id="${id}" data-path="${path}">
+        ${values.map((option) => `<option value="${escapeHtml(option.value)}" ${String(option.value) === value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
+      </select>
+      <p class="hint">${hint}</p>
+    </div>
+  `;
+}
+
 function createTokenField({ path, label, hint, optionKey, span = "" }) {
   const id = `field-${path.replaceAll(".", "-")}`;
   const className = ["field token-field", span].filter(Boolean).join(" ");
@@ -707,9 +946,12 @@ function createSection(title, hint, fields) {
 
 function renderShowList() {
   const query = searchInput.value.trim().toLowerCase();
+  const statusFilter = statusFilterSelect?.value || allStatusesFilterValue;
   const filteredShows = shows.filter((show) => {
     const haystack = `${show.title} ${show.genre} ${show.description}`.toLowerCase();
-    return haystack.includes(query);
+    const matchesQuery = haystack.includes(query);
+    const matchesStatus = statusFilter === allStatusesFilterValue || show.status === statusFilter;
+    return matchesQuery && matchesStatus;
   });
 
   showList.innerHTML = "";
@@ -720,7 +962,7 @@ function renderShowList() {
     button.addEventListener("click", () => selectShow(show.id));
     node.querySelector(".show-thumb").src = show.posterUrl;
     node.querySelector(".show-title").textContent = show.title;
-    node.querySelector(".show-meta").textContent = `${show.genre} / ${show.stats.episodeCount} episodes`;
+    node.querySelector(".show-meta").textContent = `${show.genre} / ${show.status} / ${show.stats.episodeCount} episodes`;
     showList.appendChild(node);
   });
 }
@@ -735,6 +977,12 @@ function renderHeader() {
       <p>${show.stats.avgEpisodeSeconds}s avg / ${show.stats.freePreviewEpisodes} free previews / ${show.stats.lockedEpisodes} locked</p>
     </div>
     <div class="header-actions">
+      <label class="show-status-field" for="showStatusSelect">
+        Status
+        <select id="showStatusSelect" data-show-path="status">
+          ${showStatusOptions.map((option) => `<option value="${escapeHtml(option.value)}" ${option.value === show.status ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
+        </select>
+      </label>
       <button class="secondary-button" id="buildShowButton" type="button">Build Show From Episodes</button>
       <button class="secondary-button" id="suggestButton" type="button">Suggest Defaults</button>
       <span class="status" id="statusMessage">Saved</span>
@@ -743,6 +991,10 @@ function renderHeader() {
   `;
 
   document.querySelector("#saveButton").addEventListener("click", saveSelectedShow);
+  document.querySelector("#showStatusSelect").addEventListener("change", (event) => {
+    setShowValue("status", event.target.value);
+    renderShowList();
+  });
   document.querySelector("#suggestButton").addEventListener("click", applySuggestedDefaults);
   document.querySelector("#buildShowButton").addEventListener("click", buildShowFromEpisodes);
 }
@@ -1108,7 +1360,8 @@ function renderForm() {
       createSelectField({ path: "primaryGenre", label: "Primary genre", hint: explanations.primaryGenre, optionKey: "primaryGenre" }),
       createTokenField({ path: "microGenres", label: "Micro genres", hint: explanations.microGenres, optionKey: "microGenres", span: "is-full" })
     ]),
-    createSection("Taste Atoms", explanations.emotionalFantasies, [
+    createSection("Recommendation Profile", explanations.emotionalFantasies, [
+      createTokenField({ path: "storySignals", label: "Story signals", hint: explanations.storySignals, optionKey: "storySignals", span: "is-full" }),
       createTokenField({ path: "emotionalFantasies", label: "Emotional fantasies", hint: explanations.emotionalFantasies, optionKey: "emotionalFantasies" }),
       createTokenField({ path: "protagonistArchetypes", label: "Protagonist archetypes", hint: explanations.protagonistArchetypes, optionKey: "protagonistArchetypes" }),
       createTokenField({ path: "counterpartArchetypes", label: "Counterpart archetypes", hint: explanations.counterpartArchetypes, optionKey: "counterpartArchetypes" }),
@@ -1127,6 +1380,20 @@ function renderForm() {
       createTokenField({ path: "tone", label: "Tone", hint: explanations.tone, optionKey: "tone" }),
       createTokenField({ path: "visualStyle", label: "Visual style", hint: explanations.visualStyle, optionKey: "visualStyle" }),
       createSelectField({ path: "contentLineage.type", label: "Content lineage", hint: explanations.contentLineage, optionKey: "contentLineageType" })
+    ]),
+    createSection("Editorial", explanations.editorial, [
+      createStaticSelectField({
+        path: "editorial.qualityLabel",
+        label: "Quality",
+        hint: explanations.qualityLabel,
+        values: [
+          { value: 1, label: "1" },
+          { value: 2, label: "2" },
+          { value: 3, label: "3" },
+          { value: 4, label: "4" },
+          { value: 5, label: "5" }
+        ]
+      })
     ])
   ].join("");
 
@@ -1205,7 +1472,7 @@ function attachTokenField(field, { getValues, setValues, markOptionsDirty }) {
       .filter((option) => !values.includes(option))
       .filter((option) => !query || option.toLowerCase().includes(query) || optionDisplayLabel(option).toLowerCase().includes(query));
 
-    suggestions.innerHTML = groupedSuggestionsHtml(optionKey, matches);
+    suggestions.innerHTML = groupedSuggestionsHtml(optionKey, matches, query);
     suggestions.querySelectorAll("[data-suggestion]").forEach((button) => {
       button.addEventListener("click", () => addValue(button.dataset.suggestion));
     });
@@ -1228,7 +1495,7 @@ function attachTokenField(field, { getValues, setValues, markOptionsDirty }) {
   renderSuggestions();
 }
 
-function groupedSuggestionsHtml(optionKey, matches) {
+function groupedSuggestionsHtml(optionKey, matches, query = "") {
   const buckets = optionBuckets[optionKey];
   if (!buckets) {
     return matches.slice(0, 12).map(suggestionButtonHtml).join("");
@@ -1236,10 +1503,18 @@ function groupedSuggestionsHtml(optionKey, matches) {
 
   const matchedSet = new Set(matches);
   const used = new Set();
-  const groups = Object.entries(buckets).map(([bucket, bucketOptions]) => {
+  const groups = [];
+  if (optionKey === "activeAtoms") {
+    const recommendedMatches = getRecommendedEpisodeAtoms()
+      .filter((option) => matchedSet.has(option));
+    recommendedMatches.forEach((option) => used.add(option));
+    groups.push(["Recommended for This Show", recommendedMatches]);
+  }
+
+  Object.entries(buckets).forEach(([bucket, bucketOptions]) => {
     const bucketMatches = bucketOptions.filter((option) => matchedSet.has(option));
     bucketMatches.forEach((option) => used.add(option));
-    return [bucket, bucketMatches];
+    groups.push([bucket, bucketMatches]);
   });
   const uncategorized = matches.filter((option) => !used.has(option));
   const mergedGroups = groups.map(([bucket, bucketMatches]) => [
@@ -1258,6 +1533,27 @@ function groupedSuggestionsHtml(optionKey, matches) {
       </div>
     `)
     .join("");
+}
+
+function getRecommendedEpisodeAtoms() {
+  return normalizeValues(getActiveEpisodeStoryTypes().flatMap((storyType) => episodeAtomStoryPalettes[storyType] || []));
+}
+
+function getActiveEpisodeStoryTypes() {
+  const show = getSelectedShow();
+  const recommendation = show?.recommendation || {};
+  const signals = new Set([
+    ...(recommendation.storySignals || []),
+    ...(recommendation.microGenres || []),
+    ...(recommendation.relationshipDynamics || []),
+    ...(recommendation.conflictSetups || []),
+    ...(recommendation.powerDynamics || [])
+  ]);
+  const activeStoryTypes = Object.entries(episodeAtomStorySignals)
+    .filter(([, storySignals]) => storySignals.some((signal) => signals.has(signal)))
+    .map(([storyType]) => storyType);
+
+  return activeStoryTypes;
 }
 
 function suggestionButtonHtml(option) {
@@ -1490,7 +1786,12 @@ async function saveSelectedShow() {
       headers: {
         "content-type": "application/json"
       },
-      body: JSON.stringify({ recommendation: readFormRecommendation() })
+      body: JSON.stringify({
+        show: {
+          status: show.status
+        },
+        recommendation: readFormRecommendation()
+      })
     });
 
     if (!response.ok) {
@@ -1616,6 +1917,7 @@ async function loadInitialData() {
 }
 
 searchInput.addEventListener("input", renderShowList);
+statusFilterSelect?.addEventListener("change", renderShowList);
 window.addEventListener("beforeunload", (event) => {
   if (!dirty && !episodeDirty && !optionsDirty) {
     return;

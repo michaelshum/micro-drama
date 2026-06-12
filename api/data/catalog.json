@@ -29,6 +29,20 @@
           "dating-competition",
           "dating-show"
         ],
+        "storySignals": [
+          "dating-game",
+          "partner-selection",
+          "recoupling",
+          "public-vote",
+          "elimination-pressure",
+          "confessional-interviews",
+          "new-arrival-disruption",
+          "love-triangle",
+          "couple-switching",
+          "jealousy-spiral",
+          "viewer-choice",
+          "romantic-pursuit"
+        ],
         "storyDrivers": [
           "romantic-pursuit",
           "partner-selection",
@@ -57,7 +71,9 @@
           "romantic-validation",
           "chosen-over-rival"
         ],
-        "protagonistArchetypes": [],
+        "protagonistArchetypes": [
+          "flirty-contestant"
+        ],
         "counterpartArchetypes": [],
         "relationshipDynamics": [
           "love-triangle",
@@ -110,7 +126,11 @@
           "glossy-toy-render",
           "pastel-candycore",
           "bright-resort",
-          "romance-reality-style"
+          "romance-reality-style",
+          "tropical-poolside",
+          "dating-show-glam",
+          "pastel-resort-glam",
+          "candy-character-design"
         ],
         "contentLineage": {
           "type": "parody"
@@ -134,6 +154,7 @@
           "freshnessWindowDays": 14
         },
         "editorial": {
+          "qualityLabel": 4,
           "qualityScore": 0.7,
           "coldStartPriority": 5,
           "featuredBoost": 1
@@ -158,6 +179,19 @@
           "dating-show",
           "villa-romance",
           "reality-competition"
+        ],
+        "storySignals": [
+          "dating-game",
+          "partner-selection",
+          "recoupling",
+          "public-vote",
+          "elimination-pressure",
+          "new-arrival-disruption",
+          "love-triangle",
+          "couple-switching",
+          "jealousy-spiral",
+          "viewer-choice",
+          "romantic-pursuit"
         ],
         "storyDrivers": [],
         "tropes": [],
@@ -224,10 +258,14 @@
         "visualStyle": [
           "ai-generated",
           "3d-animated",
+          "cartoon-3d",
           "glossy-toy-render",
           "bright-resort",
+          "tropical-poolside",
+          "dating-show-glam",
           "cartoon-action",
-          "exaggerated-expressions"
+          "exaggerated-expressions",
+          "anthropomorphic-fruit"
         ],
         "contentLineage": {
           "type": "parody"
@@ -264,7 +302,60 @@
       "posterUrl": "https://videodelivery.net/a308768795ab4ff07ec52185b60260f0/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/a308768795ab4ff07ec52185b60260f0/thumbnails/thumbnail.jpg",
       "sortOrder": 3,
-      "status": "published"
+      "status": "hidden",
+      "recommendation": {
+        "primaryGenre": "",
+        "secondaryGenres": [],
+        "microGenres": [],
+        "storySignals": [
+          "sports-underdog",
+          "training-grind",
+          "team-competition",
+          "recognition-hook"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [],
+        "emotionalFantasies": [],
+        "protagonistArchetypes": [],
+        "counterpartArchetypes": [],
+        "relationshipDynamics": [],
+        "conflictSetups": [],
+        "powerDynamics": [],
+        "payoffTypes": [],
+        "pacingPromises": [],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [],
+        "worldType": [],
+        "visualStyle": [],
+        "contentLineage": {
+          "type": ""
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-05-25T04:38:22.516312Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_balenciaga_harry_potter",
@@ -274,7 +365,60 @@
       "posterUrl": "https://videodelivery.net/7b9d035dac386338bc31bee82aff3a64/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/7b9d035dac386338bc31bee82aff3a64/thumbnails/thumbnail.jpg",
       "sortOrder": 4,
-      "status": "published"
+      "status": "hidden",
+      "recommendation": {
+        "primaryGenre": "",
+        "secondaryGenres": [],
+        "microGenres": [],
+        "storySignals": [
+          "parody-recognition",
+          "fashion-remix",
+          "wizard-fantasy-remix",
+          "luxury-life"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [],
+        "emotionalFantasies": [],
+        "protagonistArchetypes": [],
+        "counterpartArchetypes": [],
+        "relationshipDynamics": [],
+        "conflictSetups": [],
+        "powerDynamics": [],
+        "payoffTypes": [],
+        "pacingPromises": [],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [],
+        "worldType": [],
+        "visualStyle": [],
+        "contentLineage": {
+          "type": ""
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-05-26T20:12:27.382335Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_breaking_bad_balenciaga",
@@ -284,7 +428,60 @@
       "posterUrl": "https://videodelivery.net/912924bed0c75900a5d804611f0bb07f/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/912924bed0c75900a5d804611f0bb07f/thumbnails/thumbnail.jpg",
       "sortOrder": 5,
-      "status": "published"
+      "status": "hidden",
+      "recommendation": {
+        "primaryGenre": "",
+        "secondaryGenres": [],
+        "microGenres": [],
+        "storySignals": [
+          "parody-recognition",
+          "fashion-remix",
+          "prestige-show-remix",
+          "luxury-life"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [],
+        "emotionalFantasies": [],
+        "protagonistArchetypes": [],
+        "counterpartArchetypes": [],
+        "relationshipDynamics": [],
+        "conflictSetups": [],
+        "powerDynamics": [],
+        "payoffTypes": [],
+        "pacingPromises": [],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [],
+        "worldType": [],
+        "visualStyle": [],
+        "contentLineage": {
+          "type": ""
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-05-26T20:26:38.692392Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_harry_potter_ww2",
@@ -294,7 +491,60 @@
       "posterUrl": "https://videodelivery.net/bceb81b78fb45904c97751e19c70d56c/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/bceb81b78fb45904c97751e19c70d56c/thumbnails/thumbnail.jpg",
       "sortOrder": 6,
-      "status": "published"
+      "status": "hidden",
+      "recommendation": {
+        "primaryGenre": "",
+        "secondaryGenres": [],
+        "microGenres": [],
+        "storySignals": [
+          "parody-recognition",
+          "wizard-fantasy-remix",
+          "war-fantasy",
+          "alternate-history"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [],
+        "emotionalFantasies": [],
+        "protagonistArchetypes": [],
+        "counterpartArchetypes": [],
+        "relationshipDynamics": [],
+        "conflictSetups": [],
+        "powerDynamics": [],
+        "payoffTypes": [],
+        "pacingPromises": [],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [],
+        "worldType": [],
+        "visualStyle": [],
+        "contentLineage": {
+          "type": ""
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-05-26T19:46:26.148814Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_double_shelf_life_marks_greed",
@@ -316,15 +566,30 @@
           "revenge",
           "glow-up"
         ],
+        "storySignals": [
+          "betrayed-wife",
+          "cheating-husband",
+          "mistress-takedown",
+          "financial-exploitation",
+          "hidden-knowledge-advantage",
+          "evidence-gathering",
+          "revenge-trap",
+          "glow-up-transformation",
+          "wife-secretly-knows",
+          "villain-thinks-he-is-safe",
+          "heartbreak",
+          "personal-transformation"
+        ],
         "storyDrivers": [],
         "tropes": [],
-        "tone": [],
+        "tone": [
+          "dramatic",
+          "dark",
+          "melodramatic",
+          "suspenseful"
+        ],
         "emotionalFantasies": [
-          "forbidden-desire",
-          "betrayed-wife",
-          "revenge",
-          "exploited-woman-takes-control",
-          "mistress-humiliation"
+          "forbidden-desire"
         ],
         "protagonistArchetypes": [
           "betrayed-spouse",
@@ -337,35 +602,16 @@
           "financial-abuser",
           "smug-side-piece"
         ],
-        "relationshipDynamics": [
-          "marital-betrayal",
-          "husband-mistress-affair",
-          "wife-secretly-knows",
-          "mistress-vs-wife"
-        ],
-        "conflictSetups": [
-          "affair-discovery",
-          "stolen-marital-assets",
-          "secret-debt",
-          "heirloom-violation"
-        ],
+        "relationshipDynamics": [],
+        "conflictSetups": [],
         "powerDynamics": [
           "female-power-rise",
-          "hidden-knowledge-advantage",
-          "wife-gains-leverage",
-          "villain-thinks-he-is-safe",
-          "mistress-overplays-hand"
+          "hidden-knowledge-advantage"
         ],
         "payoffTypes": [
           "evidence-confirmation",
           "affair-confirmation",
-          "glow-up-transformation",
-          "public-humiliation",
-          "revenge-win",
-          "villain-exposed",
-          "mistress-takedown",
-          "asset-recovery",
-          "cheating-husband-punished"
+          "glow-up-transformation"
         ],
         "pacingPromises": [
           "escalation",
@@ -373,18 +619,35 @@
           "setup-heavy",
           "slow-build",
           "payoff-episode",
-          "early-betrayal",
-          "fast-hook",
-          "cliffhanger-heavy",
-          "escalates-every-episode"
+          "early-betrayal"
         ],
-        "endingPromises": [],
+        "endingPromises": [
+          "villain-punished",
+          "revenge-over-romance"
+        ],
         "setting": [],
-        "characterSystem": [],
-        "worldType": [],
-        "visualStyle": [],
+        "characterSystem": [
+          "fruit-characters",
+          "anthropomorphic-food"
+        ],
+        "worldType": [
+          "food-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "cartoon-3d",
+          "glossy-character-render",
+          "glossy-render",
+          "cinematic-melodrama",
+          "soft-realistic-lighting",
+          "warm-dramatic-lighting",
+          "domestic-interior",
+          "domestic-melodrama",
+          "anthropomorphic-fruit"
+        ],
         "contentLineage": {
-          "type": ""
+          "type": "original"
         },
         "referenceSignals": [],
         "format": {
@@ -418,7 +681,149 @@
       "posterUrl": "https://videodelivery.net/78d277a62e50f46ac02546ee2f63a01f/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/78d277a62e50f46ac02546ee2f63a01f/thumbnails/thumbnail.jpg",
       "sortOrder": 8,
-      "status": "published"
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "romance",
+        "secondaryGenres": [
+          "melodrama",
+          "soap-opera",
+          "workplace"
+        ],
+        "microGenres": [
+          "billionaire-romance",
+          "class-gap-romance"
+        ],
+        "storySignals": [
+          "billionaire-lover",
+          "power-imbalance",
+          "luxury-life",
+          "heartbreak",
+          "fish-out-of-water",
+          "romantic-pursuit",
+          "wealth-gap",
+          "secret-keeping",
+          "mystery-reveal",
+          "personal-transformation",
+          "recognition-hook",
+          "one-night-stand",
+          "morning-after-shock",
+          "anonymous-connection",
+          "keepsake-token",
+          "he-never-forgot-her",
+          "forced-proximity",
+          "protective-distance",
+          "business-rescue",
+          "lost-connection-reunion"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [
+          "romantic",
+          "melodramatic",
+          "heartfelt",
+          "tense",
+          "glamorous",
+          "suspenseful"
+        ],
+        "emotionalFantasies": [
+          "romantic-validation",
+          "second-chance-healing",
+          "being-protected",
+          "luxury-escape",
+          "beautiful-life-upgrade"
+        ],
+        "protagonistArchetypes": [
+          "romantic-underdog",
+          "survivor",
+          "ambitious-underdog"
+        ],
+        "counterpartArchetypes": [
+          "cold-billionaire",
+          "secretly-soft-ceo",
+          "protective-alpha"
+        ],
+        "relationshipDynamics": [
+          "second-chance",
+          "rich-poor-romance",
+          "boss-subordinate",
+          "protector-protected"
+        ],
+        "conflictSetups": [
+          "class-humiliation",
+          "debt-pressure"
+        ],
+        "powerDynamics": [
+          "wealth-gap",
+          "status-gap",
+          "boss-holds-power",
+          "protector-has-power"
+        ],
+        "payoffTypes": [
+          "status-reveal",
+          "wealth-reveal",
+          "reencounter-reveal",
+          "romantic-validation",
+          "he-never-forgot-her"
+        ],
+        "pacingPromises": [
+          "fast-hook",
+          "quick-romantic-spark",
+          "cliffhanger-heavy",
+          "slow-burn",
+          "mystery-box"
+        ],
+        "endingPromises": [],
+        "setting": [
+          "luxury-world",
+          "workplace",
+          "city"
+        ],
+        "characterSystem": [
+          "fruit-characters",
+          "anthropomorphic-food"
+        ],
+        "worldType": [
+          "food-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "cartoon-3d",
+          "glossy-character-render",
+          "glossy-render",
+          "cinematic-melodrama",
+          "soft-realistic-lighting",
+          "luxury-interior",
+          "luxury-corporate-interior",
+          "corporate-romance-visuals",
+          "anthropomorphic-fruit"
+        ],
+        "contentLineage": {
+          "type": "original"
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-10T01:24:53.000Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_mad_durian_his_red_bride",
@@ -428,7 +833,151 @@
       "posterUrl": "https://videodelivery.net/8b24ba11828bd96919ae8b0940244bae/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/8b24ba11828bd96919ae8b0940244bae/thumbnails/thumbnail.jpg",
       "sortOrder": 9,
-      "status": "published"
+      "status": "archived",
+      "recommendation": {
+        "primaryGenre": "romance",
+        "secondaryGenres": [],
+        "microGenres": [
+          "billionaire-romance",
+          "class-gap-romance",
+          "dark-romance",
+          "captive-romance",
+          "dangerous-ceo-romance",
+          "captor-protector"
+        ],
+        "storySignals": [
+          "billionaire-lover",
+          "power-imbalance",
+          "luxury-life",
+          "romantic-pursuit",
+          "wealth-gap",
+          "mystery-reveal",
+          "protective-distance",
+          "captivity-romance",
+          "dangerous-captor",
+          "captor-becomes-protector",
+          "replacement-lover-wound",
+          "withheld-past",
+          "loyalty-test"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [
+          "dark",
+          "tense",
+          "melodramatic",
+          "suspenseful",
+          "dramatic",
+          "romantic"
+        ],
+        "emotionalFantasies": [
+          "dangerous-desire",
+          "being-protected",
+          "power-fantasy",
+          "second-chance-healing",
+          "secret-power-reveal",
+          "dangerous-man-softens",
+          "protected-by-captor",
+          "survive-the-monster"
+        ],
+        "protagonistArchetypes": [
+          "strong-heroine",
+          "survivor",
+          "reluctant-hero",
+          "defiant-captive",
+          "wounded-heroine",
+          "trapped-bride"
+        ],
+        "counterpartArchetypes": [
+          "cold-billionaire",
+          "protective-alpha",
+          "toxic-heartthrob",
+          "secretly-soft-ceo",
+          "dangerous-captor",
+          "possessive-ceo",
+          "wounded-monster"
+        ],
+        "relationshipDynamics": [
+          "captor-captive",
+          "protector-protected",
+          "captor-to-protector",
+          "replacement-bride",
+          "dark-power-romance"
+        ],
+        "conflictSetups": [
+          "forced-captivity",
+          "dead-fiancee-shadow",
+          "replacement-bride"
+        ],
+        "powerDynamics": [
+          "female-power-rise",
+          "power-swaps-midstory",
+          "protector-has-power",
+          "hidden-knowledge-advantage"
+        ],
+        "payoffTypes": [
+          "dramatic-rescue",
+          "romantic-validation"
+        ],
+        "pacingPromises": [
+          "escalation",
+          "cliffhanger-ending",
+          "twist-heavy",
+          "fast-hook",
+          "slow-build",
+          "setup-heavy",
+          "escalates-every-episode"
+        ],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [
+          "fruit-characters",
+          "anthropomorphic-food"
+        ],
+        "worldType": [
+          "food-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "cartoon-3d",
+          "glossy-character-render",
+          "glossy-render",
+          "exaggerated-expressions",
+          "cinematic-melodrama",
+          "dark-luxury-interior",
+          "neo-noir-lighting",
+          "dark-romance-visuals",
+          "moody",
+          "anthropomorphic-fruit"
+        ],
+        "contentLineage": {
+          "type": "original"
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-10T01:24:53.000Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     },
     {
       "id": "show_demo_the_eye_of_betrayal",
@@ -438,7 +987,686 @@
       "posterUrl": "https://videodelivery.net/3251c30eae3ed76b323d2ff0c6ef7316/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/3251c30eae3ed76b323d2ff0c6ef7316/thumbnails/thumbnail.jpg",
       "sortOrder": 10,
-      "status": "published"
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "thriller",
+        "secondaryGenres": [],
+        "microGenres": [
+          "cheating-husband",
+          "mistress-takedown",
+          "financial-betrayal",
+          "revenge",
+          "murder-frame-mystery",
+          "fake-blindness",
+          "supernatural",
+          "ghost-clue",
+          "mystery"
+        ],
+        "storySignals": [
+          "heartbreak",
+          "secret-keeping",
+          "mystery-reveal",
+          "personal-transformation",
+          "hidden-knowledge-advantage",
+          "villain-thinks-he-is-safe",
+          "cheating-husband",
+          "mistress-takedown",
+          "fake-blindness",
+          "murder-frame-plot",
+          "ghost-warning",
+          "surveillance-control",
+          "hidden-clue-hunt"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [
+          "dark",
+          "tense",
+          "suspenseful",
+          "melodramatic",
+          "dramatic"
+        ],
+        "emotionalFantasies": [
+          "forbidden-desire",
+          "justice-served",
+          "public-vindication",
+          "revenge",
+          "exploited-woman-takes-control",
+          "survival-against-odds",
+          "secret-power-reveal"
+        ],
+        "protagonistArchetypes": [
+          "survivor",
+          "strong-heroine",
+          "strategic-revenge-heroine",
+          "wrongfully-framed-heroine"
+        ],
+        "counterpartArchetypes": [
+          "cheating-husband",
+          "gold-digging-mistress",
+          "financial-abuser",
+          "smug-side-piece",
+          "murderous-husband",
+          "conspiring-stepsister"
+        ],
+        "relationshipDynamics": [
+          "marital-betrayal",
+          "husband-mistress-affair",
+          "wife-secretly-knows",
+          "betrayer-victim"
+        ],
+        "conflictSetups": [
+          "cheating-partner",
+          "affair-discovery",
+          "stolen-marital-assets",
+          "wrongfully-accused",
+          "murder-frame-plot",
+          "fake-blindness-survival",
+          "ghost-warning"
+        ],
+        "powerDynamics": [
+          "hidden-knowledge-advantage",
+          "villain-thinks-he-is-safe",
+          "wife-gains-leverage",
+          "mistress-overplays-hand",
+          "power-swaps-midstory"
+        ],
+        "payoffTypes": [
+          "evidence-confirmation",
+          "villain-exposed",
+          "revenge-win",
+          "mistress-takedown",
+          "cheating-husband-punished",
+          "asset-recovery"
+        ],
+        "pacingPromises": [
+          "escalation",
+          "cliffhanger-ending",
+          "slow-build",
+          "twist-heavy",
+          "early-betrayal",
+          "fast-hook",
+          "mystery-box"
+        ],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [
+          "fruit-characters",
+          "anthropomorphic-food"
+        ],
+        "worldType": [
+          "food-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "cartoon-3d",
+          "glossy-character-render",
+          "glossy-render",
+          "cinematic-melodrama",
+          "moody",
+          "dark-luxury-interior",
+          "neo-noir-lighting",
+          "dark-romance-visuals",
+          "supernatural-thriller-visuals",
+          "exaggerated-expressions",
+          "anthropomorphic-fruit"
+        ],
+        "contentLineage": {
+          "type": "original"
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-10T01:24:53.000Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
+    },
+    {
+      "id": "show_demo_i_married_my_exs_mafia_boss",
+      "title": "I Married My Ex's Mafia Boss",
+      "description": "I Married My Ex's Mafia Boss micro-drama told in short vertical episodes.",
+      "genre": "Romance",
+      "posterUrl": "https://videodelivery.net/5503db73496e7a637b8804bfee459691/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/5503db73496e7a637b8804bfee459691/thumbnails/thumbnail.jpg",
+      "sortOrder": 11,
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "romance",
+        "secondaryGenres": [],
+        "microGenres": [
+          "class-gap-romance",
+          "revenge",
+          "mafia-romance",
+          "revenge-marriage",
+          "ex-boyfriend-regret"
+        ],
+        "storySignals": [
+          "heartbreak",
+          "romantic-pursuit",
+          "wealth-gap",
+          "power-imbalance",
+          "betrayed-wife",
+          "villain-thinks-he-is-safe",
+          "revenge-marriage-offer",
+          "fake-fiancee-reveal",
+          "public-class-humiliation",
+          "elite-family-rejection",
+          "ex-regret-setup",
+          "mafia-protection",
+          "marry-higher-status-man"
+        ],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [
+          "dramatic",
+          "melodramatic",
+          "glamorous",
+          "tense",
+          "romantic",
+          "vengeful"
+        ],
+        "emotionalFantasies": [
+          "public-vindication",
+          "revenge",
+          "humiliation-reversal",
+          "status-transformation",
+          "power-fantasy",
+          "beautiful-life-upgrade",
+          "make-them-beg",
+          "marry-above-your-ex"
+        ],
+        "protagonistArchetypes": [
+          "strong-heroine",
+          "romantic-underdog",
+          "ambitious-underdog",
+          "discarded-girlfriend",
+          "humiliated-outsider",
+          "revenge-bride"
+        ],
+        "counterpartArchetypes": [
+          "cold-billionaire",
+          "protective-alpha",
+          "crime-boss",
+          "regretful-ex",
+          "elite-mean-girl",
+          "villainous-family",
+          "mafia-boss",
+          "status-climbing-ex",
+          "cruel-fiancee",
+          "elite-matriarch"
+        ],
+        "relationshipDynamics": [
+          "rich-poor-romance",
+          "fake-marriage",
+          "contract-relationship",
+          "protector-protected",
+          "betrayer-victim",
+          "revenge-marriage"
+        ],
+        "conflictSetups": [
+          "class-humiliation",
+          "cheating-partner",
+          "public-scandal",
+          "powerful-family-opposes",
+          "elite-family-rejection",
+          "revenge-marriage-offer"
+        ],
+        "powerDynamics": [
+          "wealth-gap",
+          "status-gap",
+          "outsider-gains-leverage",
+          "protector-has-power",
+          "public-status-reversal",
+          "heroine-marries-up"
+        ],
+        "payoffTypes": [
+          "public-humiliation",
+          "proposal-or-commitment",
+          "status-reveal",
+          "villain-exposed",
+          "revenge-marriage-reveal"
+        ],
+        "pacingPromises": [
+          "fast-hook",
+          "early-betrayal",
+          "early-revenge",
+          "cliffhanger-heavy",
+          "escalates-every-episode",
+          "constant-reversals"
+        ],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [
+          "fruit-characters",
+          "anthropomorphic-food"
+        ],
+        "worldType": [
+          "food-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "3d-animated",
+          "cartoon-3d",
+          "glossy-character-render",
+          "glossy-render",
+          "soft-realistic-lighting",
+          "warm-dramatic-lighting",
+          "cinematic-melodrama",
+          "exaggerated-expressions",
+          "storybook-melodrama",
+          "theatrical-interior",
+          "costume-forward",
+          "warm-stage-lighting",
+          "gothic-romance-interior",
+          "cozy-cafe-interior"
+        ],
+        "contentLineage": {
+          "type": ""
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-11T00:32:54.000Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
+    },
+    {
+      "id": "show_demo_secrets_in_the_juice",
+      "title": "Secrets in the Juice",
+      "description": "Secrets in the Juice micro-drama told in short vertical episodes.",
+      "genre": "Drama",
+      "posterUrl": "https://videodelivery.net/738378718095ef309071f717721f7db7/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/738378718095ef309071f717721f7db7/thumbnails/thumbnail.jpg",
+      "sortOrder": 12,
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "",
+        "secondaryGenres": [],
+        "microGenres": [],
+        "storySignals": [],
+        "storyDrivers": [],
+        "tropes": [],
+        "tone": [],
+        "emotionalFantasies": [],
+        "protagonistArchetypes": [],
+        "counterpartArchetypes": [],
+        "relationshipDynamics": [],
+        "conflictSetups": [],
+        "powerDynamics": [],
+        "payoffTypes": [],
+        "pacingPromises": [],
+        "endingPromises": [],
+        "setting": [],
+        "characterSystem": [],
+        "worldType": [],
+        "visualStyle": [],
+        "contentLineage": {
+          "type": ""
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-11T00:32:54.000Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 3,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
+    },
+    {
+      "id": "show_demo_screen_time",
+      "title": "Screen Time",
+      "description": "Screen Time micro-drama told in short vertical episodes.",
+      "genre": "Drama",
+      "posterUrl": "https://videodelivery.net/dafb24923f27556cbd2c6981bb102413/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/dafb24923f27556cbd2c6981bb102413/thumbnails/thumbnail.jpg",
+      "sortOrder": 13,
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "thriller",
+        "secondaryGenres": [
+          "melodrama",
+          "soap-opera"
+        ],
+        "microGenres": [
+          "mystery"
+        ],
+        "storySignals": [
+          "secret-keeping",
+          "mystery-reveal",
+          "surveillance-control",
+          "hidden-clue-hunt",
+          "heartbreak",
+          "financial-exploitation",
+          "hidden-knowledge-advantage"
+        ],
+        "storyDrivers": [
+          "secret-keeping",
+          "mystery-reveal",
+          "betrayal",
+          "power-struggle",
+          "jealousy",
+          "alliances"
+        ],
+        "tropes": [
+          "secret-affair",
+          "power-struggle",
+          "heartbreak"
+        ],
+        "tone": [
+          "tense",
+          "suspenseful",
+          "dramatic",
+          "melodramatic"
+        ],
+        "emotionalFantasies": [
+          "justice-served",
+          "public-vindication",
+          "survival-against-odds"
+        ],
+        "protagonistArchetypes": [
+          "strong-heroine",
+          "survivor"
+        ],
+        "counterpartArchetypes": [
+          "corrupt-institution"
+        ],
+        "relationshipDynamics": [
+          "marital-betrayal",
+          "betrayer-victim",
+          "unlikely-allies"
+        ],
+        "conflictSetups": [
+          "affair-discovery",
+          "public-scandal",
+          "wrongfully-accused",
+          "secret-debt"
+        ],
+        "powerDynamics": [
+          "hidden-knowledge-advantage",
+          "power-swaps-midstory"
+        ],
+        "payoffTypes": [
+          "affair-confirmation",
+          "evidence-confirmation",
+          "hidden-agenda-reveal",
+          "villain-exposed"
+        ],
+        "pacingPromises": [
+          "fast-hook",
+          "cliffhanger-heavy",
+          "mystery-box",
+          "constant-reversals",
+          "escalates-every-episode",
+          "twist-heavy"
+        ],
+        "endingPromises": [],
+        "setting": [
+          "city",
+          "mansion"
+        ],
+        "characterSystem": [
+          "human-characters"
+        ],
+        "worldType": [
+          "real-world"
+        ],
+        "visualStyle": [
+          "live-action",
+          "domestic-interior",
+          "domestic-melodrama",
+          "warm-dramatic-lighting",
+          "soap-opera",
+          "moody",
+          "cinematic"
+        ],
+        "contentLineage": {
+          "type": "original"
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-11T00:32:54.000Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
+    },
+    {
+      "id": "show_demo_the_beast_queens_canvas",
+      "title": "The Beast Queen's Canvas",
+      "description": "The Beast Queen's Canvas micro-drama told in short vertical episodes.",
+      "genre": "Fantasy",
+      "posterUrl": "https://videodelivery.net/83666d685ca596128726e656d923aac0/thumbnails/thumbnail.jpg",
+      "coverUrl": "https://videodelivery.net/83666d685ca596128726e656d923aac0/thumbnails/thumbnail.jpg",
+      "sortOrder": 14,
+      "status": "published",
+      "recommendation": {
+        "primaryGenre": "fantasy",
+        "secondaryGenres": [
+          "fantasy-adventure",
+          "melodrama"
+        ],
+        "microGenres": [
+          "portal-fantasy",
+          "beast-shifter-romance",
+          "reverse-harem-fantasy",
+          "female-ruler-fantasy"
+        ],
+        "storySignals": [
+          "portal-to-fantasy-world",
+          "magical-paintbrush",
+          "beast-shifter-protectors",
+          "female-ruler-rise",
+          "throne-claim",
+          "arena-trial",
+          "matriarchal-fantasy-world",
+          "survival-against-odds",
+          "secret-power-reveal",
+          "romantic-pursuit",
+          "forced-proximity"
+        ],
+        "storyDrivers": [
+          "survival-pressure",
+          "power-struggle",
+          "alliances",
+          "personal-transformation",
+          "rivalry-escalation"
+        ],
+        "tropes": [
+          "chosen-one",
+          "fish-out-of-water",
+          "power-struggle",
+          "forbidden-love",
+          "secret-identity"
+        ],
+        "tone": [
+          "dramatic",
+          "tense",
+          "dark",
+          "glamorous",
+          "romantic",
+          "sexy"
+        ],
+        "emotionalFantasies": [
+          "power-fantasy",
+          "secret-power-reveal",
+          "being-protected",
+          "social-domination",
+          "survival-against-odds",
+          "forbidden-desire"
+        ],
+        "protagonistArchetypes": [
+          "ordinary-person-chosen",
+          "ambitious-underdog",
+          "rebellious-princess"
+        ],
+        "counterpartArchetypes": [
+          "protective-alpha",
+          "dangerous-captor",
+          "wounded-monster",
+          "strict-mentor"
+        ],
+        "relationshipDynamics": [
+          "protector-protected",
+          "captor-captive",
+          "dark-power-romance",
+          "unlikely-allies"
+        ],
+        "conflictSetups": [
+          "forced-captivity",
+          "wrongfully-accused",
+          "powerful-family-opposes"
+        ],
+        "powerDynamics": [
+          "female-power-rise",
+          "outsider-gains-leverage",
+          "protector-has-power",
+          "power-swaps-midstory",
+          "public-status-reversal"
+        ],
+        "payoffTypes": [
+          "secret-identity-reveal",
+          "dramatic-rescue",
+          "status-reveal",
+          "rival-defeated"
+        ],
+        "pacingPromises": [
+          "fast-hook",
+          "cliffhanger-heavy",
+          "escalates-every-episode",
+          "constant-reversals",
+          "twist-heavy"
+        ],
+        "endingPromises": [],
+        "setting": [
+          "fantasy-world",
+          "medieval-kingdom",
+          "throne-room",
+          "arena",
+          "mountain-encampment"
+        ],
+        "characterSystem": [
+          "human-characters"
+        ],
+        "worldType": [
+          "fantasy-world"
+        ],
+        "visualStyle": [
+          "ai-generated",
+          "ai-stylized",
+          "live-action",
+          "cinematic",
+          "moody",
+          "glossy-ai-fantasy",
+          "dark-fantasy-visuals",
+          "medieval-fantasy",
+          "throne-room-fantasy",
+          "stormy-mountain-exterior",
+          "firelit-camp",
+          "fantasy-romance-visuals",
+          "theatrical-interior",
+          "costume-forward",
+          "armor-and-leather-costuming",
+          "torchlit-interior",
+          "warm-dramatic-lighting",
+          "ornate-glamour",
+          "dark-romance-visuals"
+        ],
+        "contentLineage": {
+          "type": "original"
+        },
+        "referenceSignals": [],
+        "format": {
+          "episodeLengthBucket": "",
+          "serialization": "",
+          "cliffhangerLevel": "",
+          "freePreviewEpisodes": 3
+        },
+        "audience": {
+          "maturityRating": "",
+          "language": "en",
+          "contentWarnings": []
+        },
+        "release": {
+          "publishedAt": "2026-06-11T22:33:12Z",
+          "freshnessWindowDays": 14
+        },
+        "editorial": {
+          "qualityLabel": 4,
+          "qualityScore": 0.7,
+          "coldStartPriority": 5,
+          "featuredBoost": 1
+        },
+        "similarShowIds": []
+      }
     }
   ],
   "episodes": [
@@ -2342,7 +3570,34 @@
       "isFreePreview": true,
       "sortOrder": 1,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. strawberry wakes up in pineapple's bed\n2. it is a very expensive room and she realizes she slept with a famous and billionaire CEO pineapple\n3. pineapple returns and strawberry tries to run away\n4. flashback to the yacht where they met and didn't introduce themselves to each other",
+        "activeAtoms": [
+          "character-introduction",
+          "setting-establishment",
+          "first-impression",
+          "status-reveal",
+          "wealth-reveal",
+          "romantic-spark",
+          "one-night-stand",
+          "secret-reveal",
+          "morning-after-shock"
+        ],
+        "emotionalBeat": "status-reversal",
+        "narrativeRole": "hook",
+        "payoffTypes": [
+          "status-reveal",
+          "wealth-reveal"
+        ],
+        "pacingTags": [
+          "fast-hook",
+          "quick-romantic-spark",
+          "twist-heavy",
+          "setup-heavy",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_002",
@@ -2357,7 +3612,25 @@
       "isFreePreview": true,
       "sortOrder": 2,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "anonymous chemistry flashback\n\n1. flashback to strawberry dancing on the yacht, not having a good time.\n2. she goes to the roof and runs into pineapple, who offers her a drink\n3. they commiserate over being fruits who hate parties\n4. they decide not to exchange names or labels\n5. they have a spark of chemistry, ending on a cliffhanger",
+        "activeAtoms": [
+          "romantic-spark",
+          "personality-reveal",
+          "setting-establishment",
+          "relationship-seeding"
+        ],
+        "emotionalBeat": "romantic-spark",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "quick-romantic-spark",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_003",
@@ -2372,7 +3645,25 @@
       "isFreePreview": true,
       "sortOrder": 3,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "chemistry payoff + keepsake setup\n\n1. strawberry and pineapple hook up after drinking too much\n2. pineapple gives strawberry a trinket",
+        "activeAtoms": [
+          "relationship-seeding",
+          "romantic-spark",
+          "one-night-stand"
+        ],
+        "emotionalBeat": "romantic-spark",
+        "narrativeRole": "payoff",
+        "payoffTypes": [
+          "romantic-claim"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "quick-romantic-spark",
+          "setup-heavy"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_004",
@@ -2387,7 +3678,26 @@
       "isFreePreview": false,
       "sortOrder": 4,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "pregnancy shock / abandoned morning-after\n\n1. strawberry wakes up and pineapple left already\n2. cherry asks strawberry what she did and finds out she hooked up with pineapple\n3. strawberry discovers she is pregnant with pineapple's baby. she is only 19",
+        "activeAtoms": [
+          "relationship-seeding",
+          "stakes-introduction",
+          "morning-after-shock",
+          "one-night-stand",
+          "pregnancy-discovery"
+        ],
+        "emotionalBeat": "cliffhanger-shock",
+        "narrativeRole": "inciting-incident",
+        "payoffTypes": [],
+        "pacingTags": [
+          "twist-heavy",
+          "escalation",
+          "cliffhanger-ending",
+          "setup-heavy"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_005",
@@ -2402,7 +3712,25 @@
       "isFreePreview": false,
       "sortOrder": 5,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "loss + time-jump hardship\n\n1. strawberry panicking after learning she is pregnant\n2. cherry comes to check in on her\n3. strawberry has a miscarriage\n4. six years pass and strawberry is having a hard time",
+        "activeAtoms": [
+          "heartbreak",
+          "tearful-confession",
+          "stakes-introduction",
+          "pregnancy-loss",
+          "life-hardship"
+        ],
+        "emotionalBeat": "heartbreak",
+        "narrativeRole": "reversal",
+        "payoffTypes": [],
+        "pacingTags": [
+          "twist-heavy",
+          "escalation",
+          "setup-heavy"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_006",
@@ -2417,7 +3745,27 @@
       "isFreePreview": false,
       "sortOrder": 6,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "post-loss hardship + second-chance setup\n\n1. strawberry goes on a date and has a bad time. she is depressed\n2. cherry accuses her of being too cold, she says it's a coping mechanism\n3. strawberry and cherry's business is doing bad and they can't pay rent\n4. pineapple invites their business to a meeting that could save them",
+        "activeAtoms": [
+          "personality-reveal",
+          "heartbreak",
+          "life-hardship",
+          "stakes-introduction",
+          "relationship-seeding",
+          "power-imbalance"
+        ],
+        "emotionalBeat": "anticipation",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_007",
@@ -2432,7 +3780,27 @@
       "isFreePreview": false,
       "sortOrder": 7,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "status-gap re-encounter setup\n\n1. strawberry is hesitant to meet with pineapple's business\n2. she agrees to do one meeting\n3. she is out of place and demeaned by the secretary\n4. she arrives in the conference room.\n5. cliffhanger as she walks in",
+        "activeAtoms": [
+          "setting-establishment",
+          "stakes-introduction",
+          "relationship-seeding",
+          "class-humiliation",
+          "power-imbalance",
+          "reencounter-setup"
+        ],
+        "emotionalBeat": "anticipation",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "cliffhanger-ending",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_008",
@@ -2447,7 +3815,34 @@
       "isFreePreview": false,
       "sortOrder": 8,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "reencounter reveal + “he never forgot her”\n\n1. strawberry sets up as the board members demean her\n2. pineapple smiles at strawberry, who is in shock and drops her tablet\n3. she does her presentation and everyone leaves.\n4. pineapple reveals he's been looking for her for 6 years",
+        "activeAtoms": [
+          "class-humiliation",
+          "power-imbalance",
+          "relationship-seeding",
+          "secret-reveal",
+          "romantic-validation",
+          "status-reveal",
+          "reencounter-reveal",
+          "he-never-forgot-her"
+        ],
+        "emotionalBeat": "status-reversal",
+        "narrativeRole": "payoff",
+        "payoffTypes": [
+          "status-reveal",
+          "reencounter-reveal",
+          "romantic-validation",
+          "he-never-forgot-her"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "twist-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_009",
@@ -2462,7 +3857,28 @@
       "isFreePreview": false,
       "sortOrder": 9,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "mutual longing / keepsake confirmation\n\n1. strawberry runs away, telling cherry he was the same guy from years ago\n2. cut to pineapple showing how he has been looking for her for years\n3. strawberry is still holding a keepsake that pineapple gave her",
+        "activeAtoms": [
+          "romantic-validation",
+          "relationship-seeding",
+          "he-never-forgot-her",
+          "keepsake-gift",
+          "reencounter-reveal",
+          "mutual-longing"
+        ],
+        "emotionalBeat": "romantic-validation",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "he-never-forgot-her"
+        ],
+        "pacingTags": [
+          "slow-build",
+          "setup-heavy",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_010",
@@ -2477,7 +3893,28 @@
       "isFreePreview": false,
       "sortOrder": 10,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "forced reencounter / emotional probing\n\n1. strawberry telling cherry she doesn't want to go back, but has to for the sake of the business\n2. meeting room was reassigned, and strawberry and pineapple meet\n3. they discuss business but pineapple asks if strawberry still has the keepsake\n4. pineapple and strawberry talk in the elevator and he notes that she looks different, more sad",
+        "activeAtoms": [
+          "life-hardship",
+          "stakes-introduction",
+          "power-imbalance",
+          "relationship-seeding",
+          "reencounter-reveal",
+          "keepsake-gift",
+          "romantic-validation"
+        ],
+        "emotionalBeat": "romantic-tension",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "slow-build",
+          "setup-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_011",
@@ -2492,7 +3929,31 @@
       "isFreePreview": false,
       "sortOrder": 11,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "forced-proximity deal + planted investigator twist\n\n1. pineapple proposes a 5 year partnership, but it depends on strawberry going to office in person\n2. bad boy banana shows up at strawberry's office and tosses a drink onto strawberry\n3. banana is revealed to be a private investigator working for pineapple",
+        "activeAtoms": [
+          "character-introduction",
+          "setting-establishment",
+          "stakes-introduction",
+          "power-imbalance",
+          "relationship-seeding",
+          "forced-proximity",
+          "secret-reveal",
+          "covert-investigation"
+        ],
+        "emotionalBeat": "secret-reveal",
+        "narrativeRole": "twist",
+        "payoffTypes": [
+          "hidden-agenda-reveal"
+        ],
+        "pacingTags": [
+          "twist-heavy",
+          "escalation",
+          "setup-heavy",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_one_night_in_fruitopia_012",
@@ -2507,7 +3968,28 @@
       "isFreePreview": false,
       "sortOrder": 12,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "quiet protector/push-pull romance tension episode\n\n1. pineapple gives notes to strawberry in a business meeting\n2. strawberry notices pineapple doesn't pay personal attention to her\n3. pineapple then gifts strawberry a drink anonymously via a secretary\n4. pineapple then gifts strawberry expensive tools anonymously\n5. cherry notices that strawberry's hands are shaking\n6. pineapple drops off food outside, noting that she hasn't eaten yet\n7. pineapple shows up and strawberry asks \"why won't you just let me go\"",
+        "activeAtoms": [
+          "relationship-seeding",
+          "romantic-validation",
+          "power-imbalance",
+          "mutual-longing",
+          "anonymous-caregiving"
+        ],
+        "emotionalBeat": "romantic-tension",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "romantic-validation"
+        ],
+        "pacingTags": [
+          "slow-build",
+          "setup-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_001",
@@ -2522,7 +4004,23 @@
       "isFreePreview": true,
       "sortOrder": 1,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. raspberry gets mad at CEO durian, physically attacking him\n2. durian says to toss her into a blender and his goons throw her into a car\n3. cliffhanger where he just says \"drive\"",
+        "activeAtoms": [
+          "physical-confrontation",
+          "power-imbalance",
+          "stakes-introduction"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "hook",
+        "payoffTypes": [],
+        "pacingTags": [
+          "cliffhanger-ending",
+          "fast-hook",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_002",
@@ -2537,7 +4035,26 @@
       "isFreePreview": true,
       "sortOrder": 2,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. durian tells rasberry she was sold out\n2. raspberry is held over a shark tank\n3. durian threatens raspberry's friend Lemon and says Lemon sold her out\n4. durian tells raspberry to choose death or joining him",
+        "activeAtoms": [
+          "stakes-introduction",
+          "power-imbalance",
+          "power-struggle",
+          "betrayal",
+          "secret-reveal",
+          "coercion"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "cliffhanger-ending",
+          "fast-hook"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_003",
@@ -2552,7 +4069,28 @@
       "isFreePreview": true,
       "sortOrder": 3,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. raspberry refuses to eat and breaks dishes\n2. raspberry is shown a full feast but still starves herself\n3. durian is upset that she won't eat, but won't let anyone force her to do anything\n4. cliffhanger where durian prepares a helicopter to go back to see raspberry",
+        "activeAtoms": [
+          "coercion",
+          "power-imbalance",
+          "power-struggle",
+          "stakes-introduction",
+          "relationship-seeding",
+          "captivity",
+          "defiance"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "setup-heavy",
+          "slow-build",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_004",
@@ -2567,7 +4105,30 @@
       "isFreePreview": false,
       "sortOrder": 4,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. durian returns and stops a guava from hurting raspberry\n2. raspberry is locked in a room but breaks the lock and runs to durian's office\n3. guava tells her he is the only person in the house who can save her\n4. durian rushes in and stops guava from touching raspberry\n5. durian orders guava to leave the house",
+        "activeAtoms": [
+          "coercion",
+          "power-imbalance",
+          "physical-confrontation",
+          "power-struggle",
+          "female-power-rise",
+          "dramatic-rescue",
+          "captivity",
+          "defiance"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [
+          "dramatic-rescue"
+        ],
+        "pacingTags": [
+          "escalation",
+          "twist-heavy",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_005",
@@ -2582,7 +4143,25 @@
       "isFreePreview": false,
       "sortOrder": 5,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. raspberry shows her bruising to durian\n2. raspberry crying\n3. durian and raspberry get into an argument and physically fight",
+        "activeAtoms": [
+          "coercion",
+          "power-imbalance",
+          "tearful-confession",
+          "power-struggle",
+          "physical-confrontation",
+          "captivity"
+        ],
+        "emotionalBeat": "heartbreak",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "slow-burn",
+          "escalation"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_006",
@@ -2597,7 +4176,28 @@
       "isFreePreview": false,
       "sortOrder": 6,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. durian refuses to let raspberry leave\n2. raspberry stands in front of his car daring him to hit her\n3. he is unable to, so she gets in the car\n4. ends with her commanding him to take them to the office",
+        "activeAtoms": [
+          "coercion",
+          "power-imbalance",
+          "power-struggle",
+          "female-power-rise",
+          "captivity",
+          "defiance",
+          "power-reversal"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "reversal",
+        "payoffTypes": [],
+        "pacingTags": [
+          "payoff-episode",
+          "escalation",
+          "twist-heavy",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_007",
@@ -2612,7 +4212,25 @@
       "isFreePreview": false,
       "sortOrder": 7,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. raspberry refuses to buckle up in the car\n2. durian tries to make her buckle up, showing he cares about her safety\n3. they finish the drive silently\n4. they arrive at his office, where his secretary tells him there's a problem\n5. durian says to keep cherry's name out of the press",
+        "activeAtoms": [
+          "power-imbalance",
+          "defiance",
+          "relationship-seeding",
+          "protective-control"
+        ],
+        "emotionalBeat": "romantic-tension",
+        "narrativeRole": "setup",
+        "payoffTypes": [],
+        "pacingTags": [
+          "slow-build",
+          "setup-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_008",
@@ -2627,7 +4245,25 @@
       "isFreePreview": false,
       "sortOrder": 8,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. durian tells raspberry she doesn't understand what's going on\n2. raspberry asks \"is cherry the reason you hate me?\" and \"who is cherry?\"\n3. durian tells her it's none of her business\n4. raspberry breaks things all over the office",
+        "activeAtoms": [
+          "secret-reveal",
+          "power-imbalance",
+          "power-struggle",
+          "defiance",
+          "physical-confrontation"
+        ],
+        "emotionalBeat": "curiosity",
+        "narrativeRole": "twist",
+        "payoffTypes": [],
+        "pacingTags": [
+          "twist-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_009",
@@ -2642,7 +4278,27 @@
       "isFreePreview": false,
       "sortOrder": 9,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. guava returns and tells raspberry durian was engaged to someone named cherry\n2. he tells her she's just a replacement for cherry\n3. durian dashes in and asks guava what he said to her\n4. durian finds out guava told raspberry she's just a cheap replacement and asks \"and you actually believed him?\"",
+        "activeAtoms": [
+          "secret-reveal",
+          "power-imbalance",
+          "heartbreak",
+          "romantic-validation",
+          "replacement-lover-wound",
+          "emotional-manipulation"
+        ],
+        "emotionalBeat": "secret-reveal",
+        "narrativeRole": "twist",
+        "payoffTypes": [],
+        "pacingTags": [
+          "twist-heavy",
+          "escalation",
+          "cliffhanger-ending",
+          "slow-build"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_010",
@@ -2657,7 +4313,25 @@
       "isFreePreview": false,
       "sortOrder": 10,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. durian physically pulls raspberry into the house and tells her never to speak to guava\n2. she says  why, because he told me the truth?\n3. cliffhanger where durian tells her let's see whose side you're really on",
+        "activeAtoms": [
+          "power-imbalance",
+          "physical-confrontation",
+          "coercion",
+          "power-struggle",
+          "withheld-past",
+          "loyalty-test"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_011",
@@ -2672,7 +4346,25 @@
       "isFreePreview": false,
       "sortOrder": 11,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. raspberry runs to apple, her friend\n2. durian attacks him and throws him out\n3. he then pulls raspberry into a locked room",
+        "activeAtoms": [
+          "power-imbalance",
+          "coercion",
+          "physical-confrontation",
+          "power-struggle",
+          "captivity"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "cliffhanger-ending",
+          "fast-hook"
+        ]
+      }
     },
     {
       "id": "ep_demo_mad_durian_his_red_bride_012",
@@ -2702,7 +4394,30 @@
       "isFreePreview": true,
       "sortOrder": 1,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. pear wakes up from an eye transplant and sees her husband Mark (an apple) hooking up with her step sister raspberry\n2. she rushes back to her bed and pretends to be asleep\n3. Mark brings her water and medicine\n4. he pours it down her throat as she thinks \"it's poison, he's trying to kill me\"",
+        "activeAtoms": [
+          "character-introduction",
+          "stakes-introduction",
+          "betrayal",
+          "forbidden-desire",
+          "betrayal-discovery",
+          "hidden-knowledge-advantage",
+          "coercion",
+          "murder-attempt"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "hook",
+        "payoffTypes": [],
+        "pacingTags": [
+          "fast-hook",
+          "early-betrayal",
+          "twist-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_002",
@@ -2717,7 +4432,28 @@
       "isFreePreview": true,
       "sortOrder": 2,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "blindness deception / hidden knowledge survival\n\n1. pear chokes and coughs the poison water onto apple (Mark)\n2. she pretends to have finished drinking the rest of the medicine\n3. they return home together and see raspberry (Sarah)\n4. Mark fetches the bags from the car and raspberry tests to see if pear is truly blind\n5. Pear pretends well enough and we cut to cliffhanger",
+        "activeAtoms": [
+          "hidden-knowledge-advantage",
+          "lying",
+          "coercion",
+          "power-imbalance",
+          "betrayal",
+          "survival-deception",
+          "fake-blindness",
+          "villain-test"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "cliffhanger-ending",
+          "slow-build"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_003",
@@ -2732,7 +4468,28 @@
       "isFreePreview": true,
       "sortOrder": 3,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. raspberry holds a match up to pear's eye to test her blindness\n2. pear turns around and sees a ghost pear, who scares her. ghost tells her about a hidden compartment in the wall\n3. in fear, pear breaks a glass accidentally and raspberry yells at her\n4. pear wonders if the ghost is a hallucination or a message",
+        "activeAtoms": [
+          "hidden-knowledge-advantage",
+          "power-imbalance",
+          "coercion",
+          "physical-confrontation",
+          "fake-blindness",
+          "villain-test",
+          "supernatural-message"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "twist",
+        "payoffTypes": [],
+        "pacingTags": [
+          "twist-heavy",
+          "escalation",
+          "cliffhanger-ending",
+          "slow-build"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_004",
@@ -2747,7 +4504,32 @@
       "isFreePreview": false,
       "sortOrder": 4,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "murder-frame conspiracy reveal / ghost warning payoff\n\n1. pear cuts herself on the broken glass\n2. apple and raspberry go to find the first aid kit\n3. pear finds the hidden compartment space with an envelope, containing a property transfer\n4. she discovers mark wants her to take the fall for chloe (ghost pear from earlier)'s murder. the transfer gives her assets to Mark\n5. we discover Chloe's ghost was warning her\n6. raspberry tells Mark they need to handle Pear sooner rather than later\n7. Mark says tonight the people will find the blind killer tomorrow\n8. pear returns to the glass and continues to pretend to be blind",
+        "activeAtoms": [
+          "hidden-knowledge-advantage",
+          "evidence-discovery",
+          "covert-investigation",
+          "fake-blindness",
+          "betrayal",
+          "financial-exploitation",
+          "supernatural-message",
+          "hidden-compartment-clue",
+          "murder-frame-plot"
+        ],
+        "emotionalBeat": "secret-reveal",
+        "narrativeRole": "twist",
+        "payoffTypes": [
+          "evidence-confirmation"
+        ],
+        "pacingTags": [
+          "payoff-episode",
+          "twist-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_005",
@@ -2755,14 +4537,34 @@
       "episodeNumber": 5,
       "title": "Episode 5",
       "description": "The Eye of Betrayal Episode 5.",
-      "durationSeconds": 60,
+      "durationSeconds": 58,
       "provider": "cloudflare_stream",
-      "providerAssetId": "1b0fd77c760c76ecb73cb73f994bc64b",
+      "providerAssetId": "14225c4ed18ffa79d3e38216a553cce6",
       "isLocked": false,
       "isFreePreview": false,
       "sortOrder": 5,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. police arrive at the house\n2. sheriff says he's still looking into chloe's disappearance\n3.  Mark pretends like he's sad about it but that his new fiancee pear needs him\n4. Pear asks who it is\n5. sheriff comes to see her, but pear pours hot tea on him since she is pretending to be blind\n6. mark shows sheriff to the washroom\n7. cliffhanger where raspberry says pear is faking her blindness",
+        "activeAtoms": [
+          "fake-blindness",
+          "hidden-knowledge-advantage",
+          "lying",
+          "murder-frame-plot",
+          "villain-test",
+          "power-imbalance",
+          "authority-arrival"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "cliffhanger-ending",
+          "slow-build"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_006",
@@ -2770,14 +4572,36 @@
       "episodeNumber": 6,
       "title": "Episode 6",
       "description": "The Eye of Betrayal Episode 6.",
-      "durationSeconds": 58,
+      "durationSeconds": 57,
       "provider": "cloudflare_stream",
-      "providerAssetId": "14225c4ed18ffa79d3e38216a553cce6",
+      "providerAssetId": "4501b57a99f494c6bbbf5a376ae1fb97",
       "isLocked": false,
       "isFreePreview": false,
       "sortOrder": 6,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. pear clutches onto the sheriff saying her eyes hurt so much\n2. raspberry apologizes for her, saying adjusting to blindness has been hard for her\n3. as the sheriff leaves, raspberry tells pear to behave herself\n4. pear sees that apple is installing cameras all over the house",
+        "activeAtoms": [
+          "fake-blindness",
+          "hidden-knowledge-advantage",
+          "lying",
+          "power-imbalance",
+          "coercion",
+          "murder-frame-plot",
+          "authority-arrival",
+          "surveillance-control",
+          "villain-tightens-net"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "slow-build",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_007",
@@ -2785,14 +4609,34 @@
       "episodeNumber": 7,
       "title": "Episode 7",
       "description": "The Eye of Betrayal Episode 7.",
-      "durationSeconds": 57,
+      "durationSeconds": 46,
       "provider": "cloudflare_stream",
-      "providerAssetId": "4501b57a99f494c6bbbf5a376ae1fb97",
+      "providerAssetId": "81946a7bc271c6b61861a980cfcabe07",
       "isLocked": false,
       "isFreePreview": false,
       "sortOrder": 7,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. pear has to continue pretending to be blind due to the cameras\n2. pear sees a hidden camera in the bathroom.\n3. to sell her blindness pear falls and hurts her head badly, convincing mark she is really blind",
+        "activeAtoms": [
+          "fake-blindness",
+          "hidden-knowledge-advantage",
+          "surveillance-control",
+          "coercion",
+          "power-imbalance",
+          "self-sacrifice",
+          "evidence-discovery"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "slow-build",
+          "twist-heavy"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_008",
@@ -2800,14 +4644,31 @@
       "episodeNumber": 8,
       "title": "Episode 8",
       "description": "The Eye of Betrayal Episode 8.",
-      "durationSeconds": 46,
+      "durationSeconds": 44,
       "provider": "cloudflare_stream",
-      "providerAssetId": "81946a7bc271c6b61861a980cfcabe07",
+      "providerAssetId": "3f629c1ba19affbfec55307a692c36ac",
       "isLocked": false,
       "isFreePreview": false,
       "sortOrder": 8,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. raspberry sets a transparent wire across stairs to test pear\n2. pear sees it but deliberately trips on the wire and falls painfull to sell her blindness to raspberry",
+        "activeAtoms": [
+          "fake-blindness",
+          "hidden-knowledge-advantage",
+          "coercion",
+          "self-sacrifice",
+          "power-imbalance"
+        ],
+        "emotionalBeat": "danger-spike",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "slow-build"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_009",
@@ -2815,14 +4676,35 @@
       "episodeNumber": 9,
       "title": "Episode 9",
       "description": "The Eye of Betrayal Episode 9.",
-      "durationSeconds": 44,
+      "durationSeconds": 47,
       "provider": "cloudflare_stream",
-      "providerAssetId": "3f629c1ba19affbfec55307a692c36ac",
+      "providerAssetId": "d7462e62174c63fefaa4fb55e7ba1822",
       "isLocked": false,
       "isFreePreview": false,
       "sortOrder": 9,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Pear wakes up in the hospital, with a broken arm\n2. Pear has a vision where she sees Mark kill Chloe with a bronze statue\n3.Pear realizes she needs to find the statue to prove Mark's guilt",
+        "activeAtoms": [
+          "hidden-knowledge-advantage",
+          "supernatural-message",
+          "murder-frame-plot",
+          "evidence-discovery",
+          "covert-investigation",
+          "murder-weapon-clue",
+          "proof-quest"
+        ],
+        "emotionalBeat": "secret-reveal",
+        "narrativeRole": "twist",
+        "payoffTypes": [],
+        "pacingTags": [
+          "twist-heavy",
+          "setup-heavy",
+          "escalation",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_010",
@@ -2830,14 +4712,36 @@
       "episodeNumber": 10,
       "title": "Episode 10",
       "description": "The Eye of Betrayal Episode 10.",
-      "durationSeconds": 47,
+      "durationSeconds": 56,
       "provider": "cloudflare_stream",
-      "providerAssetId": "d7462e62174c63fefaa4fb55e7ba1822",
+      "providerAssetId": "2785063f5c0c7415ea17a3622da223b4",
       "isLocked": false,
       "isFreePreview": false,
       "sortOrder": 10,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Pear wanders the house looking for the statue\n2. She sees Mrs. Higgins cleaning up\n3. She realizes she needs a plan\n4. She pretends to be sleepwalking and walks through a party, drawing the statue. A guest says the statue is in the hall\n5. She sleeptalks about Chloe, and guests realize Chloe is Mark's late wife\n6. Ends with Mark saying to stop her",
+        "activeAtoms": [
+          "covert-investigation",
+          "hidden-knowledge-advantage",
+          "murder-weapon-clue",
+          "proof-quest",
+          "lying",
+          "survival-deception",
+          "secret-reveal",
+          "sleepwalking-performance",
+          "public-suspicion"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "slow-build",
+          "cliffhanger-ending"
+        ]
+      }
     },
     {
       "id": "ep_demo_the_eye_of_betrayal_011",
@@ -2845,29 +4749,1186 @@
       "episodeNumber": 11,
       "title": "Episode 11",
       "description": "The Eye of Betrayal Episode 11.",
-      "durationSeconds": 56,
-      "provider": "cloudflare_stream",
-      "providerAssetId": "2785063f5c0c7415ea17a3622da223b4",
-      "isLocked": false,
-      "isFreePreview": false,
-      "sortOrder": 11,
-      "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
-    },
-    {
-      "id": "ep_demo_the_eye_of_betrayal_012",
-      "showId": "show_demo_the_eye_of_betrayal",
-      "episodeNumber": 12,
-      "title": "Episode 12",
-      "description": "The Eye of Betrayal Episode 12.",
       "durationSeconds": 59,
       "provider": "cloudflare_stream",
       "providerAssetId": "2e0db87ea23d9716e8f94fb6a8d6129e",
       "isLocked": false,
       "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-10T01:24:53.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Mark chokes raspberry, asking who told Pear about the statue\n2. Mark suspects raspberry and accuses her for wanting the money for herself\n3. Mark slaps raspberry\n4. Raspberry hits Mark with an ashtray\n5. Pear watches as they get into a fight\n6. Mrs Higgins pulls Pear aside, and cliffhanger before they have a conversation",
+        "activeAtoms": [
+          "physical-confrontation",
+          "power-struggle",
+          "betrayal",
+          "hidden-knowledge-advantage",
+          "financial-exploitation",
+          "murder-weapon-clue",
+          "proof-quest",
+          "covert-investigation",
+          "villains-turn-on-each-other"
+        ],
+        "emotionalBeat": "power-shift",
+        "narrativeRole": "escalation",
+        "payoffTypes": [],
+        "pacingTags": [
+          "escalation",
+          "twist-heavy",
+          "cliffhanger-ending"
+        ]
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_001",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "I Married My Ex's Mafia Boss Episode 1.",
+      "durationSeconds": 67,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "5503db73496e7a637b8804bfee459691",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Mel introduces his \"real\" fiancee, Lemmy\n2. Strawberry is shocked, until Lemmy tells her \"you didn't think a poor dishwasher could marry into the Orchard family\", and that she was Mel's pet when he was bored. She throws her wine into Berry's face\n3. Berry feels like she was lied to for 5 years\n4. Mrs Orchard commands her staff to escort her out of the party\n5. Mel doesn't show any remorse\n6. When Berry is thrown out she gets an offer from Fig to get revenge and make them beg her to come back by marrying her grandson",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_002",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "I Married My Ex's Mafia Boss Episode 2.",
+      "durationSeconds": 87,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "b511bfa1d2ed702bfeabf3ab2491dd86",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. fig offers strawberry to marry her grandson, who thinks she's joking\n2. fig invites strawberry into a private car\n3. strawberry wonders why fig is helping her. fig says strawberry is different\n4. strawberry gets in the car, and fig seems to know her history. 26 years old, living in a leaking apartment, working 3 jobs, paying for Mel's gambling debts and tuition\n5. fig offers name, status, a chance at revenge, in exchange for a marriage\n6. cliffhanger where fig is about to introduce strawberry to her grandson",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_003",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "I Married My Ex's Mafia Boss Episode 3.",
+      "durationSeconds": 79,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ffc1677cc0db0bca6287a439ce81bef5",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. fig keeps refusing to tell strawberry who she is\n2. strawberry is given a prenuptial agreement. she refuses to sign, but fig tells her the choices are to either 1) lose all her jobs, get thrown out of her apartment, and see Mel and new fiancee all over the headlines, or 2) sign, get a new last name, and rub it in their faces\n3. strawberry asks why her. fig says because she was willing to say she wanted to win even though she was in pain. fig says she's different\n4. fig's grandson comes in, blackberry. he says he won't get married and that his grandmother is too controlling - his business, security, and now wife.\n5. strawberry says she's not a gift\n6. fig says the wedding is tonight and neither of the two of them are in a position to refuse her\n\n[notes: some chinese still left here, some words garbled]",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_004",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "I Married My Ex's Mafia Boss Episode 4.",
+      "durationSeconds": 72,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "0bc6e91c8f3b57a8242bfa8b860ccd87",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. blackberry asks to be left out of this marriage\n2. strawberry tells him not to just think about himself. \n3. blackberry tells her she should just leave\n4. fig says if strawberry leaves, blackberry needs to handle the brooklyn mess tonight. if strawberry leaves, no restaurant will be allowed to hire her\n5. strawberry gives her conditions: she keeps her freedom, never be left to be humiliated in public, and must be told what she's being involved with\n6. fig says ok, but that the last depends on how long strawberry survives\n7. blackberry and strawberry both sign. blackberry says his condition is that strawberry can't fall in love with him. she scoffs\n8. fig advises strawberry to be stronger and leave the previous life behind after the wedding\n9. cliffhanger where blackberry is told strawberry will stay with him tonight",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_005",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "I Married My Ex's Mafia Boss Episode 5.",
+      "durationSeconds": 58,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "5d57bfc3585aa151d93a44a1fc21b541",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. blackberry asks to add a clause: nobody touches strawberry without his permission\n2. the two get married, sign, and kiss\n3. blackberry says strawberry should be careful, since she now has his last name\n4. a paparazzo takes a photo of the two of them and runs away",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_006",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "I Married My Ex's Mafia Boss Episode 6.",
+      "durationSeconds": 64,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ccb9686f42e0f2353b691a033b9ebb3e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. strawberry moves into blackberry's apartment and is surprised by the guards and staff\n2. strawberry learns she's been fired from her jobs\n3. strawberry is told she has to tell security before going anywhere. \n4. blackberry tells her not to go anywhere without his permission",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_007",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "I Married My Ex's Mafia Boss Episode 7.",
+      "durationSeconds": 73,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "9270c343b4cbbcd251b76b4ca387e32e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. strawberry is invited to an event by the Mel and Lemmy family\n2. she wants to go to stand up to them but blackberry tells her she shouldn't. he tells her to go and not come back crying\n3. fig tells him if she cries it means he's failed\n4. fig has strawberry get styled up by her team\n5. fig tells her to go and make them regret not respecting her\n6. strawberry walks in and Mel and Lemmy are surprised. cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_008",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "I Married My Ex's Mafia Boss Episode 8.",
+      "durationSeconds": 69,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "4009bdef51409ecfab3f6a41b89b0b78",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Lemmy and strawberry trade barbs. Lemmy says she looks ugly\n2. Mel tells strawberry the charity event isn't for her and not to try to fit in where she doesn't belong\n3. Lemmy puts strawberry down again\n4. Blackberry shows up and introduces strawberry as his wife\n5. cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_009",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "I Married My Ex's Mafia Boss Episode 9.",
+      "durationSeconds": 60,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "8587cb2c2e0399a227467725ee9b41ef",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Lemmy throws barbs again at Strawberry and says Blackberry could do better\n2. Blackberry makes a phone call to freeze the astor cross trust, Lemmy's family trust\n3. Lemmy calls for legal counsel\n4. Blackberry says this is to teach Lemmy a lesson\n5. Lemmy attacks strawberry and has to be held back",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_010",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "I Married My Ex's Mafia Boss Episode 10.",
+      "durationSeconds": 61,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ca06e838db971de088772f5fa5ede611",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. On the ride home, Blackberry says he stood up for her because he doesn't like people touching what's his\n2. Strawberry thinks he's objectifying her\n3. Blackberry says he stood up for her because he didn't like how Lemmy treated her\n4. Fig is extremely happy about the events and thinks Strawberry has actually caught feelings\n5. The next morning Blackberry gives Strawberry something and says it's a weapon. Strawberry says she doesn't want it. cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_011",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "I Married My Ex's Mafia Boss Episode 11.",
+      "durationSeconds": 76,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ff9b10a18185f86a78b279d16c67a54e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Strawberry wants Blackberry to let her be free. Blackberry says his gift is an investment to help her get revenge on Mel and Lemmy\n2. Fig says strawberry needs to be independent and not only cry\n3. Strawberry goes to a failing restaurant and suggests ways to save it. smaller menu, better lighting, better branding. \n4. She demonstrates her value and appears to take a step forward in her life",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_i_married_my_exs_mafia_boss_012",
+      "showId": "show_demo_i_married_my_exs_mafia_boss",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "I Married My Ex's Mafia Boss Episode 12.",
+      "durationSeconds": 79,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "79364c0c1a7167d7d8d5e97986d5df03",
+      "isLocked": false,
+      "isFreePreview": false,
       "sortOrder": 12,
       "status": "published",
-      "publishedAt": "2026-06-10T01:24:53.000Z"
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Strawberry walks into the restaurant and makes tons of changes. She's the new owner - throwing out old food, cutting dessert menu, changing lighting\n2. The chef doesn't think she knows what to do, but she says she's done all the jobs in a restaurant like washing dishes, closing up, being a cashier\n3. She girlbosses up and puts the chef in his place.\n4. She asks blackberry for more money for new lighting, signage, promo shoots, and soft opening\n5. She pitches Fig on her plan, who likes it\n6. The chef changes his mind and seems to come around on Strawberry\n7. cliffhanger where somebody gets out of a car and photographs the new restaurant",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_001",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "Secrets in the Juice Episode 1.",
+      "durationSeconds": 72,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "738378718095ef309071f717721f7db7",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. starfruit (Leo) is being told he's rotten and is about to be juiced\n2. as they're about to throw him in, he kicks off and attempts to escape\n3. he goes to a machine and shows the other workers the data the guards are using to decide who to juice is fake\n4. guards close in on him with tasers, and we end with a cliffhanger",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_002",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "Secrets in the Juice Episode 2.",
+      "durationSeconds": 83,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "fb9ef31a6636ee1606c1d72df9c9835f",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. factory supervisor commands the guards to tase the starfruit\n2. starfruit shows all the other workers how his data shows he's healthy\n3. the workers realize they're being mistreated\n4. supervisor threatens them to get back to work\n5. as they're about to fight, the owner pomegranate walks in\n6.  supervisor says they're disposing of a rotten starfruit, but the owner says he looks perfectly fine",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_003",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "Secrets in the Juice Episode 3.",
+      "durationSeconds": 83,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "edf9739af9422542de9aecd93b0f39c4",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. starfruit shows the owner how the maintenance logs are tampered with\n2. pomegranate says it's impressive how he decoded it\n3. starfruit says he knows everything about the factory\n4. pomegranate says the starfruit is under his direct protection\n5. pineapple (some sort of aide who walked in with pomegranate) tells mangosteen (maybe pomegranate's wife?) if the starfruit talks the family algorithm will be exposed\n6. she tells him that pomegranate doesn't know anything about it yet\n7. pomegranate asks for the starfruit to be brought to the executive floor\n8. mangosteen whispers that they need to silence the starfruit before it's too late. cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_004",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "Secrets in the Juice Episode 4.",
+      "durationSeconds": 91,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a0c95a6ae397634e87127eaed2f68e91",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. starfruit walks into a glamorous executive floor, feeling out of place\n2. pomegranate pours him a glowing drink that makes the starfruit's bruises go away\n3. pomegranate asks starfruit to explain what's going on\n4. starfruit tells him the code deliberately tags healthy fruits as rotten\n5. pomegranate asks how long this has been happening - starfruit says 3 years. the juice yield has been inflated by sacrificing workers\n6. pomegranate tells starfruit that as long as starfruit is useful, nobody will ever touch him again\n7. mangosteen watches on a spy camera from afar. cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_005",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "Secrets in the Juice Episode 5.",
+      "durationSeconds": 85,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ef0a1c7b39709b642aca076308d3b4b4",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. at a fancy gala, mangosteen reports to a table the projections look good. she says the new technician seems reliable\n2. executives find it absurd that a technician from lower floors has been brought upstairs\n3. mangosteen asks a goon to investigate the starfruit - debt status, background, and wife\n4. starfruit can't break into the mangosteen family's servers. pomegranate tells him to take a break\n5. pomegranate leans in and tells starfruit that starfruit can't trust anyone except for pomegranate",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_006",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "Secrets in the Juice Episode 6.",
+      "durationSeconds": 83,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "19e078a1078ee2223b05ff4765421e24",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. starfruit and pomegranate enter the executive vault, where pomegranate gives him a repair cream for his skin\n2. pomegranate finds tampering in the books with starfruit that goes through the mangosteen's family's business\n3. pomegranate brings starfruit to an executive meeting, where they bemoan how a lower class fruit is being brought up and oppose him sitting down at the table\n4. pomegranate asks starfruit to show the hidden ledgers. cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_007",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "Secrets in the Juice Episode 7.",
+      "durationSeconds": 83,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "75da3558ee087f6623f3f86ba60a22e8",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. starfruit's wife, apple, waits in her leaky apartment as starfruit arrives home late\n2. apple asks starfruit why he smells like pomegranate and how he got a big sum of money\n3. apple asks starfruit what he's doing - that it's not just maintenance work\n4. starfruit snaps back saying he's important now\n5. apple says she's just worried about him\n6. starfruit storms out as apple suspects something is wrong\n7. apple brings a uniform to the office asking to give it to her husband\n8. someone says to let her up and that mangosteen had specific instructions for her. \n9. cliffhanger ending as apple enters an elevator",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_008",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "Secrets in the Juice Episode 8.",
+      "durationSeconds": 73,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "990ac1f28784d8d5724dd86063637ca9",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. apple arrives at the executive floor and sees starfruit getting intimate treatment from pomegranate \n2. pomegranate leans in and tells starfruit he's very valuable to him. they kiss\n3. apple cries, thinking it can't be real\n4. pomegranate hears her outside. she runs, leaving behind a shoe",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_009",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "Secrets in the Juice Episode 9.",
+      "durationSeconds": 70,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ec6962a6a9519dc593eff9f741be0f06",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. starfruit tries doing work on machines as pomegranate watches.\n2. the main valve ruptures and pomegranate runs in trying to save starfruit. pomegranate gets burned on his back\n3. starfruit and pomegranate run out, escaping. they stand in the decontamination chamber and kiss\n4. cliffhanger ending where we see they are caught on camera",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_010",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "Secrets in the Juice Episode 10.",
+      "durationSeconds": 87,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a6ac5231ab051e16ae456d170cc8287c",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. pomegranate and starfruit walk out of an elevator\n2. pomegranate tells starfruit he'll be staying with him for the night, and gives him fancy clothes\n3. pomegranate watches over starfruit sleeping, saying \"you are mine now\"\n4. mangosteen reviews footage and sees pomegranate and starfruit kissing. she is enraged\n5. mangosteen plots to use starfruit's wife. cliffhanger ending as she prepares to go to the slums and visit starfruit's wife",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_011",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "Secrets in the Juice Episode 11.",
+      "durationSeconds": 86,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "1f3acd4956c7915ebe02387d82979246",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. mangosteen arrives to the slums, showing she thinks it is poor\n2. she meets apple, saying she pities her\n3. apple rejects the pity, but changes her mind when mangosteen mentions her husband is bewitched by pomegranate\n4. apple refuses to believe it but asks mangosteen to tell her what starfruit is involved in\n5. mangosteen tells her to keep him at home, or he'll be in danger",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_secrets_in_the_juice_012",
+      "showId": "show_demo_secrets_in_the_juice",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "Secrets in the Juice Episode 12.",
+      "durationSeconds": 95,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "fb535d17baa711756dbec0e06dad0055",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 12,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. starfruit returns home and apple asks where he's been. he is in new clothes\n2. starfruit says he's just been working. apple accuses him of messing around\n3. starfruit says he's trying to build a future for them\n4. apple tells him mangosteen came to visit her\n5. starfruit accuses her of not knowing how upper class people work\n6. she tells him he smells like pomegranate.\n7. he tells her she doesn't understand ambition and shoves her\n8. starfruit storms out, saying the slums aren't enough for him anymore\n9. mangosteen is given a device. cliffhanger where she says she'll kill the starfruit",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_001",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "Screen Time Episode 1.",
+      "durationSeconds": 89,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "dafb24923f27556cbd2c6981bb102413",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Marcus asks Danielle how James afforded that ring.\n2. Danielle gets some strange texts from an unknown number\n3. Marcus and Danielle toast Olivia and James and say not to keep secrets from each other\n4. Danielle continues to get unknown texts saying this person will expose everything\n5. Danielle asks who this is\n6. As that happens, the projector plays a robot voice saying it has all their online secrets. \n7. Each night at 6pm, they are required to reveal a secret, otherwise it'll expose their secrets to everyone\n8. Cliffhanger as Danielle is up first",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_002",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "Screen Time Episode 2.",
+      "durationSeconds": 54,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "d460a8cebd097eeb2b4bfee8e1cfd7ee",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Robot voice tells Danielle the clock is ticking\n2. Robot prompts her to talk about Phoenix, and shows a photo of Danielle with somebody else\n3. Danielle says it's just a grad student she met with for drinks at a leadership conference\n4. Robot says to be honest and that it's not the whole truth. It then shows a second photo of them in her hotel room and asks where he spent the night\n5. Cliffhanger before Danielle responds",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_003",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "Screen Time Episode 3.",
+      "durationSeconds": 60,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a609ca250077acde14833dcc33238f2f",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Danielle tells Marcus he spent the night in her room but nothing happened\n2. Marcus accuses her of lying while James says to hear her out\n3. Olivia says we should call the police and that this is an invasion of privacy. She is a lawyer\n4. Olivia is asked if she knows about the Citibank accounts as James looks guilty.\n5. Now that they've revealed Danielle's secret, the robot tells them to show up again tomorrow at 6pm\n6. James looks upset and says the robot could be someone in the room",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_004",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "Screen Time Episode 4.",
+      "durationSeconds": 61,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "94c0a690fbe569a69bc5b9621a6be312",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Marcus storms off angrily and Danielle goes after him\n2. Olivia asks James what's going on and what the Citibank thing is\n3. James says he doesn't know and that this is clearly blackmail\n4. Olivia says they get married in 2 weeks. She asks what secrets he has that would make someone want to blackmail him\n5. James says none. He thinks it's Marcus, who has never trusted James' friendship with Danielle, and who works in politics\n6. Cliffhanger as James asks if it's Marcus",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_005",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "Screen Time Episode 5.",
+      "durationSeconds": 54,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "169df603dbe0a30ae7daf0411abc4b76",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Danielle walks in and Marcus accuses her of cheating on him with a student\n2. Danielle says she didn't cheat and that the man is a TA\n3. Marcus asks if Danielle is still talking to him\n4. His name is Joseph\n5. Marcus asks to see her phone. \n6. She says Marcus was busy and she was lonely. She texted with Joseph, who she hadn't met up with for before that night\n7. Marcus asks if she slept with him. Cliffhanger ending before getting an answer",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_006",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "Screen Time Episode 6.",
+      "durationSeconds": 57,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "f5bab28d7c0b8f0b9c92d234cfaf3e0c",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Danielle says they didn't sleep together. It was only emotional\n2. Marcus says she probably wanted to sleep with Joseph\n3. Marcus asks if James knew. She says no\n4. Marcus says he's up for a vote, so it effects him too - exposing this infidelity is bad for him\n5. They both sulk and Marcus asks if Danielle has anything else to tell him. Cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_007",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "Screen Time Episode 7.",
+      "durationSeconds": 61,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "d084a8fda6d710f026e231aa8130fb7a",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Danielle says not hiding anything else\n2. Marcus says how they're going to manage tomorrow, even after this secret revealing issue\n3. Danielle asks how to manage the police implication threat, but Marcus says Olivia and James are her friends\n4. Danielle says it could be related to Marcus' work for the city\n5. He says he can't sleep next to her tonight\n6. She texts J \"he knows. i'm scared\", and cliffhanger before we get a response",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_008",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "Screen Time Episode 8.",
+      "durationSeconds": 60,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "e2b0569f1f7e8944ae9e004f56c6c75c",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Night two arrives and only Marcus and Danielle are the only ones there at 5:56\n2. Danielle says Olivia wouldn't risk secrets being exposed since her dad is a judge and they have money\n3. Marcus suspects James (a mechanic) has nothing to lose, and thinks that James has the secret account, and always owes people money\n4. Danielle says James wouldn't do that\n5. 6pm arrives and the robot asks where the friends are + threatens consequences if they don't arrive",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_009",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "Screen Time Episode 9.",
+      "durationSeconds": 60,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "08ec5d4bc052feb0860a1a2ed0ea6bff",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. Robot says since friends didn't honor the agreement, they'll have to pay\n2. Robot takes out 10k from Marcus and Danielle's bank account\n3.  Robot then pauses and says if the friends don't arrive in 30 minutes, it'll publish the cheating photos from the night before\n4. Danielle says it's unfair, but the robot hangs up. \n5. Marcus asks Danielle to call them right now, but Olivia picks up and says James is gone",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_010",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "Screen Time Episode 10.",
+      "durationSeconds": 53,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "a7e3d90776399db8aff7dd2b236f907d",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. 8 minutes have passed and Olivia says James never came home from work, and 10k is gone from their bank account too\n2. Marcus says James is responsible, since James needed money\n3. Danielle says Olivia needs to come over immediately\n4. Olivia is worried about James\n5. Olivia asks why James needed money\n6. Danielle says she knows nothing\n7. James joins the call and Olivia asks where he is\n8. James says \"i'm sorry i should have told you this a long time ago\", cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_011",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "Screen Time Episode 11.",
+      "durationSeconds": 60,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "55cf9a275ac70d174fb540a077f77724",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. James says he thought he knew who was doing this - someone who he had issues with before\n2. Danielle asks how he knows it's not\n3. James says he drove over and banged on that person's door to confront them\n4. James says it wasn't that person and that Marcus shouldn't worry that another person knows\n5. James says he'll head over immediately, and Olivia does too\n6. IMmediately, someone knocks on the door. Cliffhanger",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_screen_time_012",
+      "showId": "show_demo_screen_time",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "Screen Time Episode 12.",
+      "durationSeconds": 59,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "88408e827a5bae9c30dbae9e91ec11f9",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 12,
+      "status": "published",
+      "publishedAt": "2026-06-11T00:32:54.000Z",
+      "recommendation": {
+        "scriptNotes": "1. 15 minutes are left and someone persistently knocks on the door. Someone says \"delivery\"\n2. Marcus goes to the door and brings in a package that says \"For tomorrow, do not open until instructed\"\n3. Olivia arrives\n4. Marcus asks where James really went, and if he knows about Marcus and Olivia\n5. Olivia says of course not\n6. cliffhanger ending",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_001",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 1,
+      "title": "Episode 1",
+      "description": "The Beast Queen's Canvas Episode 1.",
+      "durationSeconds": 64,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "83666d685ca596128726e656d923aac0",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 1,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. men break down a door demanding debts\n2. main character is crying and says she doesn't have the money\n3. she clutches a paintbrush and as men break down the door she is teleported into a medieval kind of world\n4. guards knock her down and as she's about to be axed she clutches at her paintbrush",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_002",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 2,
+      "title": "Episode 2",
+      "description": "The Beast Queen's Canvas Episode 2.",
+      "durationSeconds": 69,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "85299570b11e9295eaa4aec023cd1e5e",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 2,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. she rolls away from the ax holding her paint brush\n2. she starts painting with her own blood\n3. she draws a tiger that comes to life, killing the ax man\n4. the chief is scared, and all the townspeople kneel before her\n5. this world is run by women",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_003",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 3,
+      "title": "Episode 3",
+      "description": "The Beast Queen's Canvas Episode 3.",
+      "durationSeconds": 65,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "ed91bc3be735f8820232a4c5d555a5c6",
+      "isLocked": false,
+      "isFreePreview": true,
+      "sortOrder": 3,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. the chief shows the main character to her room\n2. main character realizes that she's in danger\n3. an assassin comes in looking to kill her\n4. a hero in chains (Kaelen) comes in through the window and saves her\n5. Kaelen says he is sent from the chief as a gift and a protector",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_004",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 4,
+      "title": "Episode 4",
+      "description": "The Beast Queen's Canvas Episode 4.",
+      "durationSeconds": 63,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "7562f2ec4cbc4ff825a2c4dd00434c3e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 4,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. Kaelen says his scars are from former masters\n2. The main character uses her paint brush to heal his injuries and gives him armor\n3. Attackers are coming up to attack the main character\n4. Kaelen prepares for battle. We end on a cliffhanger",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_005",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 5,
+      "title": "Episode 5",
+      "description": "The Beast Queen's Canvas Episode 5.",
+      "durationSeconds": 67,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "2ae35d5cb162c5110e3b295f5c9e2b25",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 5,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. Chief shows up with her army to kill Kaelen, but his armor is unbreakable\n2. Chief negotiates and tells the main character the law - a messenger has to take 3 teammates \n3. Chief says tomorrow there will be a fight in the arena\n4. Kaelen realizes it's a trap and says he will defend her\n\n[meta note: kind of confusing English in this episode]",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_006",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 6,
+      "title": "Episode 6",
+      "description": "The Beast Queen's Canvas Episode 6.",
+      "durationSeconds": 71,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "c118425f261d08d7f22acb62287b4375",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 6,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. Fight begins in the arena\n2. An enraged man emerges and opponents ask for mercy\n3. He turns into a white jaguar\n4. Kaelen is about to kill the jaguar until the main character stops him\n5. She confidently opens her arms as the jaguar dives at her\n6. Cliffhanger before the jaguar gets to her",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_007",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 7,
+      "title": "Episode 7",
+      "description": "The Beast Queen's Canvas Episode 7.",
+      "durationSeconds": 58,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "d904614df48a81483e67e3b67c73af3e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 7,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. Main character uses her paintbrush and lassos the jaguar right as it reaches her\n2. Somehow the collar eases the jaguar's rage and he turns back into a man\n3. He pulls her in for a kiss but Kaelen stops him with a sword\n4. Jaguar and Kaelen have a face off and challenge each other to a fight\n5. Cliffhanger as we also see a snake",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_008",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 8,
+      "title": "Episode 8",
+      "description": "The Beast Queen's Canvas Episode 8.",
+      "durationSeconds": 70,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "6a7bbb9158a9a13ef1d1de2018008cde",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 8,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:33:12Z",
+      "recommendation": {
+        "scriptNotes": "1. Snake turns into a man (Orion) and tells the main character that he will help her rule\n2. Kaelen tells Orion he shouldn't have come\n3. Orion reminds the main character she needs 3 teammates, and he should be the third\n4. Main character claims the three and kicks off her quest",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_009",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 9,
+      "title": "Episode 9",
+      "description": "The Beast Queen's Canvas Episode 9.",
+      "durationSeconds": 61,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "801b0aa3cc1208cc8647d911b68daec1",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 9,
+      "status": "published",
+      "publishedAt": "2026-06-11T22:36:50Z",
+      "recommendation": {
+        "scriptNotes": "1. Xander tries to seduce the main character, but she's all business\n2. She says if they want to sleep with her, they need to help her tear down the chief's underground armory\n3. Orion is on board with overthrowing the chief\n4. Main character says she aims to be the absolute ruler. empowerment moment\n5. cliffhanger where she says tonight we strike",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_010",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 10,
+      "title": "Episode 10",
+      "description": "The Beast Queen's Canvas Episode 10.",
+      "durationSeconds": 65,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "4755c60aacc49d9948377a067c54bd9b",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 10,
+      "status": "published",
+      "publishedAt": "2026-06-11T23:05:35Z",
+      "recommendation": {
+        "scriptNotes": "1. the three protectors take down guards in the armory\n2. the protectors realize it's a trap, but kaelen and xander are caught in a trap\n3. orion tells her they need to leave but she refuses. she uses her paintbrush to do something, but we get a cliffhanger",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_011",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 11,
+      "title": "Episode 11",
+      "description": "The Beast Queen's Canvas Episode 11.",
+      "durationSeconds": 85,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "088b2c5c870f67697bfbd6a60f192b5e",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 11,
+      "status": "published",
+      "publishedAt": "2026-06-11T23:05:35Z",
+      "recommendation": {
+        "scriptNotes": "1. the main character draws a hex that opens a blast of water, breaking open the cage that holds the two heros and wipes out the fire\n2. it saves the heroes but drains her of energy\n3. they are thankful, saying in this world women usually only use men\n4. the men are thankful and say they owe her their lives",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_012",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 12,
+      "title": "Episode 12",
+      "description": "The Beast Queen's Canvas Episode 12.",
+      "durationSeconds": 76,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "c9fd5b35300b822a3bc98aa8aabbb2f7",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 12,
+      "status": "published",
+      "publishedAt": "2026-06-11T23:05:35Z",
+      "recommendation": {
+        "scriptNotes": "1. chief realizes the armory has been overthrown\n2. chief orders an army to go attack the main character\n3. main character is tired from the spell, but orion gives her a potion\n4. the army has encircled the main character and heroes\n5. they attack, but the main character doesn't have enough energy\n6. orion proposes they all bind together in a blood contract to gain more power\n7. cliffhanger before they do the contract",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_013",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 13,
+      "title": "Episode 13",
+      "description": "The Beast Queen's Canvas Episode 13.",
+      "durationSeconds": 74,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "891abf8bd1710220e33b7c1844164b48",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 13,
+      "status": "published",
+      "publishedAt": "2026-06-11T23:05:35Z",
+      "recommendation": {
+        "scriptNotes": "1. we watch them do the blood contract\n2. she gets powers like being able to fly and do magic. now she doesn't need the paintbrush anymore\n3. she destroys the army",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
+    },
+    {
+      "id": "ep_demo_the_beast_queens_canvas_014",
+      "showId": "show_demo_the_beast_queens_canvas",
+      "episodeNumber": 14,
+      "title": "Episode 14",
+      "description": "The Beast Queen's Canvas Episode 14.",
+      "durationSeconds": 72,
+      "provider": "cloudflare_stream",
+      "providerAssetId": "70243d1fe11399a776609533297ca83a",
+      "isLocked": false,
+      "isFreePreview": false,
+      "sortOrder": 14,
+      "status": "published",
+      "publishedAt": "2026-06-11T23:05:35Z",
+      "recommendation": {
+        "scriptNotes": "1. main character sends down meteors to destroy the army\n2. chief barricades the city\n3. army surrenders to the main character\n4. cliffhanger as main character vows to take the city tomorrow",
+        "activeAtoms": [],
+        "emotionalBeat": "",
+        "narrativeRole": "",
+        "payoffTypes": [],
+        "pacingTags": []
+      }
     }
   ],
   "feeds": [
@@ -2978,7 +6039,56 @@
         "ep_demo_the_eye_of_betrayal_009",
         "ep_demo_the_eye_of_betrayal_010",
         "ep_demo_the_eye_of_betrayal_011",
-        "ep_demo_the_eye_of_betrayal_012"
+        "ep_demo_i_married_my_exs_mafia_boss_001",
+        "ep_demo_i_married_my_exs_mafia_boss_002",
+        "ep_demo_i_married_my_exs_mafia_boss_003",
+        "ep_demo_i_married_my_exs_mafia_boss_004",
+        "ep_demo_i_married_my_exs_mafia_boss_005",
+        "ep_demo_i_married_my_exs_mafia_boss_006",
+        "ep_demo_i_married_my_exs_mafia_boss_007",
+        "ep_demo_i_married_my_exs_mafia_boss_008",
+        "ep_demo_i_married_my_exs_mafia_boss_009",
+        "ep_demo_i_married_my_exs_mafia_boss_010",
+        "ep_demo_i_married_my_exs_mafia_boss_011",
+        "ep_demo_i_married_my_exs_mafia_boss_012",
+        "ep_demo_secrets_in_the_juice_001",
+        "ep_demo_secrets_in_the_juice_002",
+        "ep_demo_secrets_in_the_juice_003",
+        "ep_demo_secrets_in_the_juice_004",
+        "ep_demo_secrets_in_the_juice_005",
+        "ep_demo_secrets_in_the_juice_006",
+        "ep_demo_secrets_in_the_juice_007",
+        "ep_demo_secrets_in_the_juice_008",
+        "ep_demo_secrets_in_the_juice_009",
+        "ep_demo_secrets_in_the_juice_010",
+        "ep_demo_secrets_in_the_juice_011",
+        "ep_demo_secrets_in_the_juice_012",
+        "ep_demo_screen_time_001",
+        "ep_demo_screen_time_002",
+        "ep_demo_screen_time_003",
+        "ep_demo_screen_time_004",
+        "ep_demo_screen_time_005",
+        "ep_demo_screen_time_006",
+        "ep_demo_screen_time_007",
+        "ep_demo_screen_time_008",
+        "ep_demo_screen_time_009",
+        "ep_demo_screen_time_010",
+        "ep_demo_screen_time_011",
+        "ep_demo_screen_time_012",
+        "ep_demo_the_beast_queens_canvas_001",
+        "ep_demo_the_beast_queens_canvas_002",
+        "ep_demo_the_beast_queens_canvas_003",
+        "ep_demo_the_beast_queens_canvas_004",
+        "ep_demo_the_beast_queens_canvas_005",
+        "ep_demo_the_beast_queens_canvas_006",
+        "ep_demo_the_beast_queens_canvas_007",
+        "ep_demo_the_beast_queens_canvas_008",
+        "ep_demo_the_beast_queens_canvas_009",
+        "ep_demo_the_beast_queens_canvas_010",
+        "ep_demo_the_beast_queens_canvas_011",
+        "ep_demo_the_beast_queens_canvas_012",
+        "ep_demo_the_beast_queens_canvas_013",
+        "ep_demo_the_beast_queens_canvas_014"
       ]
     }
   ]

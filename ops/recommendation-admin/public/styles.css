@@ -63,6 +63,7 @@ textarea {
 }
 
 .toolbar input,
+.toolbar select,
 .field input,
 .field select,
 .field textarea {
@@ -75,7 +76,13 @@ textarea {
   outline: none;
 }
 
+.toolbar {
+  display: grid;
+  gap: 10px;
+}
+
 .toolbar input:focus,
+.toolbar select:focus,
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
@@ -180,6 +187,27 @@ textarea {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.show-status-field {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.show-status-field select {
+  min-width: 120px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 10px;
+  text-transform: none;
 }
 
 .status {

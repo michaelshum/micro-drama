@@ -17,6 +17,7 @@ const publicDir = join(__dirname, "public");
 const port = Number(process.env.PORT || 3015);
 const host = process.env.HOST || "127.0.0.1";
 const playbackTokenTtlSeconds = Number(process.env.PLAYBACK_TOKEN_TTL_SECONDS || 30 * 60);
+const imageTokenTtlSeconds = Number(process.env.IMAGE_TOKEN_TTL_SECONDS || 24 * 60 * 60);
 
 let signingCredentialsCache;
 
@@ -35,6 +36,7 @@ const emptyRecommendation = {
   primaryGenre: "",
   secondaryGenres: [],
   microGenres: [],
+  storySignals: [],
   storyDrivers: [],
   tropes: [],
   tone: [],
@@ -70,6 +72,7 @@ const emptyRecommendation = {
     freshnessWindowDays: 14
   },
   editorial: {
+    qualityLabel: 4,
     qualityScore: 0.7,
     coldStartPriority: 5,
     featuredBoost: 1
@@ -90,6 +93,7 @@ const defaultRecommendationOptions = {
   primaryGenre: ["romance", "drama", "comedy", "thriller", "fantasy", "crime", "sports", "action", "horror", "sci-fi", "reality-style"],
   secondaryGenres: ["reality-style", "competition", "melodrama", "satire", "parody", "soap-opera", "rom-com", "light-comedy", "sports-drama", "crime-drama", "fantasy-adventure", "historical", "workplace", "teen", "family-drama"],
   microGenres: ["dating-competition", "dating-show", "billionaire-romance", "class-gap-romance", "sports-underdog", "fashion-satire", "fantasy-parody", "crime-parody", "alternate-history", "war-fantasy", "reality-competition", "villa-romance"],
+  storySignals: ["billionaire-lover", "power-imbalance", "luxury-life", "heartbreak", "fish-out-of-water", "romantic-pursuit", "wealth-gap", "secret-keeping", "mystery-reveal", "personal-transformation", "recognition-hook", "one-night-stand", "morning-after-shock", "anonymous-connection", "keepsake-token", "he-never-forgot-her", "forced-proximity", "protective-distance", "business-rescue", "lost-connection-reunion", "dating-game", "partner-selection", "recoupling", "public-vote", "elimination-pressure", "confessional-interviews", "new-arrival-disruption", "love-triangle", "couple-switching", "jealousy-spiral", "viewer-choice", "betrayed-wife", "cheating-husband", "mistress-takedown", "financial-exploitation", "hidden-knowledge-advantage", "evidence-gathering", "revenge-trap", "glow-up-transformation", "wife-secretly-knows", "villain-thinks-he-is-safe", "parody-recognition", "fashion-remix", "prestige-show-remix", "wizard-fantasy-remix", "sports-underdog", "training-grind", "team-competition", "war-fantasy", "alternate-history"],
   storyDrivers: ["romantic-pursuit", "partner-selection", "contest-progression", "elimination-pressure", "social-strategy", "betrayal", "revenge", "status-climbing", "wealth-gap", "secret-keeping", "mystery-reveal", "survival-pressure", "family-duty", "power-struggle", "personal-transformation", "recognition-hook", "rivalry-escalation"],
   tropes: ["love-triangle", "rivalry", "choice-driven", "elimination", "confessional-interviews", "forbidden-love", "chosen-one", "antihero", "makeover", "secret-identity", "underdog", "fish-out-of-water", "power-struggle", "billionaire-lover", "secret-affair", "power-imbalance", "luxury-life"],
   tone: ["playful", "flirty", "dramatic", "melodramatic", "dark", "tense", "absurd", "glamorous", "heartfelt", "chaotic", "suspenseful", "sexy"],
@@ -109,7 +113,7 @@ const defaultRecommendationOptions = {
   setting: ["island", "villa", "school", "workplace", "court", "mansion", "city", "fantasy-world", "wartime", "fashion-world", "sports-arena", "luxury-world"],
   characterSystem: ["human-characters", "fruit-characters", "anthropomorphic-food"],
   worldType: ["real-world", "food-world", "fantasy-world", "alternate-history"],
-  visualStyle: ["live-action", "ai-generated", "ai-stylized", "3d-animated", "glossy-toy-render", "pastel-candycore", "bright-resort", "romance-reality-style", "luxury-editorial", "fashion-campaign", "doll-like", "ornate-glamour", "cartoon-action", "exaggerated-expressions", "bright-outdoor", "cinematic-melodrama", "soap-opera", "luxury-interior", "warm-dramatic-lighting", "meme-captioned", "fashion-editorial", "sports-action", "reality-style", "meme-native", "cinematic", "bright", "moody", "glamorous"],
+  visualStyle: ["live-action", "ai-generated", "ai-stylized", "3d-animated", "glossy-toy-render", "pastel-candycore", "bright-resort", "romance-reality-style", "luxury-editorial", "fashion-campaign", "doll-like", "ornate-glamour", "cartoon-action", "exaggerated-expressions", "bright-outdoor", "cinematic-melodrama", "soap-opera", "luxury-interior", "warm-dramatic-lighting", "meme-captioned", "fashion-editorial", "sports-action", "reality-style", "meme-native", "cinematic", "bright", "moody", "glamorous", "glossy-character-render", "soft-realistic-lighting", "cartoon-3d", "dreamworks-inspired", "pixar-inspired", "glossy-render", "dark-luxury-interior", "neo-noir-lighting", "dark-romance-visuals", "anthropomorphic-fruit", "tropical-poolside", "dating-show-glam", "pastel-resort-glam", "candy-character-design", "domestic-interior", "domestic-melodrama", "luxury-corporate-interior", "corporate-romance-visuals", "storybook-melodrama", "theatrical-interior", "costume-forward", "warm-stage-lighting", "gothic-romance-interior", "cozy-cafe-interior", "rustic-warm-lighting", "workplace-ensemble-staging", "food-service-setting", "supernatural-thriller-visuals"],
   contentLineageType: ["original", "parody", "mashup", "fan-inspired", "licensed", "user-generated"],
   referenceSignals: ["wizard-fantasy", "prestige-crime", "luxury-fashion", "dating-reality", "sports-culture", "wartime-history"],
   episodeLengthBucket: ["under-thirty-sec", "thirty-to-sixty-sec", "one-to-three-min", "three-to-five-min", "over-five-min"],
@@ -121,6 +125,7 @@ const defaultRecommendationOptions = {
 };
 
 const optionFields = Object.keys(defaultRecommendationOptions);
+const showStatuses = new Set(["published", "hidden", "draft", "archived"]);
 
 async function loadEnvFiles() {
   const candidates = [
@@ -163,6 +168,14 @@ function sendJson(res, status, body) {
     "cache-control": "no-store"
   });
   res.end(payload);
+}
+
+function sendRedirect(res, location) {
+  res.writeHead(302, {
+    location,
+    "cache-control": "no-store"
+  });
+  res.end();
 }
 
 function sendError(res, status, message) {
@@ -209,6 +222,11 @@ function normalizeStringArray(value) {
   return [...new Set(value.map(normalizeString).filter(Boolean))];
 }
 
+function normalizeShowStatus(value, fallback = "draft") {
+  const status = normalizeString(value);
+  return showStatuses.has(status) ? status : fallback;
+}
+
 function normalizeOptions(input) {
   const options = input && typeof input === "object" ? input : {};
   return Object.fromEntries(
@@ -230,6 +248,7 @@ function mergeRecommendationIntoOptions(options, recommendation) {
   addOptions(nextOptions, "primaryGenre", [recommendation.primaryGenre]);
   addOptions(nextOptions, "secondaryGenres", recommendation.secondaryGenres);
   addOptions(nextOptions, "microGenres", recommendation.microGenres);
+  addOptions(nextOptions, "storySignals", recommendation.storySignals);
   addOptions(nextOptions, "storyDrivers", recommendation.storyDrivers);
   addOptions(nextOptions, "tropes", recommendation.tropes);
   addOptions(nextOptions, "tone", recommendation.tone);
@@ -277,8 +296,32 @@ function normalizeNumber(value, fallback, min, max) {
   return Math.min(Math.max(number, min), max);
 }
 
+function normalizeQualityLabel(value, score) {
+  const fallbackScore = normalizeNumber(score, 0.7, 0, 1);
+  const fallbackLabel = Math.round(fallbackScore * 4 + 1);
+  return Math.round(normalizeNumber(value, fallbackLabel, 1, 5));
+}
+
 function base64Url(input) {
   return Buffer.from(input).toString("base64url");
+}
+
+function cloudflareVideoUidFromUrl(value) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+    const [, videoUid] = url.pathname.split("/");
+    return videoUid || null;
+  } catch {
+    return null;
+  }
+}
+
+function thumbnailVideoUid(item) {
+  return item.providerAssetId || cloudflareVideoUidFromUrl(item.thumbnailUrl || item.posterUrl || item.coverUrl);
 }
 
 function normalizeSigningKey(value) {
@@ -416,13 +459,27 @@ async function fetchCloudflareStreamToken(videoUid) {
   };
 }
 
-async function buildCloudflareStreamToken(videoUid) {
-  let ticket = generateCloudflareStreamToken(videoUid);
+async function buildCloudflareStreamToken(videoUid, ttlSeconds = playbackTokenTtlSeconds) {
+  let ticket = generateCloudflareStreamToken(videoUid, ttlSeconds);
   if (!ticket) {
     ticket = await fetchCloudflareStreamToken(videoUid);
   }
 
   return ticket;
+}
+
+async function buildCloudflareAssetUrl(videoUid, assetPath, ttlSeconds = playbackTokenTtlSeconds) {
+  const ticket = await buildCloudflareStreamToken(videoUid, ttlSeconds);
+  if (!ticket) {
+    const error = new Error("Cloudflare Stream signing is not configured");
+    error.statusCode = 503;
+    throw error;
+  }
+
+  return {
+    url: `https://videodelivery.net/${ticket.token}${assetPath}`,
+    expiresAt: ticket.expiresAt
+  };
 }
 
 async function buildPlaybackTicket(episode) {
@@ -432,17 +489,26 @@ async function buildPlaybackTicket(episode) {
     throw error;
   }
 
-  const ticket = await buildCloudflareStreamToken(episode.providerAssetId);
-  if (!ticket) {
-    const error = new Error("Cloudflare Stream signing is not configured");
-    error.statusCode = 503;
+  const asset = await buildCloudflareAssetUrl(
+    episode.providerAssetId,
+    "/manifest/video.m3u8"
+  );
+
+  return {
+    playbackUrl: asset.url,
+    expiresAt: asset.expiresAt
+  };
+}
+
+async function buildThumbnailTicket(item) {
+  const videoUid = thumbnailVideoUid(item);
+  if (!videoUid) {
+    const error = new Error("Cloudflare Stream thumbnail asset is not configured");
+    error.statusCode = 404;
     throw error;
   }
 
-  return {
-    playbackUrl: `https://videodelivery.net/${ticket.token}/manifest/video.m3u8`,
-    expiresAt: ticket.expiresAt
-  };
+  return buildCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg", imageTokenTtlSeconds);
 }
 
 function normalizeRecommendation(input) {
@@ -459,6 +525,7 @@ function normalizeRecommendation(input) {
     primaryGenre: normalizeString(recommendation.primaryGenre),
     secondaryGenres: normalizeStringArray(recommendation.secondaryGenres),
     microGenres: normalizeStringArray(recommendation.microGenres),
+    storySignals: normalizeStringArray(recommendation.storySignals),
     storyDrivers: normalizeStringArray(recommendation.storyDrivers),
     tropes: normalizeStringArray(recommendation.tropes),
     tone: normalizeStringArray(recommendation.tone),
@@ -495,6 +562,7 @@ function normalizeRecommendation(input) {
       freshnessWindowDays: normalizeNumber(release.freshnessWindowDays, 14, 0, 3650)
     },
     editorial: {
+      qualityLabel: normalizeQualityLabel(editorial.qualityLabel, editorial.qualityScore),
       qualityScore: normalizeNumber(editorial.qualityScore, 0.7, 0, 1),
       coldStartPriority: Math.round(normalizeNumber(editorial.coldStartPriority, 5, 0, 10)),
       featuredBoost: normalizeNumber(editorial.featuredBoost, 1, 0, 5)
@@ -543,8 +611,8 @@ function publicShows(catalog) {
         title: show.title,
         description: show.description,
         genre: show.genre,
-        posterUrl: show.posterUrl,
-        coverUrl: show.coverUrl,
+        posterUrl: `/api/shows/${show.id}/poster`,
+        coverUrl: `/api/shows/${show.id}/cover`,
         status: show.status,
         sortOrder: show.sortOrder,
         stats,
@@ -595,9 +663,7 @@ function publicEpisodes(catalog, showId) {
       durationSeconds: episode.durationSeconds,
       provider: episode.provider,
       providerAssetId: episode.providerAssetId,
-      thumbnailUrl: episode.thumbnailUrl || (episode.providerAssetId
-        ? `https://videodelivery.net/${episode.providerAssetId}/thumbnails/thumbnail.jpg`
-        : ""),
+      thumbnailUrl: `/api/episodes/${episode.id}/thumbnail`,
       playbackPath: `/api/episodes/${episode.id}/playback`,
       isLocked: episode.isLocked,
       isFreePreview: episode.isFreePreview,
@@ -678,6 +744,7 @@ async function handleApi(req, res, url) {
     }
 
     const recommendation = normalizeRecommendation(body.recommendation);
+    show.status = normalizeShowStatus(body.show?.status, show.status);
     show.recommendation = recommendation;
     await writeCatalog(catalog);
     const options = mergeRecommendationIntoOptions(await readOptions(), recommendation);
@@ -719,6 +786,51 @@ async function handleApi(req, res, url) {
     return true;
   }
 
+  const showPosterMatch = url.pathname.match(/^\/api\/shows\/([^/]+)\/poster$/);
+  if (req.method === "GET" && showPosterMatch) {
+    const showId = decodeURIComponent(showPosterMatch[1]);
+    const catalog = await readCatalog();
+    const show = catalog.shows.find((candidate) => candidate.id === showId);
+    if (!show) {
+      sendError(res, 404, "show_not_found");
+      return true;
+    }
+
+    const ticket = await buildThumbnailTicket({ posterUrl: show.posterUrl });
+    sendRedirect(res, ticket.url);
+    return true;
+  }
+
+  const showCoverMatch = url.pathname.match(/^\/api\/shows\/([^/]+)\/cover$/);
+  if (req.method === "GET" && showCoverMatch) {
+    const showId = decodeURIComponent(showCoverMatch[1]);
+    const catalog = await readCatalog();
+    const show = catalog.shows.find((candidate) => candidate.id === showId);
+    if (!show) {
+      sendError(res, 404, "show_not_found");
+      return true;
+    }
+
+    const ticket = await buildThumbnailTicket({ coverUrl: show.coverUrl });
+    sendRedirect(res, ticket.url);
+    return true;
+  }
+
+  const episodeThumbnailMatch = url.pathname.match(/^\/api\/episodes\/([^/]+)\/thumbnail$/);
+  if (req.method === "GET" && episodeThumbnailMatch) {
+    const episodeId = decodeURIComponent(episodeThumbnailMatch[1]);
+    const catalog = await readCatalog();
+    const episode = catalog.episodes.find((candidate) => candidate.id === episodeId);
+    if (!episode) {
+      sendError(res, 404, "episode_not_found");
+      return true;
+    }
+
+    const ticket = await buildThumbnailTicket(episode);
+    sendRedirect(res, ticket.url);
+    return true;
+  }
+
   const episodePlaybackMatch = url.pathname.match(/^\/api\/episodes\/([^/]+)\/playback$/);
   if (req.method === "GET" && episodePlaybackMatch) {
     const episodeId = decodeURIComponent(episodePlaybackMatch[1]);
@@ -738,7 +850,8 @@ async function handleApi(req, res, url) {
 }
 
 async function serveStatic(res, pathname) {
-  const filePath = pathname === "/" ? join(publicDir, "index.html") : join(publicDir, pathname);
+  const relativePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+  const filePath = join(publicDir, relativePath);
   const resolvedPath = resolve(filePath);
 
   if (!resolvedPath.startsWith(publicDir) || !existsSync(resolvedPath)) {

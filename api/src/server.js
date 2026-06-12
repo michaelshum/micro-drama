@@ -45,6 +45,14 @@ function isPublished(item) {
   return item.status === "published";
 }
 
+function canIncludeHidden(url) {
+  return process.env.NODE_ENV !== "production" && url.searchParams.get("includeHidden") === "1";
+}
+
+function isVisibleShow(show, includeHidden = false) {
+  return isPublished(show) || (includeHidden && show.status === "hidden");
+}
+
 function publicEpisode(req, episode, show, imageUrl) {
   return {
     id: episode.id,
@@ -354,9 +362,13 @@ async function handleRequest(req, res) {
 
   try {
     const catalog = await loadCatalog();
-    const shows = catalog.shows.filter(isPublished).sort((a, b) => a.sortOrder - b.sortOrder);
-    const episodes = catalog.episodes.filter(isPublished);
+    const includeHidden = canIncludeHidden(url);
+    const shows = catalog.shows
+      .filter((show) => isVisibleShow(show, includeHidden))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
     const showsById = new Map(shows.map((show) => [show.id, show]));
+    const visibleShowIds = new Set(showsById.keys());
+    const episodes = catalog.episodes.filter((episode) => isPublished(episode) && visibleShowIds.has(episode.showId));
     const episodesById = new Map(episodes.map((episode) => [episode.id, episode]));
     const imageUrl = createImageUrlBuilder(req);
 
