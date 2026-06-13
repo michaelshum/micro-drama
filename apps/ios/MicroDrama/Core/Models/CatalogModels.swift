@@ -7,6 +7,7 @@ struct Show: Identifiable, Decodable, Hashable {
     let title: String
     let description: String
     let genre: String
+    let thumbnailUrl: URL?
     let posterUrl: URL
     let coverUrl: URL
     let episodeCount: Int
@@ -21,6 +22,29 @@ struct ShowDetail: Identifiable, Decodable {
     let coverUrl: URL
     let episodeCount: Int
     let episodes: [Episode]
+}
+
+struct HomeResponse: Decodable {
+    let heroShow: Show?
+    let sections: [HomeSection]
+}
+
+struct HomeSection: Identifiable, Decodable {
+    let id: String
+    let title: String
+    let shows: [Show]
+}
+
+struct HomeRequest: Encodable {
+    let onboarding: HomeOnboardingProfile?
+    let excludedShowIds: [String]
+}
+
+struct HomeOnboardingProfile: Encodable {
+    let selectedAnchorIds: [String]
+    let selectedDealbreakerIds: [String]
+    let matchedShowId: String
+    let alternateShowIds: [String]
 }
 
 struct Episode: Identifiable, Decodable, Hashable {

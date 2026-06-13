@@ -9,6 +9,153 @@
       "episodeId": "ep_demo_candy_love_island_001"
     }
   },
+  "home": {
+    "tasteAnchors": [
+      {
+        "id": "loveIsland",
+        "title": "Love Island",
+        "preferredShowIds": [
+          "show_demo_fruit_love_island",
+          "show_demo_candy_love_island"
+        ]
+      },
+      {
+        "id": "theBachelor",
+        "title": "The Bachelor",
+        "preferredShowIds": [
+          "show_demo_fruit_love_island",
+          "show_demo_candy_love_island"
+        ]
+      },
+      {
+        "id": "desperateHousewives",
+        "title": "Desperate Housewives",
+        "preferredShowIds": [
+          "show_demo_the_eye_of_betrayal",
+          "show_demo_double_shelf_life_marks_greed",
+          "show_demo_screen_time"
+        ]
+      },
+      {
+        "id": "goneGirl",
+        "title": "Gone Girl",
+        "preferredShowIds": [
+          "show_demo_screen_time",
+          "show_demo_the_eye_of_betrayal",
+          "show_demo_double_shelf_life_marks_greed"
+        ]
+      },
+      {
+        "id": "crazyRichAsians",
+        "title": "Crazy Rich Asians",
+        "preferredShowIds": [
+          "show_demo_one_night_in_fruitopia",
+          "show_demo_i_married_my_exs_mafia_boss"
+        ]
+      },
+      {
+        "id": "fiftyShades",
+        "title": "Fifty Shades",
+        "preferredShowIds": [
+          "show_demo_one_night_in_fruitopia",
+          "show_demo_i_married_my_exs_mafia_boss"
+        ]
+      },
+      {
+        "id": "prettyLittleLiars",
+        "title": "Pretty Little Liars",
+        "preferredShowIds": [
+          "show_demo_screen_time",
+          "show_demo_the_eye_of_betrayal"
+        ]
+      },
+      {
+        "id": "suits",
+        "title": "Suits",
+        "preferredShowIds": [
+          "show_demo_secrets_in_the_juice",
+          "show_demo_one_night_in_fruitopia"
+        ]
+      },
+      {
+        "id": "succession",
+        "title": "Succession",
+        "preferredShowIds": [
+          "show_demo_secrets_in_the_juice"
+        ]
+      },
+      {
+        "id": "gameOfThrones",
+        "title": "Game of Thrones",
+        "preferredShowIds": [
+          "show_demo_the_beast_queens_canvas"
+        ]
+      },
+      {
+        "id": "beautyAndTheBeast",
+        "title": "Beauty and the Beast",
+        "preferredShowIds": [
+          "show_demo_the_beast_queens_canvas"
+        ]
+      },
+      {
+        "id": "bridgerton",
+        "title": "Bridgerton",
+        "preferredShowIds": [
+          "show_demo_i_married_my_exs_mafia_boss"
+        ]
+      },
+      {
+        "id": "devilWearsPrada",
+        "title": "The Devil Wears Prada",
+        "preferredShowIds": [
+          "show_demo_secrets_in_the_juice"
+        ]
+      },
+      {
+        "id": "twilight",
+        "title": "Twilight",
+        "preferredShowIds": [
+          "show_demo_the_beast_queens_canvas"
+        ]
+      }
+    ],
+    "sections": [
+      {
+        "id": "reality-romance",
+        "title": "Reality Romance",
+        "showIds": [
+          "show_demo_candy_love_island",
+          "show_demo_fruit_love_island"
+        ]
+      },
+      {
+        "id": "revenge-betrayal",
+        "title": "Revenge & Betrayal",
+        "showIds": [
+          "show_demo_double_shelf_life_marks_greed",
+          "show_demo_the_eye_of_betrayal"
+        ]
+      },
+      {
+        "id": "power-romance",
+        "title": "Power Romance",
+        "showIds": [
+          "show_demo_one_night_in_fruitopia",
+          "show_demo_i_married_my_exs_mafia_boss",
+          "show_demo_secrets_in_the_juice"
+        ]
+      },
+      {
+        "id": "mystery-fantasy",
+        "title": "Mystery & Fantasy",
+        "showIds": [
+          "show_demo_screen_time",
+          "show_demo_the_beast_queens_canvas"
+        ]
+      }
+    ]
+  },
   "shows": [
     {
       "id": "show_demo_candy_love_island",

@@ -171,6 +171,7 @@ extension URL {
 @MainActor
 final class HomeViewModel: ObservableObject {
     @Published var shows: [Show] = []
+    @Published var homeResponse: HomeResponse?
     @Published var selectedShowDetail: ShowDetail?
     @Published var errorMessage: String?
     @Published var isLoading = false
@@ -178,15 +179,18 @@ final class HomeViewModel: ObservableObject {
 
     private let apiClient: APIClient
     private let progressStore: ShowEpisodeProgressStore
+    private let episodeThumbnailStore: LastWatchedEpisodeThumbnailStore
     private let tasteOnboardingStore: TasteOnboardingStore
 
     init(
         apiClient: APIClient = .shared,
         progressStore: ShowEpisodeProgressStore = .shared,
+        episodeThumbnailStore: LastWatchedEpisodeThumbnailStore = .shared,
         tasteOnboardingStore: TasteOnboardingStore = .shared
     ) {
         self.apiClient = apiClient
         self.progressStore = progressStore
+        self.episodeThumbnailStore = episodeThumbnailStore
         self.tasteOnboardingStore = tasteOnboardingStore
     }
 
@@ -197,6 +201,7 @@ final class HomeViewModel: ObservableObject {
 
         do {
             shows = try await apiClient.fetchShows()
+            await loadHome()
         } catch where error.isCancellation {
             return
         } catch {
@@ -211,6 +216,9 @@ final class HomeViewModel: ObservableObject {
         do {
             initialEpisodeID = progressStore.lastWatchedEpisodeID(for: show.id)
             selectedShowDetail = try await apiClient.fetchShow(id: show.id)
+            if let episode = selectedShowDetail?.episodes.first(where: { $0.id == initialEpisodeID }) {
+                episodeThumbnailStore.setThumbnailURL(episode.thumbnailUrl, for: show.id)
+            }
         } catch where error.isCancellation {
             return
         } catch {
@@ -228,70 +236,58 @@ final class HomeViewModel: ObservableObject {
             }
     }
 
-    func personalizedRecommendationSection() -> PersonalizedRecommendationSection? {
-        guard let profile = tasteOnboardingStore.profile else { return nil }
-
-        let continueWatchingShowIDs = Set(continueWatchingShows().map(\.id))
-        let showsByID = Dictionary(uniqueKeysWithValues: shows.map { ($0.id, $0) })
-        let recommendedShowIDs = orderedUniqueShowIDs([profile.matchedShowID] + profile.alternateShowIDs)
-        let recommendedShows = recommendedShowIDs.compactMap { showID -> Show? in
-            guard !continueWatchingShowIDs.contains(showID) else { return nil }
-            return showsByID[showID]
-        }
-
-        guard !recommendedShows.isEmpty else { return nil }
-
-        return PersonalizedRecommendationSection(
-            title: personalizedRecommendationTitle(for: profile, recommendedShows: recommendedShows),
-            shows: recommendedShows
-        )
+    func fallbackHomeSections() -> [HomeSection] {
+        [HomeSection(id: "all-shows", title: "All Shows", shows: shows)]
     }
 
-    func catalogShows(excluding personalizedSection: PersonalizedRecommendationSection?) -> [Show] {
-        guard let personalizedSection else { return shows }
+    func visibleHomeSections() -> [HomeSection] {
+        let continueWatchingShowIDs = Set(continueWatchingShows().map(\.id))
+        let sections = homeResponse?.sections ?? fallbackHomeSections()
 
-        let personalizedShowIDs = Set(personalizedSection.shows.map(\.id))
-        return shows.filter { !personalizedShowIDs.contains($0.id) }
+        return sections.compactMap { section in
+            let visibleShows = section.shows.filter { !continueWatchingShowIDs.contains($0.id) }
+            guard !visibleShows.isEmpty else { return nil }
+
+            return HomeSection(id: section.id, title: section.title, shows: visibleShows)
+        }
     }
 
     func lastWatchedEpisodeNumber(for showID: String) -> Int? {
         progressStore.lastWatchedEpisodeNumber(for: showID)
     }
 
+    func lastWatchedThumbnailURL(for showID: String) -> URL? {
+        episodeThumbnailStore.thumbnailURL(for: showID)
+    }
+
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
+        episodeThumbnailStore.setThumbnailURL(episode.thumbnailUrl, for: show.id)
     }
 
-    private func orderedUniqueShowIDs(_ showIDs: [String]) -> [String] {
-        var seenShowIDs: Set<String> = []
-        return showIDs.filter { showID in
-            seenShowIDs.insert(showID).inserted
+    private func loadHome() async {
+        do {
+            homeResponse = try await apiClient.fetchHome(request: homeRequest())
+        } catch where error.isCancellation {
+            return
+        } catch {
+            homeResponse = nil
         }
     }
 
-    private func personalizedRecommendationTitle(
-        for profile: TasteProfile,
-        recommendedShows: [Show]
-    ) -> String {
-        let recommendedShowIDs = Set(recommendedShows.map(\.id))
-        let selectedAnchors = TasteAnchor.allCases.filter { anchor in
-            profile.selectedAnchorIDs.contains(anchor.id)
-        }
-        let matchingAnchor = selectedAnchors.first { anchor in
-            anchor.preferredShowIDs.contains { recommendedShowIDs.contains($0) }
-        }
-
-        if let matchingAnchor {
-            return "Because you like \(matchingAnchor.title)"
-        }
-
-        return "Picked for You"
+    private func homeRequest() -> HomeRequest {
+        HomeRequest(
+            onboarding: tasteOnboardingStore.profile.map { profile in
+                HomeOnboardingProfile(
+                    selectedAnchorIds: profile.selectedAnchorIDs,
+                    selectedDealbreakerIds: profile.selectedDealbreakerIDs,
+                    matchedShowId: profile.matchedShowID,
+                    alternateShowIds: profile.alternateShowIDs
+                )
+            },
+            excludedShowIds: continueWatchingShows().map(\.id)
+        )
     }
-}
-
-struct PersonalizedRecommendationSection {
-    let title: String
-    let shows: [Show]
 }
 
 private extension Error {
@@ -424,107 +420,106 @@ final class ShowEpisodeProgressStore {
     }
 }
 
+final class LastWatchedEpisodeThumbnailStore {
+    static let shared = LastWatchedEpisodeThumbnailStore()
+
+    private let defaults: UserDefaults
+    private let storageKey = "showLastWatchedEpisodeThumbnailURLs"
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    func thumbnailURL(for showID: String) -> URL? {
+        allThumbnailURLs()[showID].flatMap(URL.init(string:))
+    }
+
+    func setThumbnailURL(_ thumbnailURL: URL, for showID: String) {
+        var thumbnailURLs = allThumbnailURLs()
+        thumbnailURLs[showID] = thumbnailURL.absoluteString
+        defaults.set(thumbnailURLs, forKey: storageKey)
+    }
+
+    private func allThumbnailURLs() -> [String: String] {
+        defaults.dictionary(forKey: storageKey) as? [String: String] ?? [:]
+    }
+}
+
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
-
-    private let showGridColumns = Array(
-        repeating: GridItem(.flexible(), spacing: 10, alignment: .top),
-        count: 3
-    )
 
     var body: some View {
         NavigationStack {
             Group {
                 if viewModel.isLoading && viewModel.shows.isEmpty {
-                    ProgressView()
+                    ZStack {
+                        Color.black.ignoresSafeArea()
+
+                        ProgressView()
+                            .tint(.white)
+                    }
                 } else {
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 24) {
+                        VStack(alignment: .leading, spacing: 28) {
                             let continueWatchingShows = viewModel.continueWatchingShows()
-                            let personalizedSection = viewModel.personalizedRecommendationSection()
-                            let catalogShows = viewModel.catalogShows(excluding: personalizedSection)
+                            let homeSections = viewModel.visibleHomeSections()
+                            let heroShow = viewModel.homeResponse?.heroShow ?? continueWatchingShows.first ?? viewModel.shows.first
+
+                            if let heroShow {
+                                HomeHeroSection(show: heroShow) {
+                                    Task {
+                                        await viewModel.open(heroShow)
+                                    }
+                                }
+                            }
 
                             if !continueWatchingShows.isEmpty {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("Continue Watching")
-                                        .font(.headline)
-                                        .padding(.horizontal, 16)
-
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack(spacing: 12) {
-                                            ForEach(continueWatchingShows.prefix(8)) { show in
-                                                Button {
-                                                    Task {
-                                                        await viewModel.open(show)
-                                                    }
-                                                } label: {
-                                                    ContinueWatchingCard(
-                                                        show: show,
-                                                        episodeNumber: viewModel.lastWatchedEpisodeNumber(for: show.id)
-                                                    )
-                                                }
-                                                .buttonStyle(.plain)
-                                            }
-                                        }
-                                        .padding(.horizontal, 16)
-                                    }
-                                }
-                            }
-
-                            if let personalizedSection {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text(personalizedSection.title)
-                                        .font(.headline)
-                                        .padding(.horizontal, 16)
-
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack(spacing: 12) {
-                                            ForEach(personalizedSection.shows) { show in
-                                                Button {
-                                                    Task {
-                                                        await viewModel.open(show)
-                                                    }
-                                                } label: {
-                                                    PersonalizedRecommendationCard(show: show)
-                                                }
-                                                .buttonStyle(.plain)
-                                            }
-                                        }
-                                        .padding(.horizontal, 16)
-                                    }
-                                }
-                            }
-
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text(personalizedSection == nil ? "All Shows" : "More Shows")
-                                    .font(.headline)
-                                    .padding(.horizontal, 16)
-
-                                LazyVGrid(columns: showGridColumns, alignment: .leading, spacing: 16) {
-                                    ForEach(catalogShows) { show in
+                                HomeRailSection(title: "Continue Watching") {
+                                    ForEach(continueWatchingShows.prefix(8)) { show in
                                         Button {
                                             Task {
                                                 await viewModel.open(show)
                                             }
                                         } label: {
-                                            ShowPosterCard(show: show)
+                                            ContinueWatchingCard(
+                                                show: show,
+                                                episodeNumber: viewModel.lastWatchedEpisodeNumber(for: show.id),
+                                                thumbnailURL: viewModel.lastWatchedThumbnailURL(for: show.id)
+                                            )
                                         }
                                         .buttonStyle(.plain)
                                     }
                                 }
-                                .padding(.horizontal, 16)
+                            }
+
+                            ForEach(homeSections) { section in
+                                HomeRailSection(title: section.title) {
+                                    ForEach(section.shows) { show in
+                                        Button {
+                                            Task {
+                                                await viewModel.open(show)
+                                            }
+                                        } label: {
+                                            HomePosterRailCard(show: show)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
                             }
                         }
-                        .padding(.top, 12)
-                        .padding(.bottom, 24)
+                        .padding(.bottom, 32)
                     }
+                    .background(Color.black)
                     .scrollBounceBehavior(.always, axes: .vertical)
                     .refreshable {
                         await viewModel.loadShows(forceRefresh: true)
                     }
                 }
             }
-            .navigationTitle("Shows")
+            .navigationTitle("Home")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
@@ -568,31 +563,110 @@ struct HomeView: View {
     }
 }
 
-private struct PersonalizedRecommendationCard: View {
+private struct HomeHeroSection: View {
+    let show: Show
+    let onOpen: () -> Void
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            RemoteImage(url: show.coverUrl)
+                .frame(maxWidth: .infinity)
+                .frame(height: 430)
+                .clipped()
+                .overlay {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black.opacity(0.1), location: 0),
+                            .init(color: .black.opacity(0.25), location: 0.42),
+                            .init(color: .black.opacity(0.95), location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(show.title)
+                        .font(.system(size: 34, weight: .heavy))
+                        .foregroundStyle(.white)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("\(show.genre) • \(show.episodeCount) episodes")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.78))
+                        .lineLimit(1)
+                }
+
+                Button(action: onOpen) {
+                    Label("Play", systemImage: "play.fill")
+                        .font(.headline)
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 46)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
+        }
+        .background(Color.black)
+    }
+}
+
+private struct HomeRailSection<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .top, spacing: 10) {
+                    content()
+                }
+                .padding(.horizontal, 16)
+            }
+        }
+    }
+}
+
+private struct HomePosterRailCard: View {
     let show: Show
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            RemoteImage(url: show.posterUrl)
-                .frame(width: 120, height: 167)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            posterImage
 
             Text(show.title)
-                .font(.footnote.weight(.medium))
-                .foregroundStyle(.primary)
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.white)
                 .lineLimit(2)
                 .lineSpacing(1)
                 .multilineTextAlignment(.leading)
-                .frame(width: 120, alignment: .leading)
+                .frame(width: 118, alignment: .leading)
         }
-        .frame(width: 120, alignment: .leading)
+        .frame(width: 118, alignment: .leading)
+    }
+
+    private var posterImage: some View {
+        RemoteImage(url: show.thumbnailUrl ?? show.posterUrl)
+            .frame(width: 118, height: 164)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
 }
 
 private struct ContinueWatchingCard: View {
     let show: Show
     let episodeNumber: Int?
+    let thumbnailURL: URL?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -601,12 +675,12 @@ private struct ContinueWatchingCard: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(show.title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.white)
                     .lineLimit(1)
 
                 Text(episodeNumber.map { "Episode \($0)" } ?? "Keep watching")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.68))
                     .lineLimit(1)
             }
         }
@@ -614,10 +688,27 @@ private struct ContinueWatchingCard: View {
     }
 
     private var posterImage: some View {
-        RemoteImage(url: show.posterUrl)
-        .frame(width: 150, height: 208)
-        .clipped()
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        ZStack(alignment: .bottomLeading) {
+            RemoteImage(url: thumbnailURL ?? show.thumbnailUrl ?? show.posterUrl)
+                .frame(width: 150, height: 208)
+                .clipped()
+
+            GeometryReader { proxy in
+                Rectangle()
+                    .fill(.red)
+                    .frame(width: progressWidth(in: proxy.size.width), height: 4)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+    }
+
+    private func progressWidth(in posterWidth: CGFloat) -> CGFloat {
+        guard let episodeNumber, show.episodeCount > 0 else {
+            return posterWidth * 0.12
+        }
+
+        return posterWidth * min(CGFloat(episodeNumber) / CGFloat(show.episodeCount), 1)
     }
 }
 

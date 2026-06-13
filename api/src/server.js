@@ -25,7 +25,7 @@ async function loadCatalog() {
 function sendJson(res, statusCode, body) {
   res.writeHead(statusCode, {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store"
@@ -70,12 +70,17 @@ function publicEpisode(req, episode, show, imageUrl) {
   };
 }
 
-function publicShow(req, show, episodeCount, imageUrl) {
+function publicShow(req, show, episodeCount, imageUrl, representativeEpisode = null) {
+  const representativeThumbnailUrl = representativeEpisode
+    ? imageUrl(representativeEpisode, `/episodes/${representativeEpisode.id}/thumbnail`)
+    : imageUrl({ posterUrl: show.posterUrl }, `/shows/${show.id}/poster`);
+
   return {
     id: show.id,
     title: show.title,
     description: show.description,
     genre: show.genre,
+    thumbnailUrl: representativeThumbnailUrl,
     posterUrl: imageUrl({ posterUrl: show.posterUrl }, `/shows/${show.id}/poster`),
     coverUrl: imageUrl({ coverUrl: show.coverUrl }, `/shows/${show.id}/cover`),
     episodeCount
@@ -84,6 +89,156 @@ function publicShow(req, show, episodeCount, imageUrl) {
 
 function notFound(res) {
   sendJson(res, 404, { error: "not_found" });
+}
+
+function readJsonBody(req, maxBytes = 64 * 1024) {
+  return new Promise((resolve, reject) => {
+    let raw = "";
+
+    req.setEncoding("utf8");
+    req.on("data", (chunk) => {
+      raw += chunk;
+      if (raw.length > maxBytes) {
+        const error = new Error("Request body too large");
+        error.statusCode = 413;
+        reject(error);
+        req.destroy();
+      }
+    });
+    req.on("end", () => {
+      if (!raw.trim()) {
+        resolve({});
+        return;
+      }
+
+      try {
+        resolve(JSON.parse(raw));
+      } catch {
+        const error = new Error("Invalid JSON request body");
+        error.statusCode = 400;
+        reject(error);
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
+function uniqueStrings(values) {
+  const seen = new Set();
+  return (Array.isArray(values) ? values : []).filter((value) => {
+    if (typeof value !== "string" || seen.has(value)) {
+      return false;
+    }
+
+    seen.add(value);
+    return true;
+  });
+}
+
+function publicShowsFromIds(showIds, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl) {
+  return uniqueStrings(showIds)
+    .map((showId) => showsById.get(showId))
+    .filter(Boolean)
+    .map((show) => publicShow(
+      null,
+      show,
+      episodeCountsByShowId.get(show.id) || 0,
+      imageUrl,
+      firstEpisodesByShowId.get(show.id)
+    ));
+}
+
+function buildBecauseYouLikeSection(
+  homeConfig,
+  requestBody,
+  showsById,
+  episodeCountsByShowId,
+  firstEpisodesByShowId,
+  imageUrl,
+  excludedShowIds
+) {
+  const selectedAnchorIds = uniqueStrings(requestBody?.onboarding?.selectedAnchorIds);
+  const anchorsById = new Map((homeConfig.tasteAnchors || []).map((anchor) => [anchor.id, anchor]));
+
+  for (const anchorId of selectedAnchorIds) {
+    const anchor = anchorsById.get(anchorId);
+    if (!anchor) {
+      continue;
+    }
+
+    const shows = publicShowsFromIds(
+      anchor.preferredShowIds?.filter((showId) => !excludedShowIds.has(showId)),
+      showsById,
+      episodeCountsByShowId,
+      firstEpisodesByShowId,
+      imageUrl
+    );
+
+    if (shows.length > 0) {
+      return {
+        id: `because-you-like-${anchor.id}`,
+        title: `Because you like ${anchor.title}`,
+        shows
+      };
+    }
+  }
+
+  return null;
+}
+
+function buildHomeResponse(homeConfig, requestBody, shows, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl) {
+  const excludedShowIds = new Set(uniqueStrings(requestBody?.excludedShowIds));
+  const usedShowIds = new Set(excludedShowIds);
+  const sections = [];
+  const becauseYouLikeSection = buildBecauseYouLikeSection(
+    homeConfig,
+    requestBody,
+    showsById,
+    episodeCountsByShowId,
+    firstEpisodesByShowId,
+    imageUrl,
+    usedShowIds
+  );
+
+  if (becauseYouLikeSection) {
+    sections.push(becauseYouLikeSection);
+    for (const show of becauseYouLikeSection.shows) {
+      usedShowIds.add(show.id);
+    }
+  }
+
+  for (const section of homeConfig.sections || []) {
+    const sectionShowIds = (section.showIds || []).filter((showId) => !usedShowIds.has(showId));
+    const sectionShows = publicShowsFromIds(sectionShowIds, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl);
+    if (sectionShows.length === 0) {
+      continue;
+    }
+
+    sections.push({
+      id: section.id,
+      title: section.title,
+      shows: sectionShows
+    });
+
+    for (const show of sectionShows) {
+      usedShowIds.add(show.id);
+    }
+  }
+
+  const heroShow =
+    sections[0]?.shows[0] ||
+    shows.find((show) => !excludedShowIds.has(show.id));
+
+  return {
+    heroShow: heroShow ? publicShow(
+      null,
+      heroShow,
+      episodeCountsByShowId.get(heroShow.id) || 0,
+      imageUrl,
+      firstEpisodesByShowId.get(heroShow.id)
+    ) : null,
+    sections
+  };
 }
 
 function base64Url(input) {
@@ -293,11 +448,12 @@ function createImageUrlBuilder(req) {
     }
 
     if (!urlsByVideoUid.has(videoUid)) {
-      urlsByVideoUid.set(
-        videoUid,
-        buildLocallySignedCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg", imageTokenTtlSeconds) ||
-          absoluteUrl(req, fallbackPath)
-      );
+      const signedUrl = buildLocallySignedCloudflareAssetUrl(videoUid, "/thumbnails/thumbnail.jpg", imageTokenTtlSeconds);
+      if (!signedUrl) {
+        return absoluteUrl(req, fallbackPath);
+      }
+
+      urlsByVideoUid.set(videoUid, signedUrl);
     }
 
     return urlsByVideoUid.get(videoUid);
@@ -352,13 +508,13 @@ async function handleRequest(req, res) {
     return;
   }
 
-  if (req.method !== "GET") {
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const path = url.pathname.replace(/\/+$/, "") || "/";
+
+  if (req.method !== "GET" && !(req.method === "POST" && path === "/home")) {
     sendJson(res, 405, { error: "method_not_allowed" });
     return;
   }
-
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  const path = url.pathname.replace(/\/+$/, "") || "/";
 
   try {
     const catalog = await loadCatalog();
@@ -370,6 +526,17 @@ async function handleRequest(req, res) {
     const visibleShowIds = new Set(showsById.keys());
     const episodes = catalog.episodes.filter((episode) => isPublished(episode) && visibleShowIds.has(episode.showId));
     const episodesById = new Map(episodes.map((episode) => [episode.id, episode]));
+    const episodeCountsByShowId = new Map();
+    for (const episode of episodes) {
+      episodeCountsByShowId.set(episode.showId, (episodeCountsByShowId.get(episode.showId) || 0) + 1);
+    }
+    const firstEpisodesByShowId = new Map();
+    for (const episode of episodes) {
+      const current = firstEpisodesByShowId.get(episode.showId);
+      if (!current || episode.episodeNumber < current.episodeNumber) {
+        firstEpisodesByShowId.set(episode.showId, episode);
+      }
+    }
     const imageUrl = createImageUrlBuilder(req);
 
     if (path === "/health") {
@@ -382,13 +549,28 @@ async function handleRequest(req, res) {
       return;
     }
 
+    if (path === "/home" && req.method === "POST") {
+      const requestBody = await readJsonBody(req);
+      sendJson(
+        res,
+        200,
+        buildHomeResponse(catalog.home || {}, requestBody, shows, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl)
+      );
+      return;
+    }
+
     if (path === "/shows") {
       sendJson(
         res,
         200,
         shows.map((show) => {
-          const episodeCount = episodes.filter((episode) => episode.showId === show.id).length;
-          return publicShow(req, show, episodeCount, imageUrl);
+          return publicShow(
+            req,
+            show,
+            episodeCountsByShowId.get(show.id) || 0,
+            imageUrl,
+            firstEpisodesByShowId.get(show.id)
+          );
         })
       );
       return;
@@ -407,7 +589,7 @@ async function handleRequest(req, res) {
         .sort((a, b) => a.episodeNumber - b.episodeNumber);
 
       sendJson(res, 200, {
-        ...publicShow(req, show, showEpisodes.length, imageUrl),
+        ...publicShow(req, show, showEpisodes.length, imageUrl, firstEpisodesByShowId.get(show.id)),
         episodes: showEpisodes.map((episode) => publicEpisode(req, episode, show, imageUrl))
       });
       return;
