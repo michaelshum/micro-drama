@@ -14,11 +14,14 @@ enum APIError: LocalizedError {
 struct APIClient {
     static let shared = APIClient()
 
-    private let baseURL = URL(string: "https://micro-drama.onrender.com")!
+    private static let productionBaseURL = URL(string: "https://micro-drama.onrender.com")!
+
+    private let baseURL: URL
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
 
-    init() {
+    init(baseURL: URL? = nil) {
+        self.baseURL = baseURL ?? Self.bundleBaseURL() ?? Self.productionBaseURL
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         self.decoder = decoder
@@ -47,6 +50,17 @@ struct APIClient {
 
     func url(for path: String) -> URL {
         baseURL.appending(path: path)
+    }
+
+    private static func bundleBaseURL() -> URL? {
+        guard let value = Bundle.main.object(forInfoDictionaryKey: "MicroDramaAPIBaseURL") as? String else {
+            return nil
+        }
+
+        let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedValue.isEmpty else { return nil }
+
+        return URL(string: trimmedValue)
     }
 
     private func fetch<T: Decodable>(_ path: String) async throws -> T {

@@ -5,6 +5,8 @@ struct RemoteImage: View {
     let url: URL
 
     @State private var image: Image?
+    @State private var imageURL: URL?
+    @State private var loadingURL: URL?
     @State private var didFail = false
 
     static func prefetch(urls: [URL]) async {
@@ -21,7 +23,7 @@ struct RemoteImage: View {
         ZStack {
             Rectangle().fill(.quaternary)
 
-            if let image {
+            if let image, imageURL == url {
                 image
                     .resizable()
                     .scaledToFill()
@@ -39,16 +41,19 @@ struct RemoteImage: View {
     }
 
     private func load() async {
-        let cacheKey = url.imageCacheKey
+        let requestedURL = url
+        loadingURL = requestedURL
+        didFail = false
+
+        let cacheKey = requestedURL.imageCacheKey
         if let cachedImage = ImageMemoryCache.shared.image(for: cacheKey) {
+            guard loadingURL == requestedURL else { return }
             image = cachedImage
-            didFail = false
+            imageURL = requestedURL
             return
         }
 
-        didFail = false
-
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: requestedURL)
         request.cachePolicy = .reloadIgnoringLocalCacheData
 
         do {
@@ -64,10 +69,14 @@ struct RemoteImage: View {
             if let responseUrl = httpResponse.url {
                 ImageMemoryCache.shared.insert(uiImage, for: responseUrl.imageCacheKey)
             }
+
+            guard loadingURL == requestedURL else { return }
             image = Image(uiImage: uiImage)
+            imageURL = requestedURL
         } catch where error.isCancellation {
             return
         } catch {
+            guard loadingURL == requestedURL else { return }
             didFail = true
         }
     }
@@ -175,6 +184,7 @@ final class HomeViewModel: ObservableObject {
     @Published var selectedShowDetail: ShowDetail?
     @Published var errorMessage: String?
     @Published var isLoading = false
+    @Published private var continueWatchingThumbnailURLs: [String: URL] = [:]
     var initialEpisodeID: String?
 
     private let apiClient: APIClient
@@ -200,7 +210,10 @@ final class HomeViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            shows = try await apiClient.fetchShows()
+            let fetchedShows = try await apiClient.fetchShows()
+            continueWatchingThumbnailURLs = episodeThumbnailStore.thumbnailURLs()
+            await hydrateContinueWatchingThumbnails(for: fetchedShows)
+            shows = fetchedShows
             await loadHome()
         } catch where error.isCancellation {
             return
@@ -217,7 +230,7 @@ final class HomeViewModel: ObservableObject {
             initialEpisodeID = progressStore.lastWatchedEpisodeID(for: show.id)
             selectedShowDetail = try await apiClient.fetchShow(id: show.id)
             if let episode = selectedShowDetail?.episodes.first(where: { $0.id == initialEpisodeID }) {
-                episodeThumbnailStore.setThumbnailURL(episode.thumbnailUrl, for: show.id)
+                setLastWatchedThumbnailURL(episode.thumbnailUrl, episodeID: episode.id, for: show.id)
             }
         } catch where error.isCancellation {
             return
@@ -227,6 +240,10 @@ final class HomeViewModel: ObservableObject {
     }
 
     func continueWatchingShows() -> [Show] {
+        continueWatchingShows(in: shows)
+    }
+
+    private func continueWatchingShows(in shows: [Show]) -> [Show] {
         shows
             .filter { progressStore.lastWatchedEpisodeID(for: $0.id) != nil }
             .sorted { first, second in
@@ -257,12 +274,39 @@ final class HomeViewModel: ObservableObject {
     }
 
     func lastWatchedThumbnailURL(for showID: String) -> URL? {
-        episodeThumbnailStore.thumbnailURL(for: showID)
+        continueWatchingThumbnailURLs[showID] ?? episodeThumbnailStore.thumbnailURL(for: showID)
     }
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
-        episodeThumbnailStore.setThumbnailURL(episode.thumbnailUrl, for: show.id)
+        setLastWatchedThumbnailURL(episode.thumbnailUrl, episodeID: episode.id, for: show.id)
+    }
+
+    private func hydrateContinueWatchingThumbnails(for shows: [Show]) async {
+        for show in continueWatchingShows(in: shows) {
+            guard let episodeID = progressStore.lastWatchedEpisodeID(for: show.id),
+                  !episodeThumbnailStore.hasThumbnailURL(for: show.id, episodeID: episodeID) else {
+                continue
+            }
+
+            do {
+                let showDetail = try await apiClient.fetchShow(id: show.id)
+                guard let episode = showDetail.episodes.first(where: { $0.id == episodeID }) else {
+                    continue
+                }
+
+                setLastWatchedThumbnailURL(episode.thumbnailUrl, episodeID: episode.id, for: show.id)
+            } catch where error.isCancellation {
+                return
+            } catch {
+                continue
+            }
+        }
+    }
+
+    private func setLastWatchedThumbnailURL(_ thumbnailURL: URL, episodeID: String, for showID: String) {
+        episodeThumbnailStore.setThumbnailURL(thumbnailURL, episodeID: episodeID, for: showID)
+        continueWatchingThumbnailURLs[showID] = thumbnailURL
     }
 
     private func loadHome() async {
@@ -434,14 +478,32 @@ final class LastWatchedEpisodeThumbnailStore {
         allThumbnailURLs()[showID].flatMap(URL.init(string:))
     }
 
-    func setThumbnailURL(_ thumbnailURL: URL, for showID: String) {
+    func thumbnailURLs() -> [String: URL] {
+        allThumbnailURLs().compactMapValues(URL.init(string:))
+    }
+
+    func hasThumbnailURL(for showID: String, episodeID: String) -> Bool {
+        thumbnailURL(for: showID) != nil && allThumbnailEpisodeIDs()[showID] == episodeID
+    }
+
+    func setThumbnailURL(_ thumbnailURL: URL, episodeID: String, for showID: String) {
         var thumbnailURLs = allThumbnailURLs()
         thumbnailURLs[showID] = thumbnailURL.absoluteString
         defaults.set(thumbnailURLs, forKey: storageKey)
+
+        var thumbnailEpisodeIDs = allThumbnailEpisodeIDs()
+        thumbnailEpisodeIDs[showID] = episodeID
+        defaults.set(thumbnailEpisodeIDs, forKey: episodeIDStorageKey)
     }
 
     private func allThumbnailURLs() -> [String: String] {
         defaults.dictionary(forKey: storageKey) as? [String: String] ?? [:]
+    }
+
+    private let episodeIDStorageKey = "showLastWatchedEpisodeThumbnailEpisodeIDs"
+
+    private func allThumbnailEpisodeIDs() -> [String: String] {
+        defaults.dictionary(forKey: episodeIDStorageKey) as? [String: String] ?? [:]
     }
 }
 
@@ -567,52 +629,86 @@ private struct HomeHeroSection: View {
     let show: Show
     let onOpen: () -> Void
 
+    private let posterAspectRatio: CGFloat = 0.78
+
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            RemoteImage(url: show.coverUrl)
-                .frame(maxWidth: .infinity)
-                .frame(height: 430)
-                .clipped()
-                .overlay {
-                    LinearGradient(
-                        stops: [
-                            .init(color: .black.opacity(0.1), location: 0),
-                            .init(color: .black.opacity(0.25), location: 0.42),
-                            .init(color: .black.opacity(0.95), location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
-
-            VStack(alignment: .leading, spacing: 14) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(show.title)
-                        .font(.system(size: 34, weight: .heavy))
-                        .foregroundStyle(.white)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text("\(show.genre) • \(show.episodeCount) episodes")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.78))
-                        .lineLimit(1)
-                }
-
-                Button(action: onOpen) {
-                    Label("Play", systemImage: "play.fill")
-                        .font(.headline)
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 46)
-                        .background(.white, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
+        VStack(spacing: 0) {
+            posterImage
+            heroActions
         }
+        .background(Color(white: 0.10))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(.white.opacity(0.34), lineWidth: 1)
+        }
+        .frame(maxWidth: 360)
+        .padding(.horizontal, 18)
+        .frame(maxWidth: .infinity)
         .background(Color.black)
+    }
+
+    private var posterImage: some View {
+        Color.clear
+            .aspectRatio(posterAspectRatio, contentMode: .fit)
+            .overlay {
+                RemoteImage(url: show.thumbnailUrl ?? show.coverUrl)
+                    .clipped()
+            }
+            .overlay(alignment: .bottom) {
+                heroTraits
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 10)
+            }
+            .clipped()
+    }
+
+    private var heroActions: some View {
+        Button(action: onOpen) {
+            Label("Play", systemImage: "play.fill")
+                .font(.headline)
+                .foregroundStyle(.black)
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+                .background(.white, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 10)
+    }
+
+    private var heroTraits: some View {
+        Text(heroTraitText)
+            .font(.system(size: 13, weight: .bold))
+            .foregroundStyle(.white)
+            .lineLimit(2)
+            .lineSpacing(2)
+            .minimumScaleFactor(0.86)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .shadow(color: .black.opacity(0.9), radius: 3, x: 0, y: 1)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.top, 44)
+        .background(alignment: .bottom) {
+            LinearGradient(
+                stops: [
+                    .init(color: .black.opacity(0), location: 0),
+                    .init(color: .black.opacity(0.22), location: 0.48),
+                    .init(color: .black.opacity(0.74), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .allowsHitTesting(false)
+            .padding(.horizontal, -14)
+            .padding(.bottom, -10)
+        }
+    }
+
+    private var heroTraitText: String {
+        let traits = show.heroTraits.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard !traits.isEmpty else { return show.genre }
+        return traits.prefix(4).joined(separator: " • ")
     }
 }
 

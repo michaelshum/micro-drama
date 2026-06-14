@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
+    "start:local": "PORT=3027 node src/server.js",
+    "dev:local": "PORT=3027 node --watch src/server.js",
+    "dev:local:env": "PORT=3027 node --env-file=.env.local --watch src/server.js",
     "recommendation:admin": "node ../ops/recommendation-admin/server.js",
     "cloudflare:videos": "node scripts/list-cloudflare-videos.js",
     "cloudflare:upload": "node scripts/upload-cloudflare-stream-videos.js",

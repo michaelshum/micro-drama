@@ -478,15 +478,6 @@ private struct EpisodePage: View {
                     .zIndex(3)
             }
 
-            if !isEpisodeLocked {
-                PlaybackWatermarkView(text: PlaybackWatermark.value)
-                    .padding(.top, 118)
-                    .padding(.horizontal, 18)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .zIndex(2)
-                    .allowsHitTesting(false)
-            }
-
             LinearGradient(
                 colors: [.clear, .black.opacity(0.72)],
                 startPoint: .center,
@@ -728,64 +719,11 @@ private struct PlayerHeader: View {
     }
 }
 
-private enum PlaybackWatermark {
-    private static let storageKey = "playbackWatermarkID"
-
-    static var value: String {
-        let defaults = UserDefaults.standard
-        let rawID: String
-
-        if let existing = defaults.string(forKey: storageKey) {
-            rawID = existing
-        } else {
-            rawID = UUID().uuidString.replacingOccurrences(of: "-", with: "")
-            defaults.set(rawID, forKey: storageKey)
-        }
-
-        return "MD-\(rawID.prefix(8).uppercased())"
-    }
-}
-
-private struct PlaybackWatermarkView: View {
-    let text: String
-
-    var body: some View {
-        Text(text)
-            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.42))
-            .padding(.horizontal, 9)
-            .frame(height: 26)
-            .background(.black.opacity(0.18), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .stroke(.white.opacity(0.12), lineWidth: 1)
-            )
-            .accessibilityHidden(true)
-    }
-}
-
 private struct ScreenCaptureProtectionOverlay: View {
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            VStack(spacing: 12) {
-                Image(systemName: "eye.slash.fill")
-                    .font(.system(size: 34, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.92))
-                    .accessibilityHidden(true)
-
-                Text("Playback paused")
-                    .font(.title3.bold())
-                    .foregroundStyle(.white)
-
-                Text("Turn off screen recording, mirroring, or AirPlay to continue watching.")
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.72))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 28)
-            }
-        }
+        Color.black
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
     }
 }
 

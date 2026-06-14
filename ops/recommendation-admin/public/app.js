@@ -1,5 +1,6 @@
 const explanations = {
   primaryGenre: "Coarse first-pass similarity signal.",
+  heroTraits: "Short user-facing traits shown under the home hero title. Keep these broad, punchy, and limited to about four.",
   secondaryGenres: "Format and flavor adjacencies, not a repeat of primary genre.",
   microGenres: "Shelf-ready categories such as dating-competition or billionaire-romance.",
   storySignals: "High-signal show-wide taste tags that cut across genre, trope, and story engine.",
@@ -30,6 +31,7 @@ const explanations = {
 };
 
 const optionLabels = {
+  heroTraits: "Hero traits",
   primaryGenre: "Primary genre",
   secondaryGenres: "Secondary genres",
   microGenres: "Micro genres",
@@ -65,6 +67,7 @@ const optionLabels = {
 };
 
 const visibleOptionFields = [
+  "heroTraits",
   "primaryGenre",
   "microGenres",
   "storySignals",
@@ -771,6 +774,13 @@ function normalizeValues(values) {
   return [...new Set(values.map(normalizeValue).filter(Boolean))];
 }
 
+function tokenEntryValues(value) {
+  return String(value || "")
+    .split(/[,\n/]+/)
+    .map(normalizeValue)
+    .filter(Boolean);
+}
+
 function mergeOptionSets(first, second) {
   const fields = new Set([...Object.keys(first || {}), ...Object.keys(second || {})]);
   return Object.fromEntries(
@@ -1362,6 +1372,9 @@ async function replayEpisode() {
 
 function renderForm() {
   form.innerHTML = [
+    createSection("Hero", explanations.heroTraits, [
+      createTokenField({ path: "heroTraits", label: "Hero traits", hint: explanations.heroTraits, optionKey: "heroTraits", span: "is-full" })
+    ]),
     createSection("Category", explanations.primaryGenre, [
       createSelectField({ path: "primaryGenre", label: "Primary genre", hint: explanations.primaryGenre, optionKey: "primaryGenre" }),
       createTokenField({ path: "microGenres", label: "Micro genres", hint: explanations.microGenres, optionKey: "microGenres", span: "is-full" })
@@ -1443,15 +1456,21 @@ function attachTokenField(field, { getValues, setValues, markOptionsDirty }) {
   }
 
   function addValue(value) {
-    const normalized = normalizeValue(value);
-    if (!normalized) {
+    const normalizedEntries = tokenEntryValues(value);
+    if (!normalizedEntries.length) {
       return;
     }
 
-    const nextValues = normalizeValues([...getValues(), normalized]);
+    const nextValues = normalizeValues([...getValues(), ...normalizedEntries]);
     setValues(nextValues);
-    if (markOptionsDirty && optionKey !== "similarShowIds" && addOption(optionKey, normalized)) {
-      renderOptionBank();
+    if (markOptionsDirty && optionKey !== "similarShowIds") {
+      let changedOptions = false;
+      normalizedEntries.forEach((entry) => {
+        changedOptions = addOption(optionKey, entry) || changedOptions;
+      });
+      if (changedOptions) {
+        renderOptionBank();
+      }
     }
     input.value = "";
     redraw();
@@ -1484,9 +1503,14 @@ function attachTokenField(field, { getValues, setValues, markOptionsDirty }) {
     });
   }
 
-  input.addEventListener("input", renderSuggestions);
+  input.addEventListener("input", () => {
+    renderSuggestions();
+    if (input.value.trim()) {
+      setValues(getValues());
+    }
+  });
   input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === "," || event.key === " " || (event.key === "Tab" && input.value.trim())) {
+    if (event.key === "Enter" || event.key === "," || event.key === "/" || (event.key === "Tab" && input.value.trim())) {
       event.preventDefault();
       addValue(input.value);
     } else if (event.key === "Backspace" && !input.value) {
@@ -1574,6 +1598,12 @@ function readFormRecommendation() {
   const recommendation = structuredClone(getSelectedShow().recommendation);
   form.querySelectorAll("input[data-path], select[data-path]").forEach((input) => {
     setPath(recommendation, input.dataset.path, input.value);
+  });
+  form.querySelectorAll("[data-token-field]").forEach((field) => {
+    const tokenValues = [...field.querySelectorAll("[data-token]")]
+      .map((token) => token.dataset.token);
+    const pendingValue = field.querySelector("[data-token-entry]")?.value;
+    setPath(recommendation, field.dataset.tokenField, normalizeValues([...tokenValues, ...tokenEntryValues(pendingValue)]));
   });
   return recommendation;
 }

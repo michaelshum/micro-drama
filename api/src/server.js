@@ -70,6 +70,73 @@ function publicEpisode(req, episode, show, imageUrl) {
   };
 }
 
+const heroTraitLabels = new Map([
+  ["absurd", "Absurd"],
+  ["billionaire-lover", "Billionaire"],
+  ["boss-subordinate", "Boss Romance"],
+  ["cartoon-3d", "Cartoon 3D"],
+  ["cliffhanger-ending", "Cliffhangers"],
+  ["cliffhanger-heavy", "Cliffhangers"],
+  ["competitive", "Competitive"],
+  ["competitive-dating", "Competitive Dating"],
+  ["constant-reversals", "Twists"],
+  ["dating-competition", "Dating Show"],
+  ["dating-game", "Dating Show"],
+  ["dating-show", "Dating Show"],
+  ["dramatic", "Dramatic"],
+  ["enemies-to-lovers", "Enemies to Lovers"],
+  ["flirty", "Flirty"],
+  ["forbidden-affair", "Forbidden Love"],
+  ["glamorous", "Glamorous"],
+  ["jealousy-spiral", "Jealousy"],
+  ["love-triangle", "Love Triangles"],
+  ["new-arrival-disruption", "New Arrivals"],
+  ["quick-romantic-spark", "Quick Sparks"],
+  ["recoupling", "Recoupling"],
+  ["revenge", "Revenge"],
+  ["revenge-trap", "Revenge"],
+  ["romantic", "Romantic"],
+  ["second-chance", "Second Chance"],
+  ["secret-identity", "Secret Identity"],
+  ["tense", "Tense"],
+  ["villa-romance", "Villa Romance"],
+  ["wealth-gap", "Wealth Gap"]
+]);
+
+function uniqueNonEmptyStrings(values) {
+  return [...new Set((Array.isArray(values) ? values : []).filter((value) => typeof value === "string").map((value) => value.trim()).filter(Boolean))];
+}
+
+function heroTraitsForShow(show) {
+  const recommendation = show.recommendation || {};
+  const curatedTraits = uniqueNonEmptyStrings(recommendation.heroTraits);
+  if (curatedTraits.length > 0) {
+    return curatedTraits.slice(0, 4);
+  }
+
+  const sourceTags = [
+    ...(recommendation.tone || []),
+    ...(recommendation.microGenres || []),
+    ...(recommendation.relationshipDynamics || []),
+    ...(recommendation.storySignals || []),
+    ...(recommendation.pacingPromises || [])
+  ];
+
+  const traits = [];
+  for (const tag of sourceTags) {
+    const label = heroTraitLabels.get(tag);
+    if (label && !traits.includes(label)) {
+      traits.push(label);
+    }
+
+    if (traits.length >= 4) {
+      break;
+    }
+  }
+
+  return traits;
+}
+
 function publicShow(req, show, episodeCount, imageUrl, representativeEpisode = null) {
   const representativeThumbnailUrl = representativeEpisode
     ? imageUrl(representativeEpisode, `/episodes/${representativeEpisode.id}/thumbnail`)
@@ -83,6 +150,7 @@ function publicShow(req, show, episodeCount, imageUrl, representativeEpisode = n
     thumbnailUrl: representativeThumbnailUrl,
     posterUrl: imageUrl({ posterUrl: show.posterUrl }, `/shows/${show.id}/poster`),
     coverUrl: imageUrl({ coverUrl: show.coverUrl }, `/shows/${show.id}/cover`),
+    heroTraits: heroTraitsForShow(show),
     episodeCount
   };
 }
@@ -226,7 +294,7 @@ function buildHomeResponse(homeConfig, requestBody, shows, showsById, episodeCou
   }
 
   const heroShow =
-    sections[0]?.shows[0] ||
+    showsById.get(sections[0]?.shows[0]?.id) ||
     shows.find((show) => !excludedShowIds.has(show.id));
 
   return {

@@ -10,7 +10,33 @@ struct Show: Identifiable, Decodable, Hashable {
     let thumbnailUrl: URL?
     let posterUrl: URL
     let coverUrl: URL
+    let heroTraits: [String]
     let episodeCount: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case description
+        case genre
+        case thumbnailUrl
+        case posterUrl
+        case coverUrl
+        case heroTraits
+        case episodeCount
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        description = try container.decode(String.self, forKey: .description)
+        genre = try container.decode(String.self, forKey: .genre)
+        thumbnailUrl = try container.decodeIfPresent(URL.self, forKey: .thumbnailUrl)
+        posterUrl = try container.decode(URL.self, forKey: .posterUrl)
+        coverUrl = try container.decode(URL.self, forKey: .coverUrl)
+        heroTraits = try container.decodeIfPresent([String].self, forKey: .heroTraits) ?? []
+        episodeCount = try container.decode(Int.self, forKey: .episodeCount)
+    }
 }
 
 struct ShowDetail: Identifiable, Decodable {

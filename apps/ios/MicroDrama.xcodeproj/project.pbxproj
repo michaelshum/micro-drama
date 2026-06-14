@@ -393,6 +393,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
+				MICRODRAMA_API_BASE_URL = "http://127.0.0.1:3027";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vivant.microdrama;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -419,6 +420,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
+				MICRODRAMA_API_BASE_URL = "https://micro-drama.onrender.com";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vivant.microdrama;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

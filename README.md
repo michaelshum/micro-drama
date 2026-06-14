@@ -27,6 +27,15 @@ npm start
 
 The API runs on `http://localhost:3000` by default.
 
+For iOS simulator development against a local API, use the fixed local dev port:
+
+```bash
+cd api
+npm run dev:local
+```
+
+This runs the API on `http://127.0.0.1:3027`, which the iOS Debug build points to through `MICRODRAMA_API_BASE_URL`. Archive/TestFlight builds use the Release configuration and stay pointed at the deployed API.
+
 Endpoints:
 
 ```text
@@ -34,6 +43,7 @@ GET /health
 GET /config
 GET /feed
 GET /feed?feed=featured
+POST /home
 GET /shows
 GET /shows/:showId
 GET /shows/:showId/poster

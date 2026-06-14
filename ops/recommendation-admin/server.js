@@ -34,6 +34,7 @@ const mimeTypes = {
 
 const emptyRecommendation = {
   primaryGenre: "",
+  heroTraits: [],
   secondaryGenres: [],
   microGenres: [],
   storySignals: [],
@@ -90,6 +91,7 @@ const emptyEpisodeRecommendation = {
 };
 
 const defaultRecommendationOptions = {
+  heroTraits: ["Flirty", "Dramatic", "Absurd", "Love Triangles", "Dating Show", "Recoupling", "Cliffhangers", "Billionaire", "Revenge", "Forbidden Love", "Enemies to Lovers", "Second Chance", "Secret Identity", "Tense", "Glamorous", "Cartoon 3D"],
   primaryGenre: ["romance", "drama", "comedy", "thriller", "fantasy", "crime", "sports", "action", "horror", "sci-fi", "reality-style"],
   secondaryGenres: ["reality-style", "competition", "melodrama", "satire", "parody", "soap-opera", "rom-com", "light-comedy", "sports-drama", "crime-drama", "fantasy-adventure", "historical", "workplace", "teen", "family-drama"],
   microGenres: ["dating-competition", "dating-show", "billionaire-romance", "class-gap-romance", "sports-underdog", "fashion-satire", "fantasy-parody", "crime-parody", "alternate-history", "war-fantasy", "reality-competition", "villa-romance"],
@@ -246,6 +248,7 @@ function mergeRecommendationIntoOptions(options, recommendation) {
   const nextOptions = normalizeOptions(options);
 
   addOptions(nextOptions, "primaryGenre", [recommendation.primaryGenre]);
+  addOptions(nextOptions, "heroTraits", recommendation.heroTraits);
   addOptions(nextOptions, "secondaryGenres", recommendation.secondaryGenres);
   addOptions(nextOptions, "microGenres", recommendation.microGenres);
   addOptions(nextOptions, "storySignals", recommendation.storySignals);
@@ -523,6 +526,7 @@ function normalizeRecommendation(input) {
 
   return {
     primaryGenre: normalizeString(recommendation.primaryGenre),
+    heroTraits: normalizeStringArray(recommendation.heroTraits),
     secondaryGenres: normalizeStringArray(recommendation.secondaryGenres),
     microGenres: normalizeStringArray(recommendation.microGenres),
     storySignals: normalizeStringArray(recommendation.storySignals),
