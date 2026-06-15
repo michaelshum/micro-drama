@@ -216,6 +216,156 @@ function publicShowsFromIds(showIds, showsById, episodeCountsByShowId, firstEpis
     ));
 }
 
+function firstPlayableEpisodeForShow(showId, episodes) {
+  return episodes
+    .filter((episode) => episode.showId === showId)
+    .sort((a, b) => a.episodeNumber - b.episodeNumber)
+    .find((episode) => !episode.isLocked);
+}
+
+function recommendationTags(show) {
+  const recommendation = show?.recommendation || {};
+  return uniqueStrings([
+    recommendation.primaryGenre,
+    ...(recommendation.heroTraits || []),
+    ...(recommendation.microGenres || []),
+    ...(recommendation.storySignals || []),
+    ...(recommendation.storyDrivers || []),
+    ...(recommendation.tropes || []),
+    ...(recommendation.tone || []),
+    ...(recommendation.relationshipDynamics || []),
+    ...(recommendation.pacingPromises || [])
+  ].filter(Boolean));
+}
+
+function homeSectionRank(homeConfig) {
+  const ranks = new Map();
+  let rank = 0;
+
+  for (const section of homeConfig.sections || []) {
+    for (const showId of section.showIds || []) {
+      if (!ranks.has(showId)) {
+        ranks.set(showId, rank);
+        rank += 1;
+      }
+    }
+  }
+
+  return ranks;
+}
+
+function buildEndOfShowRecommendation(
+  homeConfig,
+  requestBody,
+  shows,
+  showsById,
+  episodes,
+  episodeCountsByShowId,
+  firstEpisodesByShowId,
+  imageUrl
+) {
+  const sourceShow = showsById.get(requestBody?.sourceShowId);
+  if (!sourceShow) {
+    return null;
+  }
+
+  const activeShowIds = new Set(uniqueStrings(requestBody?.activeShowIds));
+  const completedShowIds = new Set(uniqueStrings(requestBody?.completedShowIds));
+  const excludedShowIds = new Set([
+    sourceShow.id,
+    ...activeShowIds,
+    ...completedShowIds
+  ]);
+  const sourceSimilarShowIds = uniqueStrings(sourceShow.recommendation?.similarShowIds);
+  const onboarding = requestBody?.onboarding || {};
+  const onboardingMatchedShowId = typeof onboarding.matchedShowId === "string" ? onboarding.matchedShowId : null;
+  const onboardingAlternateShowIds = uniqueStrings(onboarding.alternateShowIds);
+  const selectedAnchorIds = uniqueStrings(onboarding.selectedAnchorIds);
+  const anchorsById = new Map((homeConfig.tasteAnchors || []).map((anchor) => [anchor.id, anchor]));
+  const anchorPreferredShowIds = [];
+  for (const anchorId of selectedAnchorIds) {
+    anchorPreferredShowIds.push(...uniqueStrings(anchorsById.get(anchorId)?.preferredShowIds));
+  }
+
+  const sourceTags = new Set(recommendationTags(sourceShow));
+  const sectionRanks = homeSectionRank(homeConfig);
+  const candidates = [];
+
+  for (const show of shows) {
+    if (excludedShowIds.has(show.id)) {
+      continue;
+    }
+
+    const firstPlayableEpisode = firstPlayableEpisodeForShow(show.id, episodes);
+    if (!firstPlayableEpisode) {
+      continue;
+    }
+
+    let score = 0;
+    const similarIndex = sourceSimilarShowIds.indexOf(show.id);
+    if (similarIndex >= 0) {
+      score += 100 - similarIndex;
+    }
+
+    if (show.id === onboardingMatchedShowId) {
+      score += 80;
+    }
+
+    const alternateIndex = onboardingAlternateShowIds.indexOf(show.id);
+    if (alternateIndex >= 0) {
+      score += 70 - alternateIndex;
+    }
+
+    const anchorIndex = anchorPreferredShowIds.indexOf(show.id);
+    if (anchorIndex >= 0) {
+      score += 60 - anchorIndex;
+    }
+
+    for (const tag of recommendationTags(show)) {
+      if (sourceTags.has(tag)) {
+        score += 3;
+      }
+    }
+
+    const sectionRank = sectionRanks.get(show.id);
+    if (sectionRank !== undefined) {
+      score += Math.max(1, 40 - sectionRank);
+    }
+
+    score += Math.max(0, 20 - (show.sortOrder || 0));
+
+    candidates.push({
+      show,
+      firstPlayableEpisode,
+      score
+    });
+  }
+
+  candidates.sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+
+    return (a.show.sortOrder || 0) - (b.show.sortOrder || 0);
+  });
+
+  const recommendation = candidates[0];
+  if (!recommendation) {
+    return null;
+  }
+
+  return {
+    show: publicShow(
+      null,
+      recommendation.show,
+      episodeCountsByShowId.get(recommendation.show.id) || 0,
+      imageUrl,
+      firstEpisodesByShowId.get(recommendation.show.id)
+    ),
+    episodeId: recommendation.firstPlayableEpisode.id
+  };
+}
+
 function buildBecauseYouLikeSection(
   homeConfig,
   requestBody,
@@ -579,7 +729,8 @@ async function handleRequest(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const path = url.pathname.replace(/\/+$/, "") || "/";
 
-  if (req.method !== "GET" && !(req.method === "POST" && path === "/home")) {
+  const allowsPost = path === "/home" || path === "/recommendations/end-of-show";
+  if (req.method !== "GET" && !(req.method === "POST" && allowsPost)) {
     sendJson(res, 405, { error: "method_not_allowed" });
     return;
   }
@@ -624,6 +775,28 @@ async function handleRequest(req, res) {
         200,
         buildHomeResponse(catalog.home || {}, requestBody, shows, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl)
       );
+      return;
+    }
+
+    if (path === "/recommendations/end-of-show" && req.method === "POST") {
+      const requestBody = await readJsonBody(req);
+      const recommendation = buildEndOfShowRecommendation(
+        catalog.home || {},
+        requestBody,
+        shows,
+        showsById,
+        episodes,
+        episodeCountsByShowId,
+        firstEpisodesByShowId,
+        imageUrl
+      );
+
+      if (!recommendation) {
+        sendJson(res, 404, { error: "not_found" });
+        return;
+      }
+
+      sendJson(res, 200, recommendation);
       return;
     }
 

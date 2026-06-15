@@ -4,12 +4,17 @@ import SwiftUI
 import UIKit
 
 struct EpisodePlayerView: View {
-    let show: ShowDetail
-    let onEpisodeChanged: (Episode) -> Void
+    let onEpisodeChanged: (Episode, ShowDetail) -> Void
+    let onShowCompleted: (ShowDetail) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @State private var activeShow: ShowDetail
     @State private var currentIndex: Int
     @State private var dragOffset: CGFloat = 0
+    @State private var upNextState: UpNextState?
+    @State private var isUpNextPresented = false
+    @State private var isStartingUpNext = false
+    @State private var completedShowIDsInSession: Set<String> = []
     @State private var isEpisodeListPresented = false
     @State private var isSpeedSheetPresented = false
     @State private var isNotificationSoftAskPresented = false
@@ -20,14 +25,19 @@ struct EpisodePlayerView: View {
     @ObservedObject private var notificationStore = NotificationPermissionStore.shared
     @ObservedObject private var reviewPromptStore = AppReviewPromptStore.shared
     @StateObject private var screenCaptureProtection = ScreenCaptureProtectionStore()
+    private let apiClient = APIClient.shared
+    private let progressStore = ShowEpisodeProgressStore.shared
+    private let tasteOnboardingStore = TasteOnboardingStore.shared
 
     init(
         show: ShowDetail,
         initialEpisodeID: String? = nil,
-        onEpisodeChanged: @escaping (Episode) -> Void = { _ in }
+        onEpisodeChanged: @escaping (Episode, ShowDetail) -> Void = { _, _ in },
+        onShowCompleted: @escaping (ShowDetail) -> Void = { _ in }
     ) {
-        self.show = show
         self.onEpisodeChanged = onEpisodeChanged
+        self.onShowCompleted = onShowCompleted
+        _activeShow = State(initialValue: show)
 
         let initialIndex = initialEpisodeID
             .flatMap { episodeID in show.episodes.firstIndex { $0.id == episodeID } } ?? 0
@@ -44,13 +54,13 @@ struct EpisodePlayerView: View {
 
                 ZStack {
                     ForEach(visibleEpisodeIndices, id: \.self) { index in
-                        if let episode = show.episodes[safe: index] {
+                        if let episode = activeShow.episodes[safe: index] {
                             EpisodePage(
-                                showTitle: show.title,
+                                showTitle: activeShow.title,
                                 episode: episode,
-                                isActive: index == currentIndex && !isReviewSoftAskPresented,
+                                isActive: index == currentIndex && !isReviewSoftAskPresented && !isUpNextPresented,
                                 isUnlocked: unlockedEpisodeIDs.contains(episode.id),
-                                isFollowing: followedShowStore.isFollowing(show),
+                                isFollowing: followedShowStore.isFollowing(activeShow),
                                 isScreenCaptured: screenCaptureProtection.isScreenCaptured,
                                 playbackRate: playbackRate,
                                 onFollow: { toggleFollow(for: episode) },
@@ -59,19 +69,31 @@ struct EpisodePlayerView: View {
                                 onVideoFinished: finishCurrentEpisode
                             )
                             .frame(width: proxy.size.width, height: pageHeight)
-                            .offset(y: CGFloat(index - currentIndex) * pageHeight + dragOffset)
+                            .offset(y: CGFloat(index - currentIndex) * pageHeight + dragOffset + episodeStackOffset(pageHeight: pageHeight))
                         }
+                    }
+
+                    if let upNextState {
+                        UpNextOverlayView(
+                            state: upNextState,
+                            isStarting: isStartingUpNext,
+                            onBack: { dismiss() }
+                        )
+                        .frame(width: proxy.size.width, height: pageHeight)
+                        .offset(y: upNextPageOffset(pageHeight: pageHeight))
                     }
                 }
                 .clipped()
 
-                PlayerHeader(
-                    episodeNumber: show.episodes[safe: currentIndex]?.episodeNumber,
-                    onBack: { dismiss() },
-                    onSpeed: { isSpeedSheetPresented = true }
-                )
-                .padding(.horizontal, 14)
-                .padding(.top, headerTopPadding)
+                if !isUpNextPresented {
+                    PlayerHeader(
+                        episodeNumber: activeShow.episodes[safe: currentIndex]?.episodeNumber,
+                        onBack: { dismiss() },
+                        onSpeed: { isSpeedSheetPresented = true }
+                    )
+                    .padding(.horizontal, 14)
+                    .padding(.top, headerTopPadding)
+                }
             }
             .contentShape(Rectangle())
             .gesture(
@@ -94,9 +116,9 @@ struct EpisodePlayerView: View {
         .ignoresSafeArea()
         .sheet(isPresented: $isEpisodeListPresented) {
             EpisodeListSheet(
-                showTitle: show.title,
-                episodes: show.episodes,
-                currentEpisodeID: show.episodes[safe: currentIndex]?.id,
+                showTitle: activeShow.title,
+                episodes: activeShow.episodes,
+                currentEpisodeID: activeShow.episodes[safe: currentIndex]?.id,
                 onSelect: { index in
                     withAnimation(pageAnimation) {
                         currentIndex = index
@@ -117,7 +139,7 @@ struct EpisodePlayerView: View {
         }
         .sheet(isPresented: $isNotificationSoftAskPresented) {
             NotificationSoftAskSheet(
-                showTitle: show.title,
+                showTitle: activeShow.title,
                 onNotify: {
                     isNotificationSoftAskPresented = false
                     Task {
@@ -161,9 +183,9 @@ struct EpisodePlayerView: View {
     }
 
     private var visibleEpisodeIndices: [Int] {
-        guard !show.episodes.isEmpty else { return [] }
-        let lowerBound = max(show.episodes.startIndex, currentIndex - 1)
-        let upperBound = min(show.episodes.index(before: show.episodes.endIndex), currentIndex + 1)
+        guard !activeShow.episodes.isEmpty else { return [] }
+        let lowerBound = max(activeShow.episodes.startIndex, currentIndex - 1)
+        let upperBound = min(activeShow.episodes.index(before: activeShow.episodes.endIndex), currentIndex + 1)
         return Array(lowerBound...upperBound)
     }
 
@@ -171,22 +193,35 @@ struct EpisodePlayerView: View {
         .interactiveSpring(response: 0.32, dampingFraction: 0.9)
     }
 
+    private func episodeStackOffset(pageHeight: CGFloat) -> CGFloat {
+        isUpNextPresented ? -pageHeight : 0
+    }
+
+    private func upNextPageOffset(pageHeight: CGFloat) -> CGFloat {
+        (isUpNextPresented ? 0 : pageHeight) + dragOffset
+    }
+
     private func toggleFollow(for episode: Episode) {
-        let didFollow = followedShowStore.toggle(show: show, episode: episode)
+        let didFollow = followedShowStore.toggle(show: activeShow, episode: episode)
         guard didFollow, notificationStore.canShowSoftAsk else { return }
         isNotificationSoftAskPresented = true
     }
 
     private func recordCurrentEpisode() {
-        guard let episode = show.episodes[safe: currentIndex] else { return }
-        onEpisodeChanged(episode)
+        guard let episode = activeShow.episodes[safe: currentIndex] else { return }
+        onEpisodeChanged(episode, activeShow)
     }
 
     private func updateDragOffset(_ verticalTranslation: CGFloat) {
         let isPullingPastFirstEpisode = currentIndex == 0 && verticalTranslation > 0
-        let isPullingPastLastEpisode = currentIndex == show.episodes.count - 1 && verticalTranslation < 0
+        let isPullingPastLastEpisode = currentIndex == activeShow.episodes.count - 1 && verticalTranslation < 0
 
-        if isPullingPastFirstEpisode || isPullingPastLastEpisode {
+        if isUpNextPresented {
+            dragOffset = verticalTranslation
+        } else if isPullingPastLastEpisode {
+            prepareUpNextPage(for: activeShow)
+            dragOffset = verticalTranslation
+        } else if isPullingPastFirstEpisode {
             dragOffset = verticalTranslation * 0.25
         } else {
             dragOffset = verticalTranslation
@@ -194,7 +229,7 @@ struct EpisodePlayerView: View {
     }
 
     private func moveToNextEpisode() {
-        guard currentIndex < show.episodes.count - 1 else { return }
+        guard currentIndex < activeShow.episodes.count - 1 else { return }
         withAnimation(pageAnimation) {
             currentIndex += 1
             dragOffset = 0
@@ -202,16 +237,95 @@ struct EpisodePlayerView: View {
     }
 
     private func finishCurrentEpisode() {
-        guard let episode = show.episodes[safe: currentIndex] else { return }
+        guard let episode = activeShow.episodes[safe: currentIndex] else { return }
+        let isFinalEpisode = currentIndex == activeShow.episodes.count - 1
+        guard !isFinalEpisode else {
+            markShowCompletedIfNeeded(activeShow)
+            prepareUpNextPage(for: activeShow)
+            return
+        }
+
         let shouldPromptForReview = reviewPromptStore.recordCompletedEpisode(
             episode,
-            isFollowingShow: followedShowStore.isFollowing(show)
+            isFollowingShow: followedShowStore.isFollowing(activeShow)
         )
 
         moveToNextEpisode()
 
         guard shouldPromptForReview else { return }
         isReviewSoftAskPresented = true
+    }
+
+    private func prepareUpNextPage(for show: ShowDetail) {
+        guard upNextState == nil else { return }
+
+        upNextState = .loading(sourceShowTitle: show.title)
+
+        Task {
+            await loadUpNextRecommendation(for: show)
+        }
+    }
+
+    private func markShowCompletedIfNeeded(_ show: ShowDetail) {
+        guard completedShowIDsInSession.insert(show.id).inserted else { return }
+        onShowCompleted(show)
+    }
+
+    private func loadUpNextRecommendation(for completedShow: ShowDetail) async {
+        let request = EndOfShowRecommendationRequest(
+            sourceShowId: completedShow.id,
+            completedShowIds: progressStore.completedShowIDs(),
+            activeShowIds: progressStore.activeShowIDs(),
+            onboarding: tasteOnboardingStore.profile.map { profile in
+                HomeOnboardingProfile(
+                    selectedAnchorIds: profile.selectedAnchorIDs,
+                    selectedDealbreakerIds: profile.selectedDealbreakerIDs,
+                    matchedShowId: profile.matchedShowID,
+                    alternateShowIds: profile.alternateShowIDs
+                )
+            }
+        )
+
+        do {
+            let recommendation = try await apiClient.fetchEndOfShowRecommendation(request: request)
+            guard activeShow.id == completedShow.id else { return }
+            await RemoteImage.prefetch(urls: [recommendation.show.thumbnailUrl ?? recommendation.show.posterUrl])
+            upNextState = .ready(sourceShowTitle: completedShow.title, recommendation: recommendation)
+        } catch {
+            guard activeShow.id == completedShow.id else { return }
+            upNextState = .unavailable(sourceShowTitle: completedShow.title)
+        }
+    }
+
+    private func startUpNextIfReady() {
+        guard case let .ready(_, recommendation) = upNextState else { return }
+        guard !isStartingUpNext else { return }
+        isStartingUpNext = true
+        withAnimation(pageAnimation) {
+            dragOffset = 0
+        }
+
+        Task {
+            await startUpNext(recommendation)
+        }
+    }
+
+    private func startUpNext(_ recommendation: EndOfShowRecommendationResponse) async {
+        do {
+            let showDetail = try await apiClient.fetchShow(id: recommendation.show.id)
+            let recommendedIndex = showDetail.episodes.firstIndex { $0.id == recommendation.episodeId } ?? 0
+
+            activeShow = showDetail
+            currentIndex = recommendedIndex
+            dragOffset = 0
+            upNextState = nil
+            isUpNextPresented = false
+            isStartingUpNext = false
+            recordCurrentEpisode()
+        } catch {
+            isStartingUpNext = false
+            upNextState = .unavailable(sourceShowTitle: activeShow.title)
+        }
     }
 
     private func moveToPreviousEpisode() {
@@ -225,8 +339,22 @@ struct EpisodePlayerView: View {
     private func settleDrag(_ value: DragGesture.Value, pageHeight: CGFloat) {
         let threshold = pageHeight * 0.5
 
+        if isUpNextPresented {
+            settleUpNextDrag(value, threshold: threshold)
+            return
+        }
+
         if value.translation.height < -threshold {
-            moveToNextEpisode()
+            if currentIndex == activeShow.episodes.count - 1 {
+                prepareUpNextPage(for: activeShow)
+                markShowCompletedIfNeeded(activeShow)
+                withAnimation(pageAnimation) {
+                    isUpNextPresented = true
+                    dragOffset = 0
+                }
+            } else {
+                moveToNextEpisode()
+            }
         } else if value.translation.height > threshold {
             moveToPreviousEpisode()
         } else {
@@ -238,6 +366,230 @@ struct EpisodePlayerView: View {
 
     private func isVerticalDrag(_ translation: CGSize) -> Bool {
         abs(translation.height) > abs(translation.width)
+    }
+
+    private func settleUpNextDrag(_ value: DragGesture.Value, threshold: CGFloat) {
+        if value.translation.height < -threshold {
+            if case .ready = upNextState {
+                startUpNextIfReady()
+            } else {
+                withAnimation(pageAnimation) {
+                    dragOffset = 0
+                }
+            }
+        } else if value.translation.height > threshold {
+            withAnimation(pageAnimation) {
+                isStartingUpNext = false
+                isUpNextPresented = false
+                dragOffset = 0
+            }
+        } else {
+            withAnimation(pageAnimation) {
+                dragOffset = 0
+            }
+        }
+    }
+}
+
+private enum UpNextState {
+    case loading(sourceShowTitle: String)
+    case ready(sourceShowTitle: String, recommendation: EndOfShowRecommendationResponse)
+    case unavailable(sourceShowTitle: String)
+}
+
+private struct UpNextOverlayView: View {
+    let state: UpNextState
+    let isStarting: Bool
+    let onBack: () -> Void
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            Color.black.ignoresSafeArea()
+
+            switch state {
+            case let .loading(sourceShowTitle):
+                UpNextLoadingView(sourceShowTitle: sourceShowTitle)
+            case let .ready(_, recommendation):
+                UpNextReadyView(
+                    recommendation: recommendation,
+                    isStarting: isStarting
+                )
+            case let .unavailable(sourceShowTitle):
+                UpNextUnavailableView(sourceShowTitle: sourceShowTitle, onBack: onBack)
+            }
+
+            HStack {
+                Button(action: onBack) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 42, height: 42)
+                        .background(.black.opacity(0.42), in: Circle())
+                }
+                .accessibilityLabel("Back to Home")
+
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 24)
+        }
+    }
+}
+
+private struct UpNextLoadingView: View {
+    let sourceShowTitle: String
+
+    var body: some View {
+        VStack(spacing: 14) {
+            ProgressView()
+                .tint(.white)
+
+            Text("Finding what to watch next")
+                .font(.headline)
+                .foregroundStyle(.white)
+
+            Text("Because you watched \(sourceShowTitle)")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 28)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+private struct UpNextReadyView: View {
+    let recommendation: EndOfShowRecommendationResponse
+    let isStarting: Bool
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Spacer(minLength: 72)
+
+            Text("Up Next")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(.white.opacity(0.72))
+                .textCase(.uppercase)
+
+            posterImage
+
+            Text(recommendation.show.title)
+                .font(.system(size: 30, weight: .bold))
+                .foregroundStyle(.white)
+                .lineLimit(2)
+                .minimumScaleFactor(0.82)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            VStack(spacing: 9) {
+                if isStarting {
+                    ProgressView()
+                        .tint(.white)
+                } else {
+                    Image(systemName: "chevron.up")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+
+                Text(isStarting ? "Starting..." : "Swipe up to watch")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+            }
+            .padding(.top, 18)
+            .padding(.horizontal, 34)
+
+            Spacer(minLength: 34)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            RemoteImage(url: recommendation.show.coverUrl)
+                .blur(radius: 28)
+                .opacity(0.22)
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.72).ignoresSafeArea())
+        }
+    }
+
+    private var posterImage: some View {
+        RemoteImage(url: recommendation.show.thumbnailUrl ?? recommendation.show.posterUrl)
+            .frame(width: 244, height: 340)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(alignment: .bottom) {
+                Text(heroTraitText)
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .lineSpacing(2)
+                    .minimumScaleFactor(0.86)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 14)
+                    .padding(.top, 44)
+                    .padding(.bottom, 12)
+                    .background(alignment: .bottom) {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black.opacity(0), location: 0),
+                                .init(color: .black.opacity(0.24), location: 0.48),
+                                .init(color: .black.opacity(0.78), location: 1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(.white.opacity(0.28), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.55), radius: 18, x: 0, y: 10)
+    }
+
+    private var heroTraitText: String {
+        let traits = recommendation.show.heroTraits.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard !traits.isEmpty else { return recommendation.show.genre }
+        return traits.prefix(4).joined(separator: " • ")
+    }
+}
+
+private struct UpNextUnavailableView: View {
+    let sourceShowTitle: String
+    let onBack: () -> Void
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Spacer()
+
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 54, weight: .semibold))
+                .foregroundStyle(.white)
+
+            Text("You finished \(sourceShowTitle)")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 28)
+
+            Text("No more recommendations are ready right now.")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+
+            Button(action: onBack) {
+                Text("Back to Home")
+                    .font(.headline)
+                    .foregroundStyle(.black)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .background(.white, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 34)
+            .padding(.top, 4)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

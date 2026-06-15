@@ -81,6 +81,10 @@ final class RootTabViewModel: ObservableObject {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
     }
 
+    func markShowCompleted(_ show: ShowDetail) {
+        progressStore.markShowCompleted(showID: show.id)
+    }
+
     private func firstPlayableEpisodeID(in showDetail: ShowDetail) -> String? {
         showDetail.episodes.first { !$0.isLocked }?.id
     }
@@ -148,8 +152,11 @@ struct RootTabView: View {
             EpisodePlayerView(
                 show: showDetail,
                 initialEpisodeID: viewModel.initialEpisodeID,
-                onEpisodeChanged: { episode in
-                    viewModel.recordLastWatchedEpisode(episode, for: showDetail)
+                onEpisodeChanged: { episode, show in
+                    viewModel.recordLastWatchedEpisode(episode, for: show)
+                },
+                onShowCompleted: { show in
+                    viewModel.markShowCompleted(show)
                 }
             )
         }

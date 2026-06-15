@@ -40,6 +40,10 @@ struct APIClient {
         try await post("/home", body: request)
     }
 
+    func fetchEndOfShowRecommendation(request: EndOfShowRecommendationRequest) async throws -> EndOfShowRecommendationResponse {
+        try await post("/recommendations/end-of-show", body: request)
+    }
+
     func fetchShow(id: String) async throws -> ShowDetail {
         try await fetch("/shows/\(id)")
     }

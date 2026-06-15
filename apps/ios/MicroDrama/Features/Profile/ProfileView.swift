@@ -156,8 +156,11 @@ struct ProfileView: View {
                 EpisodePlayerView(
                     show: showDetail,
                     initialEpisodeID: episodeOpener.initialEpisodeID,
-                    onEpisodeChanged: { episode in
-                        episodeOpener.recordLastWatchedEpisode(episode, for: showDetail)
+                    onEpisodeChanged: { episode, show in
+                        episodeOpener.recordLastWatchedEpisode(episode, for: show)
+                    },
+                    onShowCompleted: { show in
+                        episodeOpener.markShowCompleted(show)
                     }
                 )
             }
@@ -254,8 +257,8 @@ private struct FollowedShowShelfCard: View {
 
     private let cardWidth: CGFloat = ProfileLayout.homePosterWidth
     private var restartEpisodeNumber: Int {
-        ShowEpisodeProgressStore.shared.lastWatchedEpisodeNumber(for: followedShow.showID)
-            ?? followedShow.latestEpisodeNumber
+        ShowEpisodeProgressStore.shared.activeLastWatchedEpisodeNumber(for: followedShow.showID)
+            ?? (ShowEpisodeProgressStore.shared.hasCompletedShow(followedShow.showID) ? 1 : followedShow.latestEpisodeNumber)
     }
     private var categoryText: String {
         guard let showGenre = followedShow.showGenre, !showGenre.isEmpty else {
@@ -401,8 +404,11 @@ private struct NotificationsTrayView: View {
             EpisodePlayerView(
                 show: showDetail,
                 initialEpisodeID: episodeOpener.initialEpisodeID,
-                onEpisodeChanged: { episode in
-                    episodeOpener.recordLastWatchedEpisode(episode, for: showDetail)
+                onEpisodeChanged: { episode, show in
+                    episodeOpener.recordLastWatchedEpisode(episode, for: show)
+                },
+                onShowCompleted: { show in
+                    episodeOpener.markShowCompleted(show)
                 }
             )
         }
@@ -536,8 +542,11 @@ private struct FollowedShowsView: View {
             EpisodePlayerView(
                 show: showDetail,
                 initialEpisodeID: viewModel.initialEpisodeID,
-                onEpisodeChanged: { episode in
-                    viewModel.recordLastWatchedEpisode(episode, for: showDetail)
+                onEpisodeChanged: { episode, show in
+                    viewModel.recordLastWatchedEpisode(episode, for: show)
+                },
+                onShowCompleted: { show in
+                    viewModel.markShowCompleted(show)
                 }
             )
         }
@@ -584,8 +593,8 @@ private struct NotificationPermissionCTA: View {
 private struct FollowedShowRow: View {
     let followedShow: FollowedShow
     private var restartEpisodeNumber: Int {
-        ShowEpisodeProgressStore.shared.lastWatchedEpisodeNumber(for: followedShow.showID)
-            ?? followedShow.latestEpisodeNumber
+        ShowEpisodeProgressStore.shared.activeLastWatchedEpisodeNumber(for: followedShow.showID)
+            ?? (ShowEpisodeProgressStore.shared.hasCompletedShow(followedShow.showID) ? 1 : followedShow.latestEpisodeNumber)
     }
     private var categoryText: String {
         guard let showGenre = followedShow.showGenre, !showGenre.isEmpty else {
@@ -658,9 +667,12 @@ struct ShowSearchView: View {
         .fullScreenCover(item: $viewModel.selectedShowDetail) { showDetail in
             EpisodePlayerView(
                 show: showDetail,
-                initialEpisodeID: viewModel.lastWatchedEpisodeID(for: showDetail.id),
-                onEpisodeChanged: { episode in
-                    viewModel.recordLastWatchedEpisode(episode, for: showDetail)
+                initialEpisodeID: viewModel.activeLastWatchedEpisodeID(for: showDetail.id),
+                onEpisodeChanged: { episode, show in
+                    viewModel.recordLastWatchedEpisode(episode, for: show)
+                },
+                onShowCompleted: { show in
+                    viewModel.markShowCompleted(show)
                 }
             )
         }
@@ -724,7 +736,8 @@ private final class EpisodeOpeningViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            initialEpisodeID = progressStore.lastWatchedEpisodeID(for: followedShow.showID) ?? followedShow.latestEpisodeID
+            initialEpisodeID = progressStore.activeLastWatchedEpisodeID(for: followedShow.showID)
+                ?? (progressStore.hasCompletedShow(followedShow.showID) ? nil : followedShow.latestEpisodeID)
             selectedShowDetail = try await apiClient.fetchShow(id: followedShow.showID)
         } catch {
             errorMessage = error.localizedDescription
@@ -741,7 +754,7 @@ private final class EpisodeOpeningViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            initialEpisodeID = progressStore.lastWatchedEpisodeID(for: showID)
+            initialEpisodeID = progressStore.activeLastWatchedEpisodeID(for: showID)
             selectedShowDetail = try await apiClient.fetchShow(id: showID)
         } catch {
             errorMessage = error.localizedDescription
@@ -750,6 +763,10 @@ private final class EpisodeOpeningViewModel: ObservableObject {
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
+    }
+
+    func markShowCompleted(_ show: ShowDetail) {
+        progressStore.markShowCompleted(showID: show.id)
     }
 }
 
@@ -812,12 +829,16 @@ private final class ShowSearchViewModel: ObservableObject {
         }
     }
 
-    func lastWatchedEpisodeID(for showID: String) -> String? {
-        progressStore.lastWatchedEpisodeID(for: showID)
+    func activeLastWatchedEpisodeID(for showID: String) -> String? {
+        progressStore.activeLastWatchedEpisodeID(for: showID)
     }
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
+    }
+
+    func markShowCompleted(_ show: ShowDetail) {
+        progressStore.markShowCompleted(showID: show.id)
     }
 }
 

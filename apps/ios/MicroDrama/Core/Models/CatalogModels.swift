@@ -73,6 +73,18 @@ struct HomeOnboardingProfile: Encodable {
     let alternateShowIds: [String]
 }
 
+struct EndOfShowRecommendationRequest: Encodable {
+    let sourceShowId: String
+    let completedShowIds: [String]
+    let activeShowIds: [String]
+    let onboarding: HomeOnboardingProfile?
+}
+
+struct EndOfShowRecommendationResponse: Decodable {
+    let show: Show
+    let episodeId: String
+}
+
 struct Episode: Identifiable, Decodable, Hashable {
     let id: String
     let showId: String

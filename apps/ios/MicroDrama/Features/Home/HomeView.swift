@@ -227,7 +227,7 @@ final class HomeViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            initialEpisodeID = progressStore.lastWatchedEpisodeID(for: show.id)
+            initialEpisodeID = progressStore.activeLastWatchedEpisodeID(for: show.id)
             selectedShowDetail = try await apiClient.fetchShow(id: show.id)
             if let episode = selectedShowDetail?.episodes.first(where: { $0.id == initialEpisodeID }) {
                 setLastWatchedThumbnailURL(episode.thumbnailUrl, episodeID: episode.id, for: show.id)
@@ -245,10 +245,10 @@ final class HomeViewModel: ObservableObject {
 
     private func continueWatchingShows(in shows: [Show]) -> [Show] {
         shows
-            .filter { progressStore.lastWatchedEpisodeID(for: $0.id) != nil }
+            .filter { progressStore.activeLastWatchedEpisodeID(for: $0.id) != nil }
             .sorted { first, second in
-                let firstDate = progressStore.lastWatchedAt(for: first.id) ?? .distantPast
-                let secondDate = progressStore.lastWatchedAt(for: second.id) ?? .distantPast
+                let firstDate = progressStore.activeLastWatchedAt(for: first.id) ?? .distantPast
+                let secondDate = progressStore.activeLastWatchedAt(for: second.id) ?? .distantPast
                 return firstDate > secondDate
             }
     }
@@ -270,7 +270,7 @@ final class HomeViewModel: ObservableObject {
     }
 
     func lastWatchedEpisodeNumber(for showID: String) -> Int? {
-        progressStore.lastWatchedEpisodeNumber(for: showID)
+        progressStore.activeLastWatchedEpisodeNumber(for: showID)
     }
 
     func lastWatchedThumbnailURL(for showID: String) -> URL? {
@@ -284,7 +284,7 @@ final class HomeViewModel: ObservableObject {
 
     private func hydrateContinueWatchingThumbnails(for shows: [Show]) async {
         for show in continueWatchingShows(in: shows) {
-            guard let episodeID = progressStore.lastWatchedEpisodeID(for: show.id),
+            guard let episodeID = progressStore.activeLastWatchedEpisodeID(for: show.id),
                   !episodeThumbnailStore.hasThumbnailURL(for: show.id, episodeID: episodeID) else {
                 continue
             }
@@ -331,6 +331,11 @@ final class HomeViewModel: ObservableObject {
             },
             excludedShowIds: continueWatchingShows().map(\.id)
         )
+    }
+
+    func markShowCompleted(_ show: ShowDetail) {
+        progressStore.markShowCompleted(showID: show.id)
+        continueWatchingThumbnailURLs.removeValue(forKey: show.id)
     }
 }
 
@@ -380,6 +385,7 @@ final class ShowEpisodeProgressStore {
 
     private let defaults: UserDefaults
     private let storageKey = "showLastWatchedEpisodeProgress"
+    private let completedShowsStorageKey = "completedShowTimestamps"
     private let lastWatchedStorageKey = "lastWatchedEpisode"
     private let legacyStorageKey = "showLastWatchedEpisodeIDs"
     private let initialExperienceSeenKey = "initialExperienceSeen"
@@ -392,17 +398,43 @@ final class ShowEpisodeProgressStore {
         allProgress()[showID]?.episodeID ?? legacyProgress()[showID]
     }
 
+    func activeLastWatchedEpisodeID(for showID: String) -> String? {
+        if let progress = allProgress()[showID], isActiveProgress(progress, for: showID) {
+            return progress.episodeID
+        }
+
+        guard !hasCompletedShow(showID) else { return nil }
+        return legacyProgress()[showID]
+    }
+
     func lastWatchedEpisodeNumber(for showID: String) -> Int? {
         allProgress()[showID]?.episodeNumber
+    }
+
+    func activeLastWatchedEpisodeNumber(for showID: String) -> Int? {
+        guard let progress = allProgress()[showID], isActiveProgress(progress, for: showID) else {
+            return nil
+        }
+
+        return progress.episodeNumber
     }
 
     func lastWatchedAt(for showID: String) -> Date? {
         allProgress()[showID]?.watchedAt
     }
 
+    func activeLastWatchedAt(for showID: String) -> Date? {
+        guard let progress = allProgress()[showID], isActiveProgress(progress, for: showID) else {
+            return nil
+        }
+
+        return progress.watchedAt
+    }
+
     func recentlyWatchedEpisode(maxAge: TimeInterval, now: Date = Date()) -> LastWatchedEpisode? {
         guard let lastWatchedEpisode,
-              now.timeIntervalSince(lastWatchedEpisode.watchedAt) <= maxAge else {
+              now.timeIntervalSince(lastWatchedEpisode.watchedAt) <= maxAge,
+              isActiveProgress(lastWatchedEpisode.watchedAt, for: lastWatchedEpisode.showID) else {
             return nil
         }
 
@@ -417,8 +449,30 @@ final class ShowEpisodeProgressStore {
         !allProgress().isEmpty || !legacyProgress().isEmpty || lastWatchedEpisode != nil
     }
 
+    func hasCompletedShow(_ showID: String) -> Bool {
+        completedShowTimestamps()[showID] != nil
+    }
+
+    func completedShowIDs() -> [String] {
+        Array(completedShowTimestamps().keys)
+    }
+
+    func activeShowIDs() -> [String] {
+        allProgress()
+            .filter { showID, progress in
+                isActiveProgress(progress, for: showID)
+            }
+            .map(\.key)
+    }
+
     func markInitialExperienceSeen() {
         defaults.set(true, forKey: initialExperienceSeenKey)
+    }
+
+    func markShowCompleted(showID: String, completedAt: Date = Date()) {
+        var completedShows = completedShowTimestamps()
+        completedShows[showID] = completedAt
+        persistCompletedShowTimestamps(completedShows)
     }
 
     func setLastWatchedEpisode(_ episode: Episode, for showID: String) {
@@ -457,6 +511,32 @@ final class ShowEpisodeProgressStore {
         }
 
         return progress
+    }
+
+    private func completedShowTimestamps() -> [String: Date] {
+        guard let data = defaults.data(forKey: completedShowsStorageKey),
+              let completedShows = try? JSONDecoder().decode([String: Date].self, from: data) else {
+            return [:]
+        }
+
+        return completedShows
+    }
+
+    private func persistCompletedShowTimestamps(_ completedShows: [String: Date]) {
+        guard let data = try? JSONEncoder().encode(completedShows) else { return }
+        defaults.set(data, forKey: completedShowsStorageKey)
+    }
+
+    private func isActiveProgress(_ progress: ShowEpisodeProgress, for showID: String) -> Bool {
+        isActiveProgress(progress.watchedAt, for: showID)
+    }
+
+    private func isActiveProgress(_ watchedAt: Date, for showID: String) -> Bool {
+        guard let completedAt = completedShowTimestamps()[showID] else {
+            return true
+        }
+
+        return watchedAt > completedAt
     }
 
     private func legacyProgress() -> [String: String] {
@@ -606,8 +686,11 @@ struct HomeView: View {
                 EpisodePlayerView(
                     show: showDetail,
                     initialEpisodeID: viewModel.initialEpisodeID,
-                    onEpisodeChanged: { episode in
-                        viewModel.recordLastWatchedEpisode(episode, for: showDetail)
+                    onEpisodeChanged: { episode, show in
+                        viewModel.recordLastWatchedEpisode(episode, for: show)
+                    },
+                    onShowCompleted: { show in
+                        viewModel.markShowCompleted(show)
                     }
                 )
             }
