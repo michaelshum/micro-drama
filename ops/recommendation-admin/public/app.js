@@ -1,4 +1,8 @@
 const explanations = {
+  title: "Public show title used in the app, sidebar, and show info tray.",
+  description: "Public synopsis shown in the app. Keep this audience-facing; do not paste internal script notes here.",
+  genre: "Short public genre label shown in the app.",
+  status: "Catalog visibility state for this show.",
   primaryGenre: "Coarse first-pass similarity signal.",
   heroTraits: "Short user-facing traits shown under the home hero title. Keep these broad, punchy, and limited to about four.",
   secondaryGenres: "Format and flavor adjacencies, not a repeat of primary genre.",
@@ -766,6 +770,10 @@ function setShowValue(path, value) {
   setDirty(true);
 }
 
+function showValue(path) {
+  return getPath(getSelectedShow(), path) ?? "";
+}
+
 function normalizeValue(value) {
   return String(value || "").trim();
 }
@@ -886,6 +894,45 @@ function createField({ path, label, hint, type = "text", span = "", value, reado
   `;
 }
 
+function createShowField({ path, label, hint, type = "text", span = "" }) {
+  const id = `show-field-${path.replaceAll(".", "-")}`;
+  const className = ["field", span].filter(Boolean).join(" ");
+  return `
+    <div class="${className}">
+      <label for="${id}">${label}<span>${path}</span></label>
+      <input id="${id}" data-show-path="${path}" type="${type}" value="${escapeHtml(showValue(path))}">
+      <p class="hint">${hint}</p>
+    </div>
+  `;
+}
+
+function createShowTextareaField({ path, label, hint, span = "" }) {
+  const id = `show-field-${path.replaceAll(".", "-")}`;
+  const className = ["field", span].filter(Boolean).join(" ");
+  return `
+    <div class="${className}">
+      <label for="${id}">${label}<span>${path}</span></label>
+      <textarea id="${id}" data-show-path="${path}" rows="5">${escapeHtml(showValue(path))}</textarea>
+      <p class="hint">${hint}</p>
+    </div>
+  `;
+}
+
+function createShowSelectField({ path, label, hint, values, span = "" }) {
+  const id = `show-field-${path.replaceAll(".", "-")}`;
+  const className = ["field", span].filter(Boolean).join(" ");
+  const value = String(showValue(path) || "");
+  return `
+    <div class="${className}">
+      <label for="${id}">${label}<span>${path}</span></label>
+      <select id="${id}" data-show-path="${path}">
+        ${values.map((option) => `<option value="${escapeHtml(option.value)}" ${String(option.value) === value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
+      </select>
+      <p class="hint">${hint}</p>
+    </div>
+  `;
+}
+
 function createSelectField({ path, label, hint, optionKey, span = "" }) {
   const id = `field-${path.replaceAll(".", "-")}`;
   const className = ["field", span].filter(Boolean).join(" ");
@@ -993,12 +1040,6 @@ function renderHeader() {
       <p>${show.stats.avgEpisodeSeconds}s avg / ${show.stats.freePreviewEpisodes} free previews / ${show.stats.lockedEpisodes} locked</p>
     </div>
     <div class="header-actions">
-      <label class="show-status-field" for="showStatusSelect">
-        Status
-        <select id="showStatusSelect" data-show-path="status">
-          ${showStatusOptions.map((option) => `<option value="${escapeHtml(option.value)}" ${option.value === show.status ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
-        </select>
-      </label>
       <button class="secondary-button" id="buildShowButton" type="button">Build Show From Episodes</button>
       <button class="secondary-button" id="suggestButton" type="button">Suggest Defaults</button>
       <span class="status" id="statusMessage">Saved</span>
@@ -1007,10 +1048,6 @@ function renderHeader() {
   `;
 
   document.querySelector("#saveButton").addEventListener("click", saveSelectedShow);
-  document.querySelector("#showStatusSelect").addEventListener("change", (event) => {
-    setShowValue("status", event.target.value);
-    renderShowList();
-  });
   document.querySelector("#suggestButton").addEventListener("click", applySuggestedDefaults);
   document.querySelector("#buildShowButton").addEventListener("click", buildShowFromEpisodes);
 }
@@ -1372,15 +1409,22 @@ async function replayEpisode() {
 
 function renderForm() {
   form.innerHTML = [
-    createSection("Hero", explanations.heroTraits, [
+    createSection("Show Basics", "Public catalog fields used by the app and show info tray.", [
+      createShowField({ path: "title", label: "Title", hint: explanations.title }),
+      createShowField({ path: "genre", label: "Genre", hint: explanations.genre }),
+      createShowSelectField({ path: "status", label: "Status", hint: explanations.status, values: showStatusOptions }),
+      createShowTextareaField({ path: "description", label: "Synopsis", hint: explanations.description, span: "is-full" })
+    ]),
+    createSection("Audience-Facing Hooks", "Short public hooks we can safely show in product surfaces.", [
       createTokenField({ path: "heroTraits", label: "Hero traits", hint: explanations.heroTraits, optionKey: "heroTraits", span: "is-full" })
     ]),
-    createSection("Category", explanations.primaryGenre, [
+    createSection("Discovery & Similarity", "Fields that drive shelves, show matching, and More Like This.", [
       createSelectField({ path: "primaryGenre", label: "Primary genre", hint: explanations.primaryGenre, optionKey: "primaryGenre" }),
-      createTokenField({ path: "microGenres", label: "Micro genres", hint: explanations.microGenres, optionKey: "microGenres", span: "is-full" })
-    ]),
-    createSection("Recommendation Profile", explanations.emotionalFantasies, [
+      createTokenField({ path: "microGenres", label: "Micro genres", hint: explanations.microGenres, optionKey: "microGenres", span: "is-full" }),
       createTokenField({ path: "storySignals", label: "Story signals", hint: explanations.storySignals, optionKey: "storySignals", span: "is-full" }),
+      createTokenField({ path: "similarShowIds", label: "Similar shows", hint: explanations.similarShowIds, optionKey: "similarShowIds", span: "is-full" })
+    ]),
+    createSection("Story Engine", "Narrative promise, character dynamics, conflict, and payoffs.", [
       createTokenField({ path: "emotionalFantasies", label: "Emotional fantasies", hint: explanations.emotionalFantasies, optionKey: "emotionalFantasies" }),
       createTokenField({ path: "protagonistArchetypes", label: "Protagonist archetypes", hint: explanations.protagonistArchetypes, optionKey: "protagonistArchetypes" }),
       createTokenField({ path: "counterpartArchetypes", label: "Counterpart archetypes", hint: explanations.counterpartArchetypes, optionKey: "counterpartArchetypes" }),
@@ -1391,16 +1435,14 @@ function renderForm() {
       createTokenField({ path: "pacingPromises", label: "Pacing promises", hint: explanations.pacingPromises, optionKey: "pacingPromises" }),
       createTokenField({ path: "endingPromises", label: "Ending promises", hint: explanations.endingPromises, optionKey: "endingPromises" })
     ]),
-    createSection("World", explanations.characterSystem, [
+    createSection("World & Presentation", "World logic and visual surface used for narrow, explainable matching.", [
       createTokenField({ path: "characterSystem", label: "Character system", hint: explanations.characterSystem, optionKey: "characterSystem" }),
-      createTokenField({ path: "worldType", label: "World type", hint: explanations.worldType, optionKey: "worldType" })
-    ]),
-    createSection("Surface", explanations.tone, [
+      createTokenField({ path: "worldType", label: "World type", hint: explanations.worldType, optionKey: "worldType" }),
       createTokenField({ path: "tone", label: "Tone", hint: explanations.tone, optionKey: "tone" }),
       createTokenField({ path: "visualStyle", label: "Visual style", hint: explanations.visualStyle, optionKey: "visualStyle" }),
       createSelectField({ path: "contentLineage.type", label: "Content lineage", hint: explanations.contentLineage, optionKey: "contentLineageType" })
     ]),
-    createSection("Editorial", explanations.editorial, [
+    createSection("Editorial Controls", explanations.editorial, [
       createStaticSelectField({
         path: "editorial.qualityLabel",
         label: "Quality (higher is better)",
@@ -1420,6 +1462,16 @@ function renderForm() {
 }
 
 function attachFormEvents() {
+  form.querySelectorAll("input[data-show-path], select[data-show-path], textarea[data-show-path]").forEach((input) => {
+    const updateShowValue = () => {
+      setShowValue(input.dataset.showPath, input.value);
+      renderHeader();
+      setDirty(true);
+      renderShowList();
+    };
+    input.addEventListener(input.tagName === "SELECT" ? "change" : "input", updateShowValue);
+  });
+
   form.querySelectorAll("input[data-path], select[data-path]").forEach((input) => {
     input.addEventListener("input", () => {
       setRecommendationValue(input.dataset.path, input.value);
@@ -1606,6 +1658,22 @@ function readFormRecommendation() {
     setPath(recommendation, field.dataset.tokenField, normalizeValues([...tokenValues, ...tokenEntryValues(pendingValue)]));
   });
   return recommendation;
+}
+
+function readFormShowBasics() {
+  const show = getSelectedShow();
+  const basics = {
+    title: show.title,
+    description: show.description,
+    genre: show.genre,
+    status: show.status
+  };
+
+  form.querySelectorAll("[data-show-path]").forEach((input) => {
+    setPath(basics, input.dataset.showPath, input.value);
+  });
+
+  return basics;
 }
 
 function renderOptionBank() {
@@ -1823,9 +1891,7 @@ async function saveSelectedShow() {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        show: {
-          status: show.status
-        },
+        show: readFormShowBasics(),
         recommendation: readFormRecommendation()
       })
     });

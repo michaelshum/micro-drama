@@ -44,6 +44,10 @@ struct APIClient {
         try await post("/recommendations/end-of-show", body: request)
     }
 
+    func fetchMoreLikeThis(showId: String, request: MoreLikeThisRequest) async throws -> [MoreLikeThisShow] {
+        try await post("/shows/\(showId)/more-like-this", body: request)
+    }
+
     func fetchShow(id: String) async throws -> ShowDetail {
         try await fetch("/shows/\(id)")
     }

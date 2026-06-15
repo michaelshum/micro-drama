@@ -46,13 +46,40 @@ struct ShowDetail: Identifiable, Decodable {
     let genre: String
     let posterUrl: URL
     let coverUrl: URL
+    let heroTraits: [String]
     let episodeCount: Int
     let episodes: [Episode]
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case description
+        case genre
+        case posterUrl
+        case coverUrl
+        case heroTraits
+        case episodeCount
+        case episodes
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        description = try container.decode(String.self, forKey: .description)
+        genre = try container.decode(String.self, forKey: .genre)
+        posterUrl = try container.decode(URL.self, forKey: .posterUrl)
+        coverUrl = try container.decode(URL.self, forKey: .coverUrl)
+        heroTraits = try container.decodeIfPresent([String].self, forKey: .heroTraits) ?? []
+        episodeCount = try container.decode(Int.self, forKey: .episodeCount)
+        episodes = try container.decode([Episode].self, forKey: .episodes)
+    }
 }
 
 struct HomeResponse: Decodable {
     let heroShow: Show?
     let sections: [HomeSection]
+    let continueWatchingThumbnails: [ContinueWatchingThumbnail]?
 }
 
 struct HomeSection: Identifiable, Decodable {
@@ -64,6 +91,19 @@ struct HomeSection: Identifiable, Decodable {
 struct HomeRequest: Encodable {
     let onboarding: HomeOnboardingProfile?
     let excludedShowIds: [String]
+    let heroExcludedShowIds: [String]
+    let continueWatchingEpisodes: [HomeContinueWatchingEpisode]
+}
+
+struct HomeContinueWatchingEpisode: Encodable {
+    let showId: String
+    let episodeId: String
+}
+
+struct ContinueWatchingThumbnail: Decodable {
+    let showId: String
+    let episodeId: String
+    let thumbnailUrl: URL
 }
 
 struct HomeOnboardingProfile: Encodable {
@@ -81,6 +121,19 @@ struct EndOfShowRecommendationRequest: Encodable {
 }
 
 struct EndOfShowRecommendationResponse: Decodable {
+    let show: Show
+    let episodeId: String
+}
+
+struct MoreLikeThisRequest: Encodable {
+    let completedShowIds: [String]
+    let activeShowIds: [String]
+    let onboarding: HomeOnboardingProfile?
+}
+
+struct MoreLikeThisShow: Identifiable, Decodable {
+    var id: String { show.id }
+
     let show: Show
     let episodeId: String
 }

@@ -254,21 +254,13 @@ function homeSectionRank(homeConfig) {
   return ranks;
 }
 
-function buildEndOfShowRecommendation(
+function rankedRecommendationCandidates(
   homeConfig,
+  sourceShow,
   requestBody,
   shows,
-  showsById,
-  episodes,
-  episodeCountsByShowId,
-  firstEpisodesByShowId,
-  imageUrl
+  episodes
 ) {
-  const sourceShow = showsById.get(requestBody?.sourceShowId);
-  if (!sourceShow) {
-    return null;
-  }
-
   const activeShowIds = new Set(uniqueStrings(requestBody?.activeShowIds));
   const completedShowIds = new Set(uniqueStrings(requestBody?.completedShowIds));
   const excludedShowIds = new Set([
@@ -349,11 +341,10 @@ function buildEndOfShowRecommendation(
     return (a.show.sortOrder || 0) - (b.show.sortOrder || 0);
   });
 
-  const recommendation = candidates[0];
-  if (!recommendation) {
-    return null;
-  }
+  return candidates;
+}
 
+function buildRecommendationPayload(recommendation, episodeCountsByShowId, firstEpisodesByShowId, imageUrl) {
   return {
     show: publicShow(
       null,
@@ -364,6 +355,50 @@ function buildEndOfShowRecommendation(
     ),
     episodeId: recommendation.firstPlayableEpisode.id
   };
+}
+
+function buildEndOfShowRecommendation(
+  homeConfig,
+  requestBody,
+  shows,
+  showsById,
+  episodes,
+  episodeCountsByShowId,
+  firstEpisodesByShowId,
+  imageUrl
+) {
+  const sourceShow = showsById.get(requestBody?.sourceShowId);
+  if (!sourceShow) {
+    return null;
+  }
+
+  const recommendation = rankedRecommendationCandidates(homeConfig, sourceShow, requestBody, shows, episodes)[0];
+  if (!recommendation) {
+    return null;
+  }
+
+  return buildRecommendationPayload(recommendation, episodeCountsByShowId, firstEpisodesByShowId, imageUrl);
+}
+
+function buildMoreLikeThisRecommendations(
+  homeConfig,
+  sourceShow,
+  requestBody,
+  shows,
+  episodes,
+  episodeCountsByShowId,
+  firstEpisodesByShowId,
+  imageUrl,
+  limit = 12
+) {
+  return rankedRecommendationCandidates(homeConfig, sourceShow, requestBody, shows, episodes)
+    .slice(0, limit)
+    .map((recommendation) => buildRecommendationPayload(
+      recommendation,
+      episodeCountsByShowId,
+      firstEpisodesByShowId,
+      imageUrl
+    ));
 }
 
 function buildBecauseYouLikeSection(
@@ -404,8 +439,33 @@ function buildBecauseYouLikeSection(
   return null;
 }
 
-function buildHomeResponse(homeConfig, requestBody, shows, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl) {
+function continueWatchingThumbnailsForRequest(requestBody, episodesById, imageUrl) {
+  return (Array.isArray(requestBody?.continueWatchingEpisodes) ? requestBody.continueWatchingEpisodes : [])
+    .map((item) => {
+      if (!item || typeof item.showId !== "string" || typeof item.episodeId !== "string") {
+        return null;
+      }
+
+      const episode = episodesById.get(item.episodeId);
+      if (!episode || episode.showId !== item.showId) {
+        return null;
+      }
+
+      return {
+        showId: item.showId,
+        episodeId: item.episodeId,
+        thumbnailUrl: imageUrl(episode, `/episodes/${episode.id}/thumbnail`)
+      };
+    })
+    .filter(Boolean);
+}
+
+function buildHomeResponse(homeConfig, requestBody, shows, showsById, episodesById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl) {
   const excludedShowIds = new Set(uniqueStrings(requestBody?.excludedShowIds));
+  const heroExcludedShowIds = new Set([
+    ...excludedShowIds,
+    ...uniqueStrings(requestBody?.heroExcludedShowIds)
+  ]);
   const usedShowIds = new Set(excludedShowIds);
   const sections = [];
   const becauseYouLikeSection = buildBecauseYouLikeSection(
@@ -444,8 +504,10 @@ function buildHomeResponse(homeConfig, requestBody, shows, showsById, episodeCou
   }
 
   const heroShow =
-    showsById.get(sections[0]?.shows[0]?.id) ||
-    shows.find((show) => !excludedShowIds.has(show.id));
+    sections.flatMap((section) => section.shows)
+      .map((show) => showsById.get(show.id))
+      .find((show) => show && !heroExcludedShowIds.has(show.id)) ||
+    shows.find((show) => !heroExcludedShowIds.has(show.id));
 
   return {
     heroShow: heroShow ? publicShow(
@@ -455,7 +517,8 @@ function buildHomeResponse(homeConfig, requestBody, shows, showsById, episodeCou
       imageUrl,
       firstEpisodesByShowId.get(heroShow.id)
     ) : null,
-    sections
+    sections,
+    continueWatchingThumbnails: continueWatchingThumbnailsForRequest(requestBody, episodesById, imageUrl)
   };
 }
 
@@ -729,7 +792,10 @@ async function handleRequest(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const path = url.pathname.replace(/\/+$/, "") || "/";
 
-  const allowsPost = path === "/home" || path === "/recommendations/end-of-show";
+  const allowsPost =
+    path === "/home" ||
+    path === "/recommendations/end-of-show" ||
+    /^\/shows\/[^/]+\/more-like-this$/.test(path);
   if (req.method !== "GET" && !(req.method === "POST" && allowsPost)) {
     sendJson(res, 405, { error: "method_not_allowed" });
     return;
@@ -773,7 +839,7 @@ async function handleRequest(req, res) {
       sendJson(
         res,
         200,
-        buildHomeResponse(catalog.home || {}, requestBody, shows, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl)
+        buildHomeResponse(catalog.home || {}, requestBody, shows, showsById, episodesById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl)
       );
       return;
     }
@@ -797,6 +863,32 @@ async function handleRequest(req, res) {
       }
 
       sendJson(res, 200, recommendation);
+      return;
+    }
+
+    const moreLikeThisMatch = path.match(/^\/shows\/([^/]+)\/more-like-this$/);
+    if (moreLikeThisMatch && req.method === "POST") {
+      const show = showsById.get(moreLikeThisMatch[1]);
+      if (!show) {
+        notFound(res);
+        return;
+      }
+
+      const requestBody = await readJsonBody(req);
+      sendJson(
+        res,
+        200,
+        buildMoreLikeThisRecommendations(
+          catalog.home || {},
+          show,
+          requestBody,
+          shows,
+          episodes,
+          episodeCountsByShowId,
+          firstEpisodesByShowId,
+          imageUrl
+        )
+      );
       return;
     }
 

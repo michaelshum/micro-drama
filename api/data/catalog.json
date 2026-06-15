@@ -123,7 +123,7 @@
     "sections": [
       {
         "id": "reality-romance",
-        "title": "Reality Romance",
+        "title": "Dating Shows",
         "showIds": [
           "show_demo_candy_love_island",
           "show_demo_fruit_love_island"
@@ -160,7 +160,7 @@
     {
       "id": "show_demo_candy_love_island",
       "title": "Candy Love Island",
-      "description": "A fast-moving island romance where every choice changes the next match.",
+      "description": "Candylicious falls for Donutello, but every love-room vote, recoupling, and Casa Sweety temptation gives him a new chance to break her heart. In this candy-coated villa, crushes are strategy and every kiss can send someone home.",
       "genre": "Romance",
       "posterUrl": "https://videodelivery.net/ef47caa046a7b407aa908f4f9c1c2a12/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/ef47caa046a7b407aa908f4f9c1c2a12/thumbnails/thumbnail.jpg",
@@ -318,7 +318,7 @@
     {
       "id": "show_demo_fruit_love_island",
       "title": "Fruit Love Island",
-      "description": "A playful island dating story packed into bite-sized vertical episodes.",
+      "description": "Pineapple wants Banana. Watermelon wants Banana. Then Strawberry walks in and blows everything up. In this absurd tropical dating show, every new fruit arrival brings a fresh hookup, a jealous meltdown, or someone getting dumped from paradise.",
       "genre": "Romance",
       "posterUrl": "https://videodelivery.net/211482750ae557b749a98f27d74772d8/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/211482750ae557b749a98f27d74772d8/thumbnails/thumbnail.jpg",
@@ -457,7 +457,7 @@
     {
       "id": "show_demo_basketball",
       "title": "Basketball",
-      "description": "A quick basketball micro-drama told in short vertical episodes.",
+      "description": "An underdog basketball story about training, team pressure, and fighting to be recognized when everyone else has already counted you out.",
       "genre": "Sports",
       "posterUrl": "https://videodelivery.net/a308768795ab4ff07ec52185b60260f0/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/a308768795ab4ff07ec52185b60260f0/thumbnails/thumbnail.jpg",
@@ -520,7 +520,7 @@
     {
       "id": "show_demo_balenciaga_harry_potter",
       "title": "Balenciaga Harry Potter",
-      "description": "Balenciaga Harry Potter micro-drama told in short vertical episodes.",
+      "description": "A wizard fantasy gets restyled as a high-fashion fever dream, where familiar magical drama is filtered through runway poses, luxury attitude, and meme-level glam.",
       "genre": "Drama",
       "posterUrl": "https://videodelivery.net/7b9d035dac386338bc31bee82aff3a64/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/7b9d035dac386338bc31bee82aff3a64/thumbnails/thumbnail.jpg",
@@ -583,7 +583,7 @@
     {
       "id": "show_demo_breaking_bad_balenciaga",
       "title": "Breaking Bad Balenciaga",
-      "description": "Breaking Bad Balenciaga micro-drama told in short vertical episodes.",
+      "description": "A prestige crime remix with a luxury-fashion makeover, turning danger, power, and criminal swagger into a surreal runway-ready parody.",
       "genre": "Drama",
       "posterUrl": "https://videodelivery.net/912924bed0c75900a5d804611f0bb07f/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/912924bed0c75900a5d804611f0bb07f/thumbnails/thumbnail.jpg",
@@ -646,7 +646,7 @@
     {
       "id": "show_demo_harry_potter_ww2",
       "title": "Harry Potter WW2",
-      "description": "Harry Potter WW2 micro-drama told in short vertical episodes.",
+      "description": "A wizard-war remix that throws magical fantasy into an alternate WWII battlefield, turning prophecy, uniforms, and survival into a dark cinematic mashup.",
       "genre": "Drama",
       "posterUrl": "https://videodelivery.net/bceb81b78fb45904c97751e19c70d56c/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/bceb81b78fb45904c97751e19c70d56c/thumbnails/thumbnail.jpg",
@@ -709,7 +709,7 @@
     {
       "id": "show_demo_double_shelf_life_marks_greed",
       "title": "Double Shelf Life: Mark's Greed",
-      "description": "Double Shelf Life: Mark's Greed micro-drama told in short vertical episodes.",
+      "description": "Linda sacrifices everything for Mark, only to discover he is spending her savings on his mistress. Now she is collecting receipts, planning a glow-up, and setting a dinner-table trap that could ruin them both.",
       "genre": "Drama",
       "posterUrl": "https://videodelivery.net/80a8a7f912bd9db5427fc86ca55874c4/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/80a8a7f912bd9db5427fc86ca55874c4/thumbnails/thumbnail.jpg",
@@ -843,7 +843,7 @@
     {
       "id": "show_demo_one_night_in_fruitopia",
       "title": "One Night in Fruitopia",
-      "description": "One Night in Fruitopia micro-drama told in short vertical episodes.",
+      "description": "Strawberry wakes in a billionaire CEO's bed after an anonymous night on a yacht, then loses everything before fate drags him back into her life six years later. He never forgot her, but his protection may come with a price.",
       "genre": "Romance",
       "posterUrl": "https://videodelivery.net/78d277a62e50f46ac02546ee2f63a01f/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/78d277a62e50f46ac02546ee2f63a01f/thumbnails/thumbnail.jpg",
@@ -1002,7 +1002,7 @@
     {
       "id": "show_demo_mad_durian_his_red_bride",
       "title": "Mad Durian: His Red Bride",
-      "description": "Mad Durian: His Red Bride micro-drama told in short vertical episodes.",
+      "description": "Raspberry is dragged into Durian's dangerous world after being betrayed and sold out. As his threats turn into protection, she has to learn whether she is only a replacement for the bride he lost.",
       "genre": "Romance",
       "posterUrl": "https://videodelivery.net/8b24ba11828bd96919ae8b0940244bae/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/8b24ba11828bd96919ae8b0940244bae/thumbnails/thumbnail.jpg",
@@ -1156,7 +1156,7 @@
     {
       "id": "show_demo_the_eye_of_betrayal",
       "title": "The Eye of Betrayal",
-      "description": "The Eye of Betrayal micro-drama told in short vertical episodes.",
+      "description": "After an eye transplant, Pear sees her husband with her stepsister and realizes he is poisoning her, stealing her assets, and framing her for murder. To survive, she pretends to be blind while a ghost points her toward revenge.",
       "genre": "Drama",
       "posterUrl": "https://videodelivery.net/3251c30eae3ed76b323d2ff0c6ef7316/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/3251c30eae3ed76b323d2ff0c6ef7316/thumbnails/thumbnail.jpg",
@@ -1323,7 +1323,7 @@
     {
       "id": "show_demo_i_married_my_exs_mafia_boss",
       "title": "I Married My Ex's Mafia Boss",
-      "description": "I Married My Ex's Mafia Boss micro-drama told in short vertical episodes.",
+      "description": "After her ex humiliates her in front of his real fiancee, Strawberry accepts a ruthless matriarch's offer: marry a powerful mafia heir and make them beg. But her revenge marriage starts turning into protection, power, and a new life she controls.",
       "genre": "Romance",
       "posterUrl": "https://videodelivery.net/5503db73496e7a637b8804bfee459691/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/5503db73496e7a637b8804bfee459691/thumbnails/thumbnail.jpg",
@@ -1496,7 +1496,7 @@
     {
       "id": "show_demo_secrets_in_the_juice",
       "title": "Secrets in the Juice",
-      "description": "Secrets in the Juice micro-drama told in short vertical episodes.",
+      "description": "Starfruit escapes a corrupt juice factory after proving healthy workers are being labeled rotten for profit. When the powerful Pomegranate protects him, the investigation becomes a dangerous affair that could expose a family algorithm and destroy his marriage.",
       "genre": "Drama",
       "posterUrl": "https://videodelivery.net/738378718095ef309071f717721f7db7/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/738378718095ef309071f717721f7db7/thumbnails/thumbnail.jpg",
@@ -1682,7 +1682,7 @@
     {
       "id": "show_demo_screen_time",
       "title": "Screen Time",
-      "description": "Screen Time micro-drama told in short vertical episodes.",
+      "description": "Two couples are trapped by an anonymous voice that knows every text, affair, and bank secret. At 6 p.m. each night they must confess or watch their private lives get exposed to everyone.",
       "genre": "Drama",
       "posterUrl": "https://videodelivery.net/dafb24923f27556cbd2c6981bb102413/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/dafb24923f27556cbd2c6981bb102413/thumbnails/thumbnail.jpg",
@@ -1823,7 +1823,7 @@
     {
       "id": "show_demo_the_beast_queens_canvas",
       "title": "The Beast Queen's Canvas",
-      "description": "The Beast Queen's Canvas micro-drama told in short vertical episodes.",
+      "description": "A broke artist is pulled into a brutal fantasy world where her blood-painted creatures come alive. With three beast-shifter protectors and a magic brush, she turns survival into a campaign to take the throne.",
       "genre": "Fantasy",
       "posterUrl": "https://videodelivery.net/83666d685ca596128726e656d923aac0/thumbnails/thumbnail.jpg",
       "coverUrl": "https://videodelivery.net/83666d685ca596128726e656d923aac0/thumbnails/thumbnail.jpg",

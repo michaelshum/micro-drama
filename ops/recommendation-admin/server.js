@@ -229,6 +229,19 @@ function normalizeShowStatus(value, fallback = "draft") {
   return showStatuses.has(status) ? status : fallback;
 }
 
+function normalizeShowBasics(input, fallback) {
+  const show = input && typeof input === "object" ? input : {};
+  const title = normalizeString(show.title);
+  const genre = normalizeString(show.genre);
+
+  return {
+    title: title || fallback.title,
+    description: typeof show.description === "string" ? show.description.trim() : fallback.description,
+    genre: genre || fallback.genre,
+    status: normalizeShowStatus(show.status, fallback.status)
+  };
+}
+
 function normalizeOptions(input) {
   const options = input && typeof input === "object" ? input : {};
   return Object.fromEntries(
@@ -748,7 +761,11 @@ async function handleApi(req, res, url) {
     }
 
     const recommendation = normalizeRecommendation(body.recommendation);
-    show.status = normalizeShowStatus(body.show?.status, show.status);
+    const showBasics = normalizeShowBasics(body.show, show);
+    show.title = showBasics.title;
+    show.description = showBasics.description;
+    show.genre = showBasics.genre;
+    show.status = showBasics.status;
     show.recommendation = recommendation;
     await writeCatalog(catalog);
     const options = mergeRecommendationIntoOptions(await readOptions(), recommendation);

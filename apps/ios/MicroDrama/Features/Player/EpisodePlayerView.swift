@@ -15,7 +15,8 @@ struct EpisodePlayerView: View {
     @State private var isUpNextPresented = false
     @State private var isStartingUpNext = false
     @State private var completedShowIDsInSession: Set<String> = []
-    @State private var isEpisodeListPresented = false
+    @State private var isShowInfoPresented = false
+    @State private var showInfoInitialTab: ShowInfoTab = .synopsis
     @State private var isSpeedSheetPresented = false
     @State private var isNotificationSoftAskPresented = false
     @State private var isReviewSoftAskPresented = false
@@ -63,8 +64,10 @@ struct EpisodePlayerView: View {
                                 isFollowing: followedShowStore.isFollowing(activeShow),
                                 isScreenCaptured: screenCaptureProtection.isScreenCaptured,
                                 playbackRate: playbackRate,
+                                shareURL: shareURL(for: activeShow),
                                 onFollow: { toggleFollow(for: episode) },
-                                onEpisodesTapped: { isEpisodeListPresented = true },
+                                onShowInfoTapped: { presentShowInfo(tab: .synopsis) },
+                                onEpisodesTapped: { presentShowInfo(tab: .episodes) },
                                 onRewardedUnlock: { unlockedEpisodeIDs.insert(episode.id) },
                                 onVideoFinished: finishCurrentEpisode
                             )
@@ -77,6 +80,7 @@ struct EpisodePlayerView: View {
                         UpNextOverlayView(
                             state: upNextState,
                             isStarting: isStartingUpNext,
+                            isPresented: isUpNextPresented,
                             onBack: { dismiss() }
                         )
                         .frame(width: proxy.size.width, height: pageHeight)
@@ -114,21 +118,36 @@ struct EpisodePlayerView: View {
             )
         }
         .ignoresSafeArea()
-        .sheet(isPresented: $isEpisodeListPresented) {
-            EpisodeListSheet(
-                showTitle: activeShow.title,
-                episodes: activeShow.episodes,
+        .sheet(isPresented: $isShowInfoPresented) {
+            ShowInfoSheet(
+                show: activeShow,
                 currentEpisodeID: activeShow.episodes[safe: currentIndex]?.id,
+                initialTab: showInfoInitialTab,
+                isInMyList: followedShowStore.isFollowing(activeShow),
+                moreLikeThisRequest: moreLikeThisRequest,
+                onToggleMyList: {
+                    if let episode = activeShow.episodes[safe: currentIndex] {
+                        toggleFollow(for: episode)
+                    }
+                },
                 onSelect: { index in
                     withAnimation(pageAnimation) {
                         currentIndex = index
                         dragOffset = 0
                     }
-                    isEpisodeListPresented = false
+                    isShowInfoPresented = false
+                },
+                onSelectShow: { recommendation in
+                    isShowInfoPresented = false
+                    Task {
+                        await startShowFromInfo(recommendation)
+                    }
                 }
             )
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.large])
             .presentationDragIndicator(.visible)
+            .presentationBackground(.black)
+            .preferredColorScheme(.dark)
         }
         .sheet(isPresented: $isSpeedSheetPresented) {
             SpeedSelectionSheet(selectedRate: $playbackRate) {
@@ -193,12 +212,36 @@ struct EpisodePlayerView: View {
         .interactiveSpring(response: 0.32, dampingFraction: 0.9)
     }
 
+    private var moreLikeThisRequest: MoreLikeThisRequest {
+        MoreLikeThisRequest(
+            completedShowIds: progressStore.completedShowIDs(),
+            activeShowIds: progressStore.activeShowIDs(),
+            onboarding: tasteOnboardingStore.profile.map { profile in
+                HomeOnboardingProfile(
+                    selectedAnchorIds: profile.selectedAnchorIDs,
+                    selectedDealbreakerIds: profile.selectedDealbreakerIDs,
+                    matchedShowId: profile.matchedShowID,
+                    alternateShowIds: profile.alternateShowIDs
+                )
+            }
+        )
+    }
+
     private func episodeStackOffset(pageHeight: CGFloat) -> CGFloat {
         isUpNextPresented ? -pageHeight : 0
     }
 
     private func upNextPageOffset(pageHeight: CGFloat) -> CGFloat {
         (isUpNextPresented ? 0 : pageHeight) + dragOffset
+    }
+
+    private func presentShowInfo(tab: ShowInfoTab) {
+        showInfoInitialTab = tab
+        isShowInfoPresented = true
+    }
+
+    private func shareURL(for show: ShowDetail) -> URL {
+        URL(string: "https://micro-drama.onrender.com/shows/\(show.id)")!
     }
 
     private func toggleFollow(for episode: Episode) {
@@ -242,6 +285,10 @@ struct EpisodePlayerView: View {
         guard !isFinalEpisode else {
             markShowCompletedIfNeeded(activeShow)
             prepareUpNextPage(for: activeShow)
+            withAnimation(pageAnimation) {
+                isUpNextPresented = true
+                dragOffset = 0
+            }
             return
         }
 
@@ -328,6 +375,23 @@ struct EpisodePlayerView: View {
         }
     }
 
+    private func startShowFromInfo(_ recommendation: MoreLikeThisShow) async {
+        do {
+            let showDetail = try await apiClient.fetchShow(id: recommendation.show.id)
+            let recommendedIndex = showDetail.episodes.firstIndex { $0.id == recommendation.episodeId } ?? 0
+
+            activeShow = showDetail
+            currentIndex = recommendedIndex
+            dragOffset = 0
+            upNextState = nil
+            isUpNextPresented = false
+            isStartingUpNext = false
+            recordCurrentEpisode()
+        } catch {
+            return
+        }
+    }
+
     private func moveToPreviousEpisode() {
         guard currentIndex > 0 else { return }
         withAnimation(pageAnimation) {
@@ -400,6 +464,7 @@ private enum UpNextState {
 private struct UpNextOverlayView: View {
     let state: UpNextState
     let isStarting: Bool
+    let isPresented: Bool
     let onBack: () -> Void
 
     var body: some View {
@@ -412,7 +477,8 @@ private struct UpNextOverlayView: View {
             case let .ready(_, recommendation):
                 UpNextReadyView(
                     recommendation: recommendation,
-                    isStarting: isStarting
+                    isStarting: isStarting,
+                    isPresented: isPresented
                 )
             case let .unavailable(sourceShowTitle):
                 UpNextUnavailableView(sourceShowTitle: sourceShowTitle, onBack: onBack)
@@ -420,8 +486,8 @@ private struct UpNextOverlayView: View {
 
             HStack {
                 Button(action: onBack) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 15, weight: .bold))
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 19, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 42, height: 42)
                         .background(.black.opacity(0.42), in: Circle())
@@ -461,44 +527,40 @@ private struct UpNextLoadingView: View {
 private struct UpNextReadyView: View {
     let recommendation: EndOfShowRecommendationResponse
     let isStarting: Bool
+    let isPresented: Bool
+    @State private var countdownSeconds = 3
 
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer(minLength: 72)
+        GeometryReader { proxy in
+            let posterWidth = min(proxy.size.width * 0.82, 342, proxy.size.height * 0.53 * 0.7176)
 
-            Text("Up Next")
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(.white.opacity(0.72))
-                .textCase(.uppercase)
+            ZStack(alignment: .bottom) {
+                VStack(spacing: 16) {
+                    Spacer(minLength: 60)
 
-            posterImage
+                    Text("Up Next")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(.white.opacity(0.72))
+                        .textCase(.uppercase)
 
-            Text(recommendation.show.title)
-                .font(.system(size: 30, weight: .bold))
-                .foregroundStyle(.white)
-                .lineLimit(2)
-                .minimumScaleFactor(0.82)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24)
-
-            VStack(spacing: 9) {
-                if isStarting {
-                    ProgressView()
-                        .tint(.white)
-                } else {
-                    Image(systemName: "chevron.up")
-                        .font(.system(size: 22, weight: .bold))
+                    Text(recommendation.show.title)
+                        .font(.system(size: 30, weight: .bold))
                         .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.82)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+
+                    posterImage(width: posterWidth)
+
+                    Spacer(minLength: max(proxy.safeAreaInsets.bottom + 92, 108))
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                Text(isStarting ? "Starting..." : "Swipe up to watch")
-                    .font(.headline)
-                    .foregroundStyle(.white)
+                countdownAffordance
+                    .padding(.horizontal, 34)
+                    .padding(.bottom, max(proxy.safeAreaInsets.bottom + 22, 46))
             }
-            .padding(.top, 18)
-            .padding(.horizontal, 34)
-
-            Spacer(minLength: 34)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
@@ -508,11 +570,43 @@ private struct UpNextReadyView: View {
                 .ignoresSafeArea()
                 .overlay(Color.black.opacity(0.72).ignoresSafeArea())
         }
+        .task(id: countdownTaskID) {
+            countdownSeconds = 3
+            guard isPresented else { return }
+
+            for second in [2, 1] {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                guard !Task.isCancelled else { return }
+                countdownSeconds = second
+            }
+        }
     }
 
-    private var posterImage: some View {
+    private var countdownTaskID: String {
+        "\(recommendation.show.id)-\(isPresented)"
+    }
+
+    private var countdownAffordance: some View {
+        VStack(spacing: 9) {
+            if isStarting {
+                ProgressView()
+                    .tint(.white)
+            } else {
+                Image(systemName: "chevron.up")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+
+            Text(isStarting ? "Starting..." : "Starting in \(countdownSeconds)")
+                .font(.headline)
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func posterImage(width: CGFloat) -> some View {
         RemoteImage(url: recommendation.show.thumbnailUrl ?? recommendation.show.posterUrl)
-            .frame(width: 244, height: 340)
+            .frame(width: width, height: width / 0.7176)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay(alignment: .bottom) {
                 Text(heroTraitText)
@@ -789,7 +883,9 @@ private struct EpisodePage: View {
     let isFollowing: Bool
     let isScreenCaptured: Bool
     let playbackRate: Float
+    let shareURL: URL
     let onFollow: () -> Void
+    let onShowInfoTapped: () -> Void
     let onEpisodesTapped: () -> Void
     let onRewardedUnlock: () -> Void
     let onVideoFinished: () -> Void
@@ -861,10 +957,7 @@ private struct EpisodePage: View {
 
                 HStack(alignment: .bottom, spacing: 18) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(showTitle)
-                            .font(.title2.bold())
-                            .foregroundStyle(.white)
-                            .lineLimit(2)
+                        showTitleButton
 
                         Text(episode.description)
                             .font(.subheadline)
@@ -875,6 +968,7 @@ private struct EpisodePage: View {
 
                     ActionRail(
                         isFollowing: isFollowing,
+                        shareURL: shareURL,
                         onFollow: onFollow,
                         onEpisodesTapped: onEpisodesTapped
                     )
@@ -908,10 +1002,7 @@ private struct EpisodePage: View {
                 VStack(spacing: 10) {
                     HStack(alignment: .bottom, spacing: 18) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(showTitle)
-                                .font(.title2.bold())
-                                .foregroundStyle(.white)
-                                .lineLimit(2)
+                            showTitleButton
 
                             Text(episode.description)
                                 .font(.subheadline)
@@ -922,6 +1013,7 @@ private struct EpisodePage: View {
 
                         ActionRail(
                             isFollowing: isFollowing,
+                            shareURL: shareURL,
                             onFollow: onFollow,
                             onEpisodesTapped: onEpisodesTapped
                         )
@@ -975,6 +1067,25 @@ private struct EpisodePage: View {
 
     private var isEpisodeLocked: Bool {
         episode.isLocked && !isUnlocked
+    }
+
+    private var showTitleButton: some View {
+        Button(action: onShowInfoTapped) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(showTitle)
+                    .font(.title2.bold())
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+
+                Image(systemName: "info.circle")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.78))
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Show info")
     }
 
     private var unlockDrawerDragGesture: some Gesture {
@@ -1702,6 +1813,7 @@ private struct EpisodeThumbnailView: View {
 
 private struct ActionRail: View {
     let isFollowing: Bool
+    let shareURL: URL
     let onFollow: () -> Void
     let onEpisodesTapped: () -> Void
 
@@ -1709,11 +1821,11 @@ private struct ActionRail: View {
         VStack(spacing: 18) {
             ActionRailButton(
                 systemName: isFollowing ? "checkmark.circle.fill" : "plus.circle",
-                title: isFollowing ? "Following" : "Follow",
+                title: isFollowing ? "Saved" : "My List",
                 tint: isFollowing ? .green : .white,
                 action: onFollow
             )
-            .accessibilityLabel(isFollowing ? "Unfollow show" : "Follow show")
+            .accessibilityLabel(isFollowing ? "Remove from My List" : "Add to My List")
 
             ActionRailButton(
                 systemName: "list.bullet",
@@ -1722,7 +1834,7 @@ private struct ActionRail: View {
             )
             .accessibilityLabel("Episodes")
 
-            ShareLink(item: "https://micro-drama.onrender.com") {
+            ShareLink(item: shareURL) {
                 ActionRailItem(systemName: "square.and.arrow.up", title: "Share")
             }
             .accessibilityLabel("Share")
@@ -1814,53 +1926,446 @@ private struct ActionRailItem: View {
     }
 }
 
-private struct EpisodeListSheet: View {
-    let showTitle: String
+private enum ShowInfoTab: String, CaseIterable, Identifiable {
+    case synopsis = "Synopsis"
+    case episodes = "Episodes"
+    case moreLikeThis = "More Like This"
+
+    var id: String { rawValue }
+}
+
+private struct ShowInfoSheet: View {
+    let show: ShowDetail
+    let currentEpisodeID: String?
+    let isInMyList: Bool
+    let moreLikeThisRequest: MoreLikeThisRequest
+    let onToggleMyList: () -> Void
+    let onSelect: (Int) -> Void
+    let onSelectShow: (MoreLikeThisShow) -> Void
+
+    @State private var selectedTab: ShowInfoTab
+    @State private var moreLikeThis: [MoreLikeThisShow] = []
+    @State private var isLoadingMoreLikeThis = false
+    @State private var didFailMoreLikeThis = false
+
+    private let apiClient = APIClient.shared
+
+    init(
+        show: ShowDetail,
+        currentEpisodeID: String?,
+        initialTab: ShowInfoTab,
+        isInMyList: Bool,
+        moreLikeThisRequest: MoreLikeThisRequest,
+        onToggleMyList: @escaping () -> Void,
+        onSelect: @escaping (Int) -> Void,
+        onSelectShow: @escaping (MoreLikeThisShow) -> Void
+    ) {
+        self.show = show
+        self.currentEpisodeID = currentEpisodeID
+        self.isInMyList = isInMyList
+        self.moreLikeThisRequest = moreLikeThisRequest
+        self.onToggleMyList = onToggleMyList
+        self.onSelect = onSelect
+        self.onSelectShow = onSelectShow
+        _selectedTab = State(initialValue: initialTab)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header
+                .padding(.horizontal, 18)
+                .padding(.top, 18)
+                .padding(.bottom, 14)
+
+            Picker("Show Info", selection: $selectedTab) {
+                ForEach(ShowInfoTab.allCases) { tab in
+                    Text(tab.rawValue).tag(tab)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 18)
+            .padding(.bottom, 12)
+
+            Divider()
+                .overlay(.white.opacity(0.14))
+
+            tabContent
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.ignoresSafeArea())
+        .foregroundStyle(.white)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top, spacing: 14) {
+                RemoteImage(url: show.posterUrl)
+                    .frame(width: 82, height: 112)
+                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(show.title)
+                        .font(.title3.weight(.bold))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.86)
+
+                    Text(headerMetadata)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.68))
+                        .lineLimit(2)
+
+                    if let currentEpisode {
+                        Label("Episode \(currentEpisode.episodeNumber)", systemImage: "play.fill")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 9)
+                            .frame(height: 28)
+                            .background(.white.opacity(0.12), in: Capsule())
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            HStack(spacing: 14) {
+                Button(action: onToggleMyList) {
+                    ShowInfoActionItem(
+                        systemName: isInMyList ? "checkmark" : "plus",
+                        title: isInMyList ? "Saved" : "My List"
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isInMyList ? "Remove from My List" : "Add to My List")
+
+                ShareLink(item: shareURL) {
+                    ShowInfoActionItem(systemName: "square.and.arrow.up", title: "Share")
+                }
+                .accessibilityLabel("Share")
+
+                Spacer()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var tabContent: some View {
+        switch selectedTab {
+        case .synopsis:
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    Text(show.description)
+                        .font(.body)
+                        .foregroundStyle(.white.opacity(0.88))
+                        .lineSpacing(3)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if !showTraits.isEmpty {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 112), spacing: 8)], alignment: .leading, spacing: 8) {
+                            ForEach(showTraits, id: \.self) { trait in
+                                Text(trait)
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(.white.opacity(0.88))
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.78)
+                                    .padding(.horizontal, 10)
+                                    .frame(height: 30)
+                                    .frame(maxWidth: .infinity)
+                                    .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                            }
+                        }
+                    }
+                }
+                .padding(18)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+        case .episodes:
+            ShowEpisodeGrid(
+                episodes: show.episodes,
+                currentEpisodeID: currentEpisodeID,
+                onSelect: onSelect
+            )
+
+        case .moreLikeThis:
+            MoreLikeThisGrid(
+                recommendations: moreLikeThis,
+                isLoading: isLoadingMoreLikeThis,
+                didFail: didFailMoreLikeThis,
+                onSelect: onSelectShow
+            )
+            .task(id: show.id) {
+                await loadMoreLikeThis()
+            }
+        }
+    }
+
+    private var headerMetadata: String {
+        var parts = [show.genre, "\(show.episodeCount) episodes"]
+        if freePreviewCount > 0 {
+            parts.append("\(freePreviewCount) free")
+        }
+        return parts.joined(separator: " • ")
+    }
+
+    private var showTraits: [String] {
+        let traits = show.heroTraits
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        return Array(traits.prefix(6))
+    }
+
+    private var freePreviewCount: Int {
+        show.episodes.filter(\.isFreePreview).count
+    }
+
+    private var currentEpisode: Episode? {
+        guard let currentEpisodeID else { return nil }
+        return show.episodes.first { $0.id == currentEpisodeID }
+    }
+
+    private var shareURL: URL {
+        URL(string: "https://micro-drama.onrender.com/shows/\(show.id)")!
+    }
+
+    private func loadMoreLikeThis() async {
+        guard moreLikeThis.isEmpty, !isLoadingMoreLikeThis else { return }
+        isLoadingMoreLikeThis = true
+        didFailMoreLikeThis = false
+
+        do {
+            let recommendations = try await apiClient.fetchMoreLikeThis(showId: show.id, request: moreLikeThisRequest)
+            moreLikeThis = recommendations
+            isLoadingMoreLikeThis = false
+            await RemoteImage.prefetch(urls: recommendations.map { $0.show.thumbnailUrl ?? $0.show.posterUrl })
+        } catch {
+            isLoadingMoreLikeThis = false
+            didFailMoreLikeThis = true
+        }
+    }
+}
+
+private struct ShowInfoActionItem: View {
+    let systemName: String
+    let title: String
+
+    var body: some View {
+        VStack(spacing: 5) {
+            Image(systemName: systemName)
+                .font(.system(size: 24, weight: .semibold))
+                .frame(width: 34, height: 30)
+
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
+        }
+        .foregroundStyle(.white)
+        .frame(width: 72)
+        .contentShape(Rectangle())
+    }
+}
+
+private struct ShowEpisodeGrid: View {
     let episodes: [Episode]
     let currentEpisodeID: String?
     let onSelect: (Int) -> Void
 
+    @State private var selectedRangeIndex = 0
+
+    private let rangeSize = 30
+    private let columns = Array(repeating: GridItem(.flexible(minimum: 44), spacing: 8), count: 6)
+
     var body: some View {
-        NavigationStack {
-            List(Array(episodes.enumerated()), id: \.element.id) { index, episode in
-                Button {
-                    onSelect(index)
-                } label: {
-                    HStack(spacing: 12) {
-                        Text("\(episode.episodeNumber)")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                            .frame(width: 34, alignment: .leading)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(episode.title)
-                                .font(.body)
-                                .foregroundStyle(.primary)
-
-                            Text(episode.description)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(2)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                if episodeRanges.count > 1 {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(episodeRanges.indices, id: \.self) { index in
+                                Button {
+                                    selectedRangeIndex = index
+                                } label: {
+                                    Text(rangeLabel(for: episodeRanges[index]))
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(selectedRangeIndex == index ? .black : .white.opacity(0.76))
+                                        .padding(.horizontal, 13)
+                                        .frame(height: 34)
+                                        .background(selectedRangeIndex == index ? .white : .white.opacity(0.12), in: Capsule())
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
-
-                        Spacer()
-
-                        if episode.isLocked {
-                            Image(systemName: "lock.fill")
-                                .foregroundStyle(.secondary)
-                        } else if episode.id == currentEpisodeID {
-                            Image(systemName: "checkmark")
-                                .font(.headline)
-                                .foregroundStyle(.blue)
-                        }
+                        .padding(.horizontal, 18)
                     }
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+
+                LazyVGrid(columns: columns, spacing: 8) {
+                    ForEach(visibleEpisodes, id: \.offset) { item in
+                        EpisodeGridTile(
+                            episode: item.element,
+                            isCurrent: item.element.id == currentEpisodeID,
+                            action: { onSelect(item.offset) }
+                        )
+                    }
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 22)
             }
-            .navigationTitle(showTitle)
-            .navigationBarTitleDisplayMode(.inline)
+            .padding(.top, 16)
         }
+        .onAppear(perform: selectCurrentRange)
+        .onChange(of: currentEpisodeID) { _, _ in
+            selectCurrentRange()
+        }
+    }
+
+    private var episodeRanges: [Range<Int>] {
+        stride(from: 0, to: episodes.count, by: rangeSize).map { start in
+            start..<min(start + rangeSize, episodes.count)
+        }
+    }
+
+    private var selectedRange: Range<Int> {
+        guard episodeRanges.indices.contains(selectedRangeIndex) else {
+            return episodeRanges.first ?? 0..<0
+        }
+        return episodeRanges[selectedRangeIndex]
+    }
+
+    private var visibleEpisodes: [(offset: Int, element: Episode)] {
+        Array(episodes.enumerated()).filter { selectedRange.contains($0.offset) }
+    }
+
+    private func rangeLabel(for range: Range<Int>) -> String {
+        guard let firstEpisode = episodes[safe: range.lowerBound],
+              let lastEpisode = episodes[safe: range.upperBound - 1] else {
+            return ""
+        }
+        return "\(firstEpisode.episodeNumber)-\(lastEpisode.episodeNumber)"
+    }
+
+    private func selectCurrentRange() {
+        guard let currentEpisodeID,
+              let currentIndex = episodes.firstIndex(where: { $0.id == currentEpisodeID }),
+              let rangeIndex = episodeRanges.firstIndex(where: { $0.contains(currentIndex) }) else {
+            return
+        }
+
+        selectedRangeIndex = rangeIndex
+    }
+}
+
+private struct EpisodeGridTile: View {
+    let episode: Episode
+    let isCurrent: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack(alignment: .topTrailing) {
+                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .fill(isCurrent ? .white : .white.opacity(0.12))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .strokeBorder(isCurrent ? .white : .white.opacity(0.08), lineWidth: 1)
+                    }
+
+                Text("\(episode.episodeNumber)")
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(isCurrent ? .black : .white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                if episode.isLocked {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(isCurrent ? .black.opacity(0.62) : .white.opacity(0.68))
+                        .padding(6)
+                } else if isCurrent {
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.black.opacity(0.72))
+                        .padding(6)
+                }
+            }
+            .aspectRatio(1, contentMode: .fit)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Episode \(episode.episodeNumber)")
+    }
+}
+
+private struct MoreLikeThisGrid: View {
+    let recommendations: [MoreLikeThisShow]
+    let isLoading: Bool
+    let didFail: Bool
+    let onSelect: (MoreLikeThisShow) -> Void
+
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 3)
+
+    var body: some View {
+        ScrollView {
+            if isLoading {
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .tint(.white)
+                    Text("Finding similar shows")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.72))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 42)
+            } else if didFail {
+                Text("More shows are not available right now.")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 42)
+                    .padding(.horizontal, 18)
+            } else if recommendations.isEmpty {
+                Text("No similar shows are ready yet.")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 42)
+                    .padding(.horizontal, 18)
+            } else {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 18) {
+                    ForEach(recommendations) { recommendation in
+                        Button {
+                            onSelect(recommendation)
+                        } label: {
+                            MoreLikeThisCard(recommendation: recommendation)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(18)
+            }
+        }
+    }
+}
+
+private struct MoreLikeThisCard: View {
+    let recommendation: MoreLikeThisShow
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            RemoteImage(url: recommendation.show.thumbnailUrl ?? recommendation.show.posterUrl)
+                .frame(height: 150)
+                .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+
+            Text(recommendation.show.title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white)
+                .lineLimit(2)
+                .lineSpacing(1)
+
+            Text(recommendation.show.genre)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.54))
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

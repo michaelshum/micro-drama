@@ -189,18 +189,15 @@ final class HomeViewModel: ObservableObject {
 
     private let apiClient: APIClient
     private let progressStore: ShowEpisodeProgressStore
-    private let episodeThumbnailStore: LastWatchedEpisodeThumbnailStore
     private let tasteOnboardingStore: TasteOnboardingStore
 
     init(
         apiClient: APIClient = .shared,
         progressStore: ShowEpisodeProgressStore = .shared,
-        episodeThumbnailStore: LastWatchedEpisodeThumbnailStore = .shared,
         tasteOnboardingStore: TasteOnboardingStore = .shared
     ) {
         self.apiClient = apiClient
         self.progressStore = progressStore
-        self.episodeThumbnailStore = episodeThumbnailStore
         self.tasteOnboardingStore = tasteOnboardingStore
     }
 
@@ -211,8 +208,6 @@ final class HomeViewModel: ObservableObject {
 
         do {
             let fetchedShows = try await apiClient.fetchShows()
-            continueWatchingThumbnailURLs = episodeThumbnailStore.thumbnailURLs()
-            await hydrateContinueWatchingThumbnails(for: fetchedShows)
             shows = fetchedShows
             await loadHome()
         } catch where error.isCancellation {
@@ -230,7 +225,7 @@ final class HomeViewModel: ObservableObject {
             initialEpisodeID = progressStore.activeLastWatchedEpisodeID(for: show.id)
             selectedShowDetail = try await apiClient.fetchShow(id: show.id)
             if let episode = selectedShowDetail?.episodes.first(where: { $0.id == initialEpisodeID }) {
-                setLastWatchedThumbnailURL(episode.thumbnailUrl, episodeID: episode.id, for: show.id)
+                setLastWatchedThumbnailURL(episode.thumbnailUrl, for: show.id)
             }
         } catch where error.isCancellation {
             return
@@ -269,49 +264,41 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
+    func heroShow() -> Show? {
+        if let heroShow = homeResponse?.heroShow, canUseAsHero(heroShow) {
+            return heroShow
+        }
+
+        for section in visibleHomeSections() {
+            if let show = section.shows.first(where: canUseAsHero) {
+                return show
+            }
+        }
+
+        return shows.first(where: canUseAsHero)
+    }
+
     func lastWatchedEpisodeNumber(for showID: String) -> Int? {
         progressStore.activeLastWatchedEpisodeNumber(for: showID)
     }
 
     func lastWatchedThumbnailURL(for showID: String) -> URL? {
-        continueWatchingThumbnailURLs[showID] ?? episodeThumbnailStore.thumbnailURL(for: showID)
+        continueWatchingThumbnailURLs[showID]
     }
 
     func recordLastWatchedEpisode(_ episode: Episode, for show: ShowDetail) {
         progressStore.setLastWatchedEpisode(episode, for: show.id)
-        setLastWatchedThumbnailURL(episode.thumbnailUrl, episodeID: episode.id, for: show.id)
+        setLastWatchedThumbnailURL(episode.thumbnailUrl, for: show.id)
     }
 
-    private func hydrateContinueWatchingThumbnails(for shows: [Show]) async {
-        for show in continueWatchingShows(in: shows) {
-            guard let episodeID = progressStore.activeLastWatchedEpisodeID(for: show.id),
-                  !episodeThumbnailStore.hasThumbnailURL(for: show.id, episodeID: episodeID) else {
-                continue
-            }
-
-            do {
-                let showDetail = try await apiClient.fetchShow(id: show.id)
-                guard let episode = showDetail.episodes.first(where: { $0.id == episodeID }) else {
-                    continue
-                }
-
-                setLastWatchedThumbnailURL(episode.thumbnailUrl, episodeID: episode.id, for: show.id)
-            } catch where error.isCancellation {
-                return
-            } catch {
-                continue
-            }
-        }
-    }
-
-    private func setLastWatchedThumbnailURL(_ thumbnailURL: URL, episodeID: String, for showID: String) {
-        episodeThumbnailStore.setThumbnailURL(thumbnailURL, episodeID: episodeID, for: showID)
+    private func setLastWatchedThumbnailURL(_ thumbnailURL: URL, for showID: String) {
         continueWatchingThumbnailURLs[showID] = thumbnailURL
     }
 
     private func loadHome() async {
         do {
             homeResponse = try await apiClient.fetchHome(request: homeRequest())
+            applyContinueWatchingThumbnails(homeResponse?.continueWatchingThumbnails ?? [])
         } catch where error.isCancellation {
             return
         } catch {
@@ -319,8 +306,22 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
+    private func applyContinueWatchingThumbnails(_ thumbnails: [ContinueWatchingThumbnail]) {
+        for thumbnail in thumbnails {
+            guard progressStore.activeLastWatchedEpisodeID(for: thumbnail.showId) == thumbnail.episodeId else {
+                continue
+            }
+
+            continueWatchingThumbnailURLs[thumbnail.showId] = thumbnail.thumbnailUrl
+        }
+    }
+
     private func homeRequest() -> HomeRequest {
-        HomeRequest(
+        let continueWatchingShows = continueWatchingShows()
+        let activeShowIDs = continueWatchingShows.map(\.id)
+        let heroExcludedShowIDs = Array(Set(activeShowIDs + progressStore.completedShowIDs()))
+
+        return HomeRequest(
             onboarding: tasteOnboardingStore.profile.map { profile in
                 HomeOnboardingProfile(
                     selectedAnchorIds: profile.selectedAnchorIDs,
@@ -329,8 +330,20 @@ final class HomeViewModel: ObservableObject {
                     alternateShowIds: profile.alternateShowIDs
                 )
             },
-            excludedShowIds: continueWatchingShows().map(\.id)
+            excludedShowIds: activeShowIDs,
+            heroExcludedShowIds: heroExcludedShowIDs,
+            continueWatchingEpisodes: continueWatchingShows.compactMap { show in
+                guard let episodeId = progressStore.activeLastWatchedEpisodeID(for: show.id) else {
+                    return nil
+                }
+
+                return HomeContinueWatchingEpisode(showId: show.id, episodeId: episodeId)
+            }
         )
+    }
+
+    private func canUseAsHero(_ show: Show) -> Bool {
+        progressStore.activeLastWatchedEpisodeID(for: show.id) == nil && !progressStore.hasCompletedShow(show.id)
     }
 
     func markShowCompleted(_ show: ShowDetail) {
@@ -544,49 +557,6 @@ final class ShowEpisodeProgressStore {
     }
 }
 
-final class LastWatchedEpisodeThumbnailStore {
-    static let shared = LastWatchedEpisodeThumbnailStore()
-
-    private let defaults: UserDefaults
-    private let storageKey = "showLastWatchedEpisodeThumbnailURLs"
-
-    init(defaults: UserDefaults = .standard) {
-        self.defaults = defaults
-    }
-
-    func thumbnailURL(for showID: String) -> URL? {
-        allThumbnailURLs()[showID].flatMap(URL.init(string:))
-    }
-
-    func thumbnailURLs() -> [String: URL] {
-        allThumbnailURLs().compactMapValues(URL.init(string:))
-    }
-
-    func hasThumbnailURL(for showID: String, episodeID: String) -> Bool {
-        thumbnailURL(for: showID) != nil && allThumbnailEpisodeIDs()[showID] == episodeID
-    }
-
-    func setThumbnailURL(_ thumbnailURL: URL, episodeID: String, for showID: String) {
-        var thumbnailURLs = allThumbnailURLs()
-        thumbnailURLs[showID] = thumbnailURL.absoluteString
-        defaults.set(thumbnailURLs, forKey: storageKey)
-
-        var thumbnailEpisodeIDs = allThumbnailEpisodeIDs()
-        thumbnailEpisodeIDs[showID] = episodeID
-        defaults.set(thumbnailEpisodeIDs, forKey: episodeIDStorageKey)
-    }
-
-    private func allThumbnailURLs() -> [String: String] {
-        defaults.dictionary(forKey: storageKey) as? [String: String] ?? [:]
-    }
-
-    private let episodeIDStorageKey = "showLastWatchedEpisodeThumbnailEpisodeIDs"
-
-    private func allThumbnailEpisodeIDs() -> [String: String] {
-        defaults.dictionary(forKey: episodeIDStorageKey) as? [String: String] ?? [:]
-    }
-}
-
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
 
@@ -605,7 +575,7 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 28) {
                             let continueWatchingShows = viewModel.continueWatchingShows()
                             let homeSections = viewModel.visibleHomeSections()
-                            let heroShow = viewModel.homeResponse?.heroShow ?? continueWatchingShows.first ?? viewModel.shows.first
+                            let heroShow = viewModel.heroShow()
 
                             if let heroShow {
                                 HomeHeroSection(show: heroShow) {
