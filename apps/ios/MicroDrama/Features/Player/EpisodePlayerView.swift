@@ -144,7 +144,7 @@ struct EpisodePlayerView: View {
                     }
                 }
             )
-            .presentationDetents([.large])
+            .presentationDetents([.fraction(0.75)])
             .presentationDragIndicator(.visible)
             .presentationBackground(.black)
             .preferredColorScheme(.dark)
@@ -155,6 +155,7 @@ struct EpisodePlayerView: View {
             }
             .presentationDetents([.height(270)])
             .presentationDragIndicator(.visible)
+            .preferredColorScheme(.dark)
         }
         .sheet(isPresented: $isNotificationSoftAskPresented) {
             NotificationSoftAskSheet(
@@ -172,6 +173,7 @@ struct EpisodePlayerView: View {
             )
             .presentationDetents([.height(270)])
             .presentationDragIndicator(.visible)
+            .preferredColorScheme(.dark)
         }
         .sheet(isPresented: $isReviewSoftAskPresented) {
             ReviewSoftAskSheet(
@@ -188,6 +190,7 @@ struct EpisodePlayerView: View {
             )
             .presentationDetents([.height(300)])
             .presentationDragIndicator(.visible)
+            .preferredColorScheme(.dark)
         }
         .onAppear {
             recordCurrentEpisode()
@@ -1998,16 +2001,16 @@ private struct ShowInfoSheet: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .top, spacing: 14) {
+            HStack(alignment: .center, spacing: 16) {
                 RemoteImage(url: show.posterUrl)
-                    .frame(width: 82, height: 112)
-                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                    .frame(width: 112, height: 152)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(show.title)
-                        .font(.title3.weight(.bold))
+                        .font(.title2.weight(.bold))
                         .lineLimit(2)
-                        .minimumScaleFactor(0.86)
+                        .minimumScaleFactor(0.8)
 
                     Text(headerMetadata)
                         .font(.subheadline.weight(.semibold))
@@ -2099,11 +2102,7 @@ private struct ShowInfoSheet: View {
     }
 
     private var headerMetadata: String {
-        var parts = [show.genre, "\(show.episodeCount) episodes"]
-        if freePreviewCount > 0 {
-            parts.append("\(freePreviewCount) free")
-        }
-        return parts.joined(separator: " • ")
+        [show.genre, "\(show.episodeCount) episodes"].joined(separator: " • ")
     }
 
     private var showTraits: [String] {
@@ -2112,10 +2111,6 @@ private struct ShowInfoSheet: View {
             .filter { !$0.isEmpty }
 
         return Array(traits.prefix(6))
-    }
-
-    private var freePreviewCount: Int {
-        show.episodes.filter(\.isFreePreview).count
     }
 
     private var currentEpisode: Episode? {

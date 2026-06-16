@@ -665,6 +665,7 @@ struct HomeView: View {
                 )
             }
         }
+        .preferredColorScheme(.dark)
     }
 
     private var errorAlertBinding: Binding<Bool> {

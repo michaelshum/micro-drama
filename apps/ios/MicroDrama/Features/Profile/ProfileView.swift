@@ -128,6 +128,7 @@ struct ProfileView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .profileDarkChrome()
             .navigationTitle("Profile")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -168,6 +169,7 @@ struct ProfileView: View {
                 await notificationPermissionStore.refreshAuthorizationStatus()
             }
         }
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -178,7 +180,7 @@ private struct FollowedShowsHeaderRow: View {
         ProfileSectionHeaderRow(
             systemImage: "checkmark.circle.fill",
             title: "Following",
-            trailingText: "\(followedCount) followed"
+            trailingText: "\(followedCount) \(followedCount == 1 ? "show" : "shows")"
         )
     }
 }
@@ -216,11 +218,11 @@ private struct EmptyFollowingRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("Following")
                     .font(ProfileTypography.sectionTitle)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(ProfilePalette.primaryText)
 
                 Text("Follow shows to keep up with new episodes")
                     .font(ProfileTypography.rowSubtitle)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ProfilePalette.secondaryText)
                     .lineLimit(2)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -273,20 +275,20 @@ private struct FollowedShowShelfCard: View {
 
             Text(followedShow.showTitle)
                 .font(ProfileTypography.shelfTitle)
-                .foregroundStyle(.primary)
+                .foregroundStyle(ProfilePalette.primaryText)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .frame(width: cardWidth, alignment: .leading)
 
             Text("Episode \(restartEpisodeNumber)")
                 .font(ProfileTypography.shelfAction)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(ProfilePalette.secondaryText)
                 .lineLimit(1)
                 .frame(width: cardWidth, alignment: .leading)
 
             Text(categoryText)
                 .font(ProfileTypography.shelfMetadata)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(ProfilePalette.tertiaryText)
                 .lineLimit(1)
                 .frame(width: cardWidth, alignment: .leading)
         }
@@ -308,17 +310,17 @@ private struct LatestNotificationPreviewRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(notification.title)
                     .font(ProfileTypography.previewTitle)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(ProfilePalette.primaryText)
                     .lineLimit(2)
 
                 Text(notification.message)
                     .font(ProfileTypography.rowSubtitle)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ProfilePalette.secondaryText)
                     .lineLimit(2)
 
                 Text(notification.sentAt.formatted(.relative(presentation: .named)))
                     .font(ProfileTypography.rowMetadata)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(ProfilePalette.tertiaryText)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -340,7 +342,7 @@ private struct NotificationsTrayView: View {
                         ContentUnavailableView(
                             "No Notifications Yet",
                             systemImage: "bell",
-                            description: Text("New episode drops, followed-show reminders, and recommendations will appear here.")
+                            description: Text("New episode drops, show reminders, and recommendations will appear here.")
                         )
                     }
                     .listRowBackground(Color.clear)
@@ -364,7 +366,7 @@ private struct NotificationsTrayView: View {
                         ContentUnavailableView(
                             "Notifications Are Off",
                             systemImage: "bell.slash",
-                            description: Text("Enable notifications to see episode drops, followed-show reminders, and recommendations.")
+                            description: Text("Enable notifications to see episode drops, show reminders, and recommendations.")
                         )
 
                         Button("Enable Notifications") {
@@ -382,6 +384,7 @@ private struct NotificationsTrayView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .profileDarkChrome()
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -448,17 +451,17 @@ private struct NotificationDetailRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(notification.title)
                     .font(ProfileTypography.rowTitle)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(ProfilePalette.primaryText)
                     .lineLimit(2)
 
                 Text(notification.message)
                     .font(ProfileTypography.rowSubtitle)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ProfilePalette.secondaryText)
                     .lineLimit(3)
 
                 Text(notification.sentAt.formatted(.dateTime.month(.abbreviated).day().hour().minute()))
                     .font(ProfileTypography.rowMetadata)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(ProfilePalette.tertiaryText)
             }
         }
         .padding(.vertical, 6)
@@ -520,6 +523,7 @@ private struct FollowedShowsView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .profileDarkChrome()
         .navigationTitle("Following")
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -562,13 +566,13 @@ private struct NotificationPermissionCTA: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Never miss followed-show drops")
+                    Text("Never miss a new episode")
                         .font(ProfileTypography.rowTitle)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(ProfilePalette.primaryText)
 
                     Text("Turn on notifications for new episodes and free unlock windows.")
                         .font(ProfileTypography.rowSubtitle)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ProfilePalette.secondaryText)
                         .lineLimit(3)
                 }
 
@@ -610,16 +614,16 @@ private struct FollowedShowRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(followedShow.showTitle)
                     .font(ProfileTypography.rowTitle)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(ProfilePalette.primaryText)
                     .lineLimit(2)
 
                 Text("Episode \(restartEpisodeNumber)")
                     .font(ProfileTypography.rowAction)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ProfilePalette.secondaryText)
 
                 Text(categoryText)
                     .font(ProfileTypography.rowMetadata)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(ProfilePalette.tertiaryText)
             }
         }
         .padding(.vertical, 6)
@@ -640,9 +644,12 @@ struct ShowSearchView: View {
                     SearchShowRow(show: show)
                 }
                 .buttonStyle(.plain)
+                .listRowBackground(ProfilePalette.screenBackground)
+                .listRowSeparatorTint(ProfilePalette.separator)
             }
         }
         .listStyle(.plain)
+        .profileDarkChrome()
         .navigationTitle("Search")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search shows")
@@ -689,16 +696,16 @@ private struct SearchShowRow: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(show.title)
                     .font(ProfileTypography.rowTitle)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(ProfilePalette.primaryText)
                     .lineLimit(2)
 
                 Text(show.genre)
                     .font(ProfileTypography.rowSubtitle)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ProfilePalette.secondaryText)
 
                 Text("\(show.episodeCount) episodes")
                     .font(ProfileTypography.rowMetadata)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(ProfilePalette.tertiaryText)
             }
         }
         .padding(.vertical, 5)
@@ -860,6 +867,26 @@ private enum ProfileLayout {
     static let contentRowInsets = EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16)
 }
 
+private enum ProfilePalette {
+    static let screenBackground = Color.black
+    static let primaryText = Color.white
+    static let secondaryText = Color.white.opacity(0.68)
+    static let tertiaryText = Color.white.opacity(0.42)
+    static let iconTileBackground = Color.white.opacity(0.10)
+    static let separator = Color.white.opacity(0.10)
+}
+
+private extension View {
+    func profileDarkChrome() -> some View {
+        scrollContentBackground(.hidden)
+            .background(ProfilePalette.screenBackground.ignoresSafeArea())
+            .toolbarBackground(ProfilePalette.screenBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .preferredColorScheme(.dark)
+    }
+}
+
 private struct ProfileSectionHeaderRow: View {
     let systemImage: String
     let title: String
@@ -874,13 +901,13 @@ private struct ProfileSectionHeaderRow: View {
 
             Text(title)
                 .font(ProfileTypography.sectionTitle)
-                .foregroundStyle(.primary)
+                .foregroundStyle(ProfilePalette.primaryText)
 
             Spacer()
 
             Text(trailingText)
                 .font(ProfileTypography.rowSubtitle)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(ProfilePalette.secondaryText)
         }
         .padding(.vertical, 6)
     }
@@ -893,7 +920,7 @@ private struct ProfileRowIcon: View {
     var body: some View {
         Image(systemName: systemImage)
             .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(ProfilePalette.secondaryText)
             .frame(width: width, alignment: .center)
     }
 }
@@ -905,9 +932,9 @@ private struct NotificationIconTile: View {
     var body: some View {
         Image(systemName: systemImage)
             .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(ProfilePalette.secondaryText)
             .frame(width: size, height: size)
-            .background(.quaternary, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .background(ProfilePalette.iconTileBackground, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
