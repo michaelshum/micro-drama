@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Micro Drama",
+    "name": "Giro: Short Dramas",
     "minimumSupportedVersion": "0.1.0",
     "defaultFeed": "featured",
     "initialExperience": {

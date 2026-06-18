@@ -180,7 +180,7 @@ private struct StartupSplashView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 132, height: 132)
-                    .accessibilityLabel("MicroDrama")
+                    .accessibilityLabel("Giro")
 
                 ProgressView()
                     .tint(.white)
