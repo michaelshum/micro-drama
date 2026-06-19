@@ -770,7 +770,7 @@ final class AppReviewPromptStore: ObservableObject {
     static var appName: String {
         Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
             ?? Bundle.main.infoDictionary?["CFBundleName"] as? String
-            ?? "Giro"
+            ?? "Onda"
     }
 
     private static var appVersion: String {

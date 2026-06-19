@@ -58,10 +58,16 @@ struct ProfileNotification: Identifiable, Hashable {
 }
 
 struct ProfileView: View {
+    let onBrowseShows: () -> Void
+
     @StateObject private var notificationContentStore = MockNotificationStore.shared
     @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
     @StateObject private var episodeOpener = EpisodeOpeningViewModel()
     @ObservedObject private var followedShowStore = FollowedShowStore.shared
+
+    init(onBrowseShows: @escaping () -> Void = {}) {
+        self.onBrowseShows = onBrowseShows
+    }
 
     var body: some View {
         NavigationStack {
@@ -93,13 +99,7 @@ struct ProfileView: View {
 
                 Section {
                     if followedShowStore.followedShows.isEmpty {
-                        EmptyFollowingRow()
-
-                        if notificationPermissionStore.shouldShowCTA {
-                            NotificationPermissionCTA()
-                                .listRowInsets(ProfileLayout.contentRowInsets)
-                                .listRowSeparator(.hidden)
-                        }
+                        EmptyFollowingRow(onBrowseShows: onBrowseShows)
                     } else {
                         NavigationLink {
                             FollowedShowsView()
@@ -126,10 +126,19 @@ struct ProfileView: View {
                         }
                     }
                 }
+
+                Section {
+                    AppVersionFooter()
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 0, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                }
             }
             .listStyle(.insetGrouped)
+            .contentMargins(.top, 8, for: .scrollContent)
             .profileDarkChrome()
-            .navigationTitle("Profile")
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
@@ -173,6 +182,25 @@ struct ProfileView: View {
     }
 }
 
+private struct AppVersionFooter: View {
+    private var version: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+    }
+
+    private var build: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"
+    }
+
+    var body: some View {
+        Text("\(version) (\(build))")
+            .font(ProfileTypography.rowMetadata)
+            .foregroundStyle(ProfilePalette.tertiaryText)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .textSelection(.enabled)
+            .accessibilityLabel("Version \(version), build \(build)")
+    }
+}
+
 private struct FollowedShowsHeaderRow: View {
     let followedCount: Int
 
@@ -208,6 +236,9 @@ private struct NotificationHeaderRow: View {
 }
 
 private struct EmptyFollowingRow: View {
+    let onBrowseShows: () -> Void
+    @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
+
     var body: some View {
         HStack(spacing: 12) {
             ProfileRowIcon(
@@ -215,19 +246,60 @@ private struct EmptyFollowingRow: View {
                 width: 32
             )
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Following")
-                    .font(ProfileTypography.sectionTitle)
-                    .foregroundStyle(ProfilePalette.primaryText)
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Follow shows you love")
+                        .font(ProfileTypography.sectionTitle)
+                        .foregroundStyle(ProfilePalette.primaryText)
 
-                Text("Follow shows to keep up with new episodes")
-                    .font(ProfileTypography.rowSubtitle)
-                    .foregroundStyle(ProfilePalette.secondaryText)
-                    .lineLimit(2)
+                    Text("Get updates when new episodes drop.")
+                        .font(ProfileTypography.rowSubtitle)
+                        .foregroundStyle(ProfilePalette.secondaryText)
+                        .lineLimit(2)
+                }
+
+                VStack(spacing: 8) {
+                    Button {
+                        onBrowseShows()
+                    } label: {
+                        Text("Browse Shows")
+                            .font(ProfileTypography.rowAction)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(.blue, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+
+                    if notificationPermissionStore.shouldShowCTA {
+                        Button {
+                            Task {
+                                await notificationPermissionStore.requestAuthorization()
+                            }
+                        } label: {
+                            Text("Turn On Notifications")
+                                .font(ProfileTypography.rowAction)
+                                .foregroundStyle(ProfilePalette.primaryText)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .stroke(.white.opacity(0.14), lineWidth: 1)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(notificationPermissionStore.isRequesting)
+                    }
+                }
+                .padding(.top, 4)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 8)
+        .task {
+            await notificationPermissionStore.refreshAuthorizationStatus()
+        }
     }
 }
 
@@ -369,12 +441,16 @@ private struct NotificationsTrayView: View {
                             description: Text("Enable notifications to see episode drops, show reminders, and recommendations.")
                         )
 
-                        Button("Enable Notifications") {
+                        Button {
                             Task {
                                 await notificationPermissionStore.requestAuthorization()
                             }
+                        } label: {
+                            Text("Enable Notifications")
+                                .foregroundStyle(.black)
                         }
                         .buttonStyle(.borderedProminent)
+                        .tint(.white)
                         .disabled(notificationPermissionStore.isRequesting)
                     }
                     .frame(maxWidth: .infinity)
@@ -576,12 +652,16 @@ private struct NotificationPermissionCTA: View {
                         .lineLimit(3)
                 }
 
-                Button("Enable Notifications") {
+                Button {
                     Task {
                         await notificationPermissionStore.requestAuthorization()
                     }
+                } label: {
+                    Text("Enable Notifications")
+                        .foregroundStyle(.black)
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(.white)
                 .controlSize(.small)
                 .disabled(notificationPermissionStore.isRequesting)
             }

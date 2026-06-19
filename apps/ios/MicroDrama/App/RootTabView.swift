@@ -118,8 +118,14 @@ final class RootTabViewModel: ObservableObject {
     }
 }
 
+private enum RootTab {
+    case home
+    case profile
+}
+
 struct RootTabView: View {
     @StateObject private var viewModel = RootTabViewModel()
+    @State private var selectedTab: RootTab = .home
 
     var body: some View {
         Group {
@@ -132,16 +138,20 @@ struct RootTabView: View {
                     }
                 }
             } else {
-                TabView {
+                TabView(selection: $selectedTab) {
                     HomeView()
                         .tabItem {
                             Label("Home", systemImage: "house.fill")
                         }
+                        .tag(RootTab.home)
 
-                    ProfileView()
+                    ProfileView {
+                        selectedTab = .home
+                    }
                         .tabItem {
                             Label("Profile", systemImage: "person.crop.circle")
                         }
+                        .tag(RootTab.profile)
                 }
             }
         }
@@ -180,7 +190,7 @@ private struct StartupSplashView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 132, height: 132)
-                    .accessibilityLabel("Giro")
+                    .accessibilityLabel("Onda")
 
                 ProgressView()
                     .tint(.white)

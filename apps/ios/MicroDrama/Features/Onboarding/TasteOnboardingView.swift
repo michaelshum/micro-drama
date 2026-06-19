@@ -488,6 +488,9 @@ struct TasteOnboardingView: View {
                     .transition(.opacity)
             }
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            OnboardingLogoBar()
+        }
     }
 
     private var languageSelectionView: some View {
@@ -636,6 +639,24 @@ struct TasteOnboardingView: View {
             matchedShowID: matchedShowID,
             alternateShowIDs: Array(showIDs.filter { $0 != matchedShowID }.prefix(2))
         )
+    }
+}
+
+private struct OnboardingLogoBar: View {
+    var body: some View {
+        HStack {
+            Spacer(minLength: 0)
+
+            Image("OndaLogoMark")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 58, height: 58)
+                .accessibilityLabel("Onda")
+
+            Spacer(minLength: 0)
+        }
+        .frame(height: 72)
+        .background(Color.black)
     }
 }
 
@@ -822,7 +843,7 @@ private struct TasteMatchResultView: View {
 
                 if !result.alternateShowIDs.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Picked for You")
+                        Text("Other Shows for You")
                             .font(.title3.weight(.bold))
                             .foregroundStyle(.white)
 

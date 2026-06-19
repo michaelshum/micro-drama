@@ -628,11 +628,15 @@ struct HomeView: View {
                     }
                 }
             }
-            .navigationTitle("Home")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    HomeLogoMark()
+                }
+
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         ShowSearchView()
@@ -679,11 +683,27 @@ struct HomeView: View {
     }
 }
 
+private struct HomeLogoMark: View {
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(.black.opacity(0.76))
+                .frame(width: 44, height: 44)
+
+            Image("OndaLogoMark")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 33, height: 33)
+        }
+        .accessibilityLabel("Onda")
+    }
+}
+
 private struct HomeHeroSection: View {
     let show: Show
     let onOpen: () -> Void
 
-    private let posterAspectRatio: CGFloat = 0.78
+    private let posterAspectRatio: CGFloat = 0.84
 
     var body: some View {
         VStack(spacing: 0) {
@@ -696,7 +716,7 @@ private struct HomeHeroSection: View {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .strokeBorder(.white.opacity(0.34), lineWidth: 1)
         }
-        .frame(maxWidth: 360)
+        .frame(maxWidth: 318)
         .padding(.horizontal, 18)
         .frame(maxWidth: .infinity)
         .background(Color.black)
