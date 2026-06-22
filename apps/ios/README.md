@@ -17,7 +17,7 @@ Planned MVP scope:
 - show detail view
 - local watch progress
 - local bookmarks
-- mock locked episode/paywall flow
+- rewarded-ad episode unlock flow
 
 Suggested app structure once the Xcode project is created:
 
@@ -30,10 +30,10 @@ MicroDrama/
     Playback/
     Storage/
   Features/
-    Feed/
+    Home/
+    Onboarding/
     Player/
-    Shows/
-    Paywall/
+    Profile/
   Resources/
 ```
 
@@ -77,7 +77,8 @@ Environment values:
 
 The iOS app reads `MicroDramaAPIBaseURL` from `Info.plist`. The Xcode project sets:
 
-- Debug: `http://127.0.0.1:3027`
+- Debug on iOS Simulator: `http://127.0.0.1:3027`
+- Debug on a physical iPhone: `https://micro-drama.onrender.com`
 - Release: `https://micro-drama.onrender.com`
 
-Run the app with the Debug configuration when testing against your local API. Archive/TestFlight builds use Release and stay pointed at production. To test production from Xcode, temporarily override `MICRODRAMA_API_BASE_URL` for the Debug build setting or run the scheme with the Release configuration.
+Run the app with the Debug configuration in the simulator when testing against your local API. Debug builds on a physical phone and Archive/TestFlight builds stay pointed at production. To test a local API from a physical phone, temporarily override `MICRODRAMA_API_BASE_URL` with your Mac's LAN address instead of `127.0.0.1`.

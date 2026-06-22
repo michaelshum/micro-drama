@@ -5,6 +5,7 @@ import SwiftUI
 struct MicroDramaApp: App {
     init() {
         configurePlaybackAudioSession()
+        LocalNotificationRouter.shared.configure()
         Task {
             await AdConsentManager.shared.configureAndStartAds()
         }

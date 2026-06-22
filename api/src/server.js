@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const catalogPath = join(__dirname, "..", "data", "catalog.json");
+const tasteAnchorPostersPath = join(__dirname, "..", "data", "taste-anchor-posters");
 const port = Number(process.env.PORT || 3000);
 const playbackTokenTtlSeconds = Number(process.env.PLAYBACK_TOKEN_TTL_SECONDS || 30 * 60);
 const imageTokenTtlSeconds = Number(process.env.IMAGE_TOKEN_TTL_SECONDS || 24 * 60 * 60);
@@ -39,6 +40,15 @@ function sendRedirect(res, location) {
     "Cache-Control": "no-store"
   });
   res.end();
+}
+
+function sendJpeg(res, body) {
+  res.writeHead(200, {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "image/jpeg",
+    "Cache-Control": "public, max-age=86400"
+  });
+  res.end(body);
 }
 
 function isPublished(item) {
@@ -201,6 +211,37 @@ function uniqueStrings(values) {
     seen.add(value);
     return true;
   });
+}
+
+function publicTasteAnchor(req, anchor, visibleShowIds = null) {
+  const preferredShowIds = uniqueStrings(anchor.preferredShowIds)
+    .filter((showId) => !visibleShowIds || visibleShowIds.has(showId));
+
+  return {
+    id: anchor.id,
+    title: anchor.title,
+    posterUrl: absoluteUrl(req, `/taste-anchors/${anchor.id}/poster`),
+    preferredShowIds
+  };
+}
+
+function buildTasteAnchors(req, homeConfig, visibleShowIds = null) {
+  const anchors = Array.isArray(homeConfig.tasteAnchors) ? homeConfig.tasteAnchors : [];
+  return anchors.map((anchor) => publicTasteAnchor(req, anchor, visibleShowIds));
+}
+
+async function sendTasteAnchorPoster(res, anchorId) {
+  if (!/^[A-Za-z0-9_-]+$/.test(anchorId)) {
+    notFound(res);
+    return;
+  }
+
+  try {
+    const poster = await readFile(join(tasteAnchorPostersPath, `${anchorId}.jpg`));
+    sendJpeg(res, poster);
+  } catch {
+    notFound(res);
+  }
 }
 
 function publicShowsFromIds(showIds, showsById, episodeCountsByShowId, firstEpisodesByShowId, imageUrl) {
@@ -831,6 +872,17 @@ async function handleRequest(req, res) {
 
     if (path === "/config") {
       sendJson(res, 200, catalog.app);
+      return;
+    }
+
+    if (path === "/taste-anchors") {
+      sendJson(res, 200, buildTasteAnchors(req, catalog.home || {}, visibleShowIds));
+      return;
+    }
+
+    const tasteAnchorPosterMatch = path.match(/^\/taste-anchors\/([^/]+)\/poster$/);
+    if (tasteAnchorPosterMatch) {
+      await sendTasteAnchorPoster(res, tasteAnchorPosterMatch[1]);
       return;
     }
 

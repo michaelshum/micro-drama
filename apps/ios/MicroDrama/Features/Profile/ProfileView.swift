@@ -1,66 +1,9 @@
 import SwiftUI
 
-private enum InitialNotificationShow {
-    static let fruitLoveIslandID = "show_demo_fruit_love_island"
-    static let fruitLoveIslandThumbnailPath = "/shows/\(fruitLoveIslandID)/poster"
-}
-
-@MainActor
-final class MockNotificationStore: ObservableObject {
-    static let shared = MockNotificationStore()
-
-    @Published private(set) var notifications: [ProfileNotification] = [
-        ProfileNotification(
-            title: "New episodes waiting",
-            message: "Fruit Love Island has fresh episodes ready to watch.",
-            sentAt: Calendar.current.date(byAdding: .hour, value: -5, to: Date()) ?? Date(),
-            systemImage: "play.rectangle.fill",
-            thumbnailUrl: APIClient.shared.url(for: InitialNotificationShow.fruitLoveIslandThumbnailPath),
-            showID: InitialNotificationShow.fruitLoveIslandID
-        ),
-        ProfileNotification(
-            title: "Because you watched romance",
-            message: "Try a new short drama picked for your next break.",
-            sentAt: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(),
-            systemImage: "sparkles"
-        )
-    ]
-
-    var sortedNotifications: [ProfileNotification] {
-        notifications.sorted { $0.sentAt > $1.sentAt }
-    }
-}
-
-struct ProfileNotification: Identifiable, Hashable {
-    let id = UUID()
-    let title: String
-    let message: String
-    let sentAt: Date
-    let systemImage: String
-    let thumbnailUrl: URL?
-    let showID: String?
-
-    init(
-        title: String,
-        message: String,
-        sentAt: Date,
-        systemImage: String,
-        thumbnailUrl: URL? = nil,
-        showID: String? = nil
-    ) {
-        self.title = title
-        self.message = message
-        self.sentAt = sentAt
-        self.systemImage = systemImage
-        self.thumbnailUrl = thumbnailUrl
-        self.showID = showID
-    }
-}
-
 struct ProfileView: View {
     let onBrowseShows: () -> Void
 
-    @StateObject private var notificationContentStore = MockNotificationStore.shared
+    @StateObject private var notificationContentStore = NotificationInboxStore.shared
     @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
     @StateObject private var adConsentManager = AdConsentManager.shared
     @StateObject private var episodeOpener = EpisodeOpeningViewModel()
@@ -129,6 +72,24 @@ struct ProfileView: View {
                 }
 
                 Section {
+                    Link(destination: OndaWebLinks.privacyPolicyURL) {
+                        ProfileSectionHeaderRow(
+                            systemImage: "lock.shield.fill",
+                            title: "Privacy Policy"
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .listRowSeparator(.hidden)
+
+                    Link(destination: OndaWebLinks.termsOfServiceURL) {
+                        ProfileSectionHeaderRow(
+                            systemImage: "doc.text.fill",
+                            title: "Terms of Service"
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .listRowSeparator(.hidden)
+
                     if adConsentManager.isPrivacyOptionsRequired {
                         Button {
                             Task {
@@ -419,7 +380,7 @@ private struct LatestNotificationPreviewRow: View {
 }
 
 private struct NotificationsTrayView: View {
-    @ObservedObject var store: MockNotificationStore
+    @ObservedObject var store: NotificationInboxStore
     @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
     @StateObject private var episodeOpener = EpisodeOpeningViewModel()
 
@@ -464,10 +425,13 @@ private struct NotificationsTrayView: View {
                             }
                         } label: {
                             Text("Enable Notifications")
+                                .font(.headline)
                                 .foregroundStyle(.black)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.white)
+                        .buttonStyle(.plain)
                         .disabled(notificationPermissionStore.isRequesting)
                     }
                     .frame(maxWidth: .infinity)
@@ -606,6 +570,7 @@ private struct FollowedShowsView: View {
                         .buttonStyle(.plain)
                         .swipeActions {
                             Button(role: .destructive) {
+                                LocalNotificationScheduler.shared.cancelReminders(for: followedShow.showID)
                                 followedShowStore.remove(showID: followedShow.showID)
                             } label: {
                                 Label("Unfollow", systemImage: "minus.circle")
@@ -675,10 +640,13 @@ private struct NotificationPermissionCTA: View {
                     }
                 } label: {
                     Text("Enable Notifications")
+                        .font(ProfileTypography.rowAction)
                         .foregroundStyle(.black)
+                        .padding(.horizontal, 14)
+                        .frame(height: 36)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.white)
+                .buttonStyle(.plain)
                 .controlSize(.small)
                 .disabled(notificationPermissionStore.isRequesting)
             }
@@ -850,16 +818,19 @@ private final class EpisodeOpeningViewModel: ObservableObject {
 
     func open(_ notification: ProfileNotification) async {
         guard let showID = notification.showID else { return }
-        await open(showID: showID)
+        await open(showID: showID, episodeID: notification.episodeID)
     }
 
-    func open(showID: String) async {
+    func open(showID: String, episodeID: String? = nil) async {
         isLoading = true
         defer { isLoading = false }
 
         do {
-            initialEpisodeID = progressStore.activeLastWatchedEpisodeID(for: showID)
-            selectedShowDetail = try await apiClient.fetchShow(id: showID)
+            let showDetail = try await apiClient.fetchShow(id: showID)
+            initialEpisodeID = episodeID.flatMap { selectedEpisodeID in
+                showDetail.episodes.contains { $0.id == selectedEpisodeID } ? selectedEpisodeID : nil
+            } ?? progressStore.activeLastWatchedEpisodeID(for: showID)
+            selectedShowDetail = showDetail
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -987,7 +958,13 @@ private extension View {
 private struct ProfileSectionHeaderRow: View {
     let systemImage: String
     let title: String
-    let trailingText: String
+    let trailingText: String?
+
+    init(systemImage: String, title: String, trailingText: String? = nil) {
+        self.systemImage = systemImage
+        self.title = title
+        self.trailingText = trailingText
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -1002,9 +979,11 @@ private struct ProfileSectionHeaderRow: View {
 
             Spacer()
 
-            Text(trailingText)
-                .font(ProfileTypography.rowSubtitle)
-                .foregroundStyle(ProfilePalette.secondaryText)
+            if let trailingText {
+                Text(trailingText)
+                    .font(ProfileTypography.rowSubtitle)
+                    .foregroundStyle(ProfilePalette.secondaryText)
+            }
         }
         .padding(.vertical, 6)
     }

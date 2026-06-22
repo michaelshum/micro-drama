@@ -43,190 +43,73 @@ enum TasteLanguage: String, CaseIterable, Identifiable, Codable {
     }
 }
 
-enum TasteAnchor: String, CaseIterable, Identifiable, Codable {
-    case loveIsland
-    case bridgerton
-    case fiftyShades
-    case goneGirl
-    case beautyAndTheBeast
-    case crazyRichAsians
-    case theBachelor
-    case desperateHousewives
-    case prettyLittleLiars
-    case suits
-    case twilight
-    case succession
-    case gameOfThrones
-    case devilWearsPrada
+struct TasteAnchor: Identifiable, Codable, Hashable {
+    let id: String
+    let title: String
+    let posterUrl: URL?
+    let preferredShowIDs: [String]
 
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .loveIsland:
-            return "Love Island"
-        case .theBachelor:
-            return "The Bachelor"
-        case .desperateHousewives:
-            return "Desperate Housewives"
-        case .goneGirl:
-            return "Gone Girl"
-        case .crazyRichAsians:
-            return "Crazy Rich Asians"
-        case .fiftyShades:
-            return "Fifty Shades"
-        case .prettyLittleLiars:
-            return "Pretty Little Liars"
-        case .suits:
-            return "Suits"
-        case .succession:
-            return "Succession"
-        case .gameOfThrones:
-            return "Game of Thrones"
-        case .beautyAndTheBeast:
-            return "Beauty and the Beast"
-        case .bridgerton:
-            return "Bridgerton"
-        case .devilWearsPrada:
-            return "The Devil Wears Prada"
-        case .twilight:
-            return "Twilight"
-        }
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case posterUrl
+        case preferredShowIDs = "preferredShowIds"
     }
 
-    var posterAssetName: String {
-        switch self {
-        case .loveIsland:
-            return "TasteAnchorLoveIsland"
-        case .theBachelor:
-            return "TasteAnchorTheBachelor"
-        case .desperateHousewives:
-            return "TasteAnchorDesperateHousewives"
-        case .goneGirl:
-            return "TasteAnchorGoneGirl"
-        case .crazyRichAsians:
-            return "TasteAnchorCrazyRichAsians"
-        case .fiftyShades:
-            return "TasteAnchorFiftyShades"
-        case .prettyLittleLiars:
-            return "TasteAnchorPrettyLittleLiars"
-        case .suits:
-            return "TasteAnchorSuits"
-        case .succession:
-            return "TasteAnchorSuccession"
-        case .gameOfThrones:
-            return "TasteAnchorGameOfThrones"
-        case .beautyAndTheBeast:
-            return "TasteAnchorBeautyAndTheBeast"
-        case .bridgerton:
-            return "TasteAnchorBridgerton"
-        case .devilWearsPrada:
-            return "TasteAnchorDevilWearsPrada"
-        case .twilight:
-            return "TasteAnchorTwilight"
-        }
+    init(
+        id: String,
+        title: String,
+        posterUrl: URL? = nil,
+        preferredShowIDs: [String]
+    ) {
+        self.id = id
+        self.title = title
+        self.posterUrl = posterUrl
+        self.preferredShowIDs = preferredShowIDs
+    }
+
+    static func == (lhs: TasteAnchor, rhs: TasteAnchor) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     var colors: [Color] {
-        switch self {
-        case .loveIsland:
+        switch id {
+        case "loveIsland":
             return [Color(red: 1.0, green: 0.31, blue: 0.47), Color(red: 1.0, green: 0.67, blue: 0.29)]
-        case .theBachelor:
+        case "theBachelor":
             return [Color(red: 0.89, green: 0.08, blue: 0.24), Color(red: 0.34, green: 0.02, blue: 0.08)]
-        case .desperateHousewives:
+        case "desperateHousewives":
             return [Color(red: 0.72, green: 0.05, blue: 0.12), Color(red: 0.18, green: 0.02, blue: 0.06)]
-        case .goneGirl:
+        case "goneGirl":
             return [Color(red: 0.12, green: 0.15, blue: 0.2), Color(red: 0.38, green: 0.45, blue: 0.56)]
-        case .crazyRichAsians:
+        case "crazyRichAsians":
             return [Color(red: 0.95, green: 0.71, blue: 0.29), Color(red: 0.06, green: 0.34, blue: 0.31)]
-        case .fiftyShades:
+        case "fiftyShades":
             return [Color(red: 0.05, green: 0.05, blue: 0.07), Color(red: 0.38, green: 0.33, blue: 0.39)]
-        case .prettyLittleLiars:
+        case "prettyLittleLiars":
             return [Color(red: 0.49, green: 0.08, blue: 0.45), Color(red: 0.1, green: 0.08, blue: 0.18)]
-        case .suits:
+        case "suits":
             return [Color(red: 0.04, green: 0.18, blue: 0.32), Color(red: 0.53, green: 0.61, blue: 0.69)]
-        case .succession:
+        case "succession":
             return [Color(red: 0.1, green: 0.11, blue: 0.12), Color(red: 0.56, green: 0.48, blue: 0.36)]
-        case .gameOfThrones:
+        case "gameOfThrones":
             return [Color(red: 0.17, green: 0.22, blue: 0.29), Color(red: 0.55, green: 0.44, blue: 0.28)]
-        case .beautyAndTheBeast:
+        case "beautyAndTheBeast":
             return [Color(red: 0.11, green: 0.13, blue: 0.38), Color(red: 0.8, green: 0.53, blue: 0.22)]
-        case .bridgerton:
+        case "bridgerton":
             return [Color(red: 0.54, green: 0.2, blue: 0.45), Color(red: 0.86, green: 0.62, blue: 0.76)]
-        case .devilWearsPrada:
+        case "devilWearsPrada":
             return [Color(red: 0.72, green: 0.03, blue: 0.18), Color(red: 0.08, green: 0.08, blue: 0.1)]
-        case .twilight:
+        case "twilight":
             return [Color(red: 0.09, green: 0.14, blue: 0.2), Color(red: 0.24, green: 0.39, blue: 0.48)]
-        }
-    }
-
-    var preferredShowIDs: [String] {
-        switch self {
-        case .loveIsland:
+        default:
             return [
-                "show_demo_fruit_love_island",
-                "show_demo_candy_love_island"
-            ]
-        case .theBachelor:
-            return [
-                "show_demo_fruit_love_island",
-                "show_demo_candy_love_island"
-            ]
-        case .desperateHousewives:
-            return [
-                "show_demo_the_eye_of_betrayal",
-                "show_demo_double_shelf_life_marks_greed",
-                "show_demo_screen_time"
-            ]
-        case .goneGirl:
-            return [
-                "show_demo_screen_time",
-                "show_demo_the_eye_of_betrayal",
-                "show_demo_double_shelf_life_marks_greed"
-            ]
-        case .crazyRichAsians:
-            return [
-                "show_demo_one_night_in_fruitopia",
-                "show_demo_i_married_my_exs_mafia_boss"
-            ]
-        case .fiftyShades:
-            return [
-                "show_demo_one_night_in_fruitopia",
-                "show_demo_i_married_my_exs_mafia_boss"
-            ]
-        case .prettyLittleLiars:
-            return [
-                "show_demo_screen_time",
-                "show_demo_the_eye_of_betrayal"
-            ]
-        case .suits:
-            return [
-                "show_demo_secrets_in_the_juice",
-                "show_demo_one_night_in_fruitopia"
-            ]
-        case .succession:
-            return [
-                "show_demo_secrets_in_the_juice"
-            ]
-        case .gameOfThrones:
-            return [
-                "show_demo_the_beast_queens_canvas"
-            ]
-        case .beautyAndTheBeast:
-            return [
-                "show_demo_the_beast_queens_canvas"
-            ]
-        case .bridgerton:
-            return [
-                "show_demo_i_married_my_exs_mafia_boss"
-            ]
-        case .devilWearsPrada:
-            return [
-                "show_demo_secrets_in_the_juice"
-            ]
-        case .twilight:
-            return [
-                "show_demo_the_beast_queens_canvas"
+                Color(red: 0.12, green: 0.12, blue: 0.14),
+                Color(red: 0.34, green: 0.34, blue: 0.38)
             ]
         }
     }
@@ -452,8 +335,11 @@ struct TasteOnboardingView: View {
 
     @State private var step: TasteOnboardingStep = .languages
     @State private var selectedLanguages: Set<TasteLanguage> = [.english]
+    @State private var availableAnchors: [TasteAnchor] = []
     @State private var selectedAnchors: Set<TasteAnchor> = []
     @State private var selectedDealbreakers: Set<TasteDealbreaker> = []
+    @State private var isLoadingAnchors = false
+    @State private var didFailToLoadAnchors = false
 
     private let twoColumnGrid = [
         GridItem(.flexible(), spacing: 12),
@@ -517,22 +403,42 @@ struct TasteOnboardingView: View {
     private var anchorSelectionView: some View {
         OnboardingStepScaffold(
             title: "What shows or movies do you like?",
-            subtitle: "This helps us find new shows you'll love.",
+            subtitle: "This helps us find new \(appDisplayName) shows you'll love.",
             buttonTitle: "Continue",
             isButtonDisabled: selectedAnchors.isEmpty,
             onContinue: { move(to: .dealbreakers) }
         ) {
-            LazyVGrid(columns: posterGrid, spacing: 10) {
-                ForEach(TasteAnchor.allCases) { anchor in
-                    TasteAnchorCard(
-                        anchor: anchor,
-                        isSelected: selectedAnchors.contains(anchor)
-                    ) {
-                        toggle(anchor)
+            if isLoadingAnchors {
+                ProgressView()
+                    .frame(maxWidth: .infinity, minHeight: 180)
+            } else if didFailToLoadAnchors && availableAnchors.isEmpty {
+                Text("Unable to load choices. Check your connection and try again.")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.68))
+                    .frame(maxWidth: .infinity, minHeight: 180, alignment: .center)
+                    .multilineTextAlignment(.center)
+            } else {
+                LazyVGrid(columns: posterGrid, spacing: 10) {
+                    ForEach(availableAnchors) { anchor in
+                        TasteAnchorCard(
+                            anchor: anchor,
+                            isSelected: selectedAnchors.contains(anchor)
+                        ) {
+                            toggle(anchor)
+                        }
                     }
                 }
             }
         }
+        .task {
+            await loadTasteAnchorsIfNeeded()
+        }
+    }
+
+    private var appDisplayName: String {
+        Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
+            ?? Bundle.main.infoDictionary?["CFBundleName"] as? String
+            ?? "Onda"
     }
 
     private var dealbreakerSelectionView: some View {
@@ -586,6 +492,37 @@ struct TasteOnboardingView: View {
         }
     }
 
+    private func loadTasteAnchorsIfNeeded() async {
+        guard availableAnchors.isEmpty, !isLoadingAnchors else { return }
+
+        await MainActor.run {
+            isLoadingAnchors = true
+            didFailToLoadAnchors = false
+        }
+        do {
+            let remoteAnchors = try await APIClient.shared.fetchTasteAnchors()
+            guard !remoteAnchors.isEmpty else {
+                await MainActor.run {
+                    isLoadingAnchors = false
+                    didFailToLoadAnchors = true
+                }
+                return
+            }
+            await MainActor.run {
+                availableAnchors = remoteAnchors
+                selectedAnchors = Set(selectedAnchors.compactMap { selectedAnchor in
+                    remoteAnchors.first { $0.id == selectedAnchor.id } ?? selectedAnchor
+                })
+                isLoadingAnchors = false
+            }
+        } catch {
+            await MainActor.run {
+                isLoadingAnchors = false
+                didFailToLoadAnchors = true
+            }
+        }
+    }
+
     private func showSelectingStep() {
         move(to: .selecting)
         let result = buildResult()
@@ -627,7 +564,7 @@ struct TasteOnboardingView: View {
 
     private func buildResult() -> TasteOnboardingResult {
         let languages = TasteLanguage.allCases.filter { selectedLanguages.contains($0) }
-        let anchors = TasteAnchor.allCases.filter { selectedAnchors.contains($0) }
+        let anchors = availableAnchors.filter { selectedAnchors.contains($0) }
         let dealbreakers = TasteDealbreaker.allCases.filter { selectedDealbreakers.contains($0) }
         let showIDs = rankedShowIDs(for: anchors, dealbreakers: dealbreakers)
         let matchedShowID = showIDs.first ?? "show_demo_the_eye_of_betrayal"
@@ -883,8 +820,8 @@ private struct TasteMatchResultView: View {
                     return firstRank < secondRank
                 }
 
-                let firstOrder = TasteAnchor.allCases.firstIndex(of: first) ?? Int.max
-                let secondOrder = TasteAnchor.allCases.firstIndex(of: second) ?? Int.max
+                let firstOrder = result.selectedAnchors.firstIndex(of: first) ?? Int.max
+                let secondOrder = result.selectedAnchors.firstIndex(of: second) ?? Int.max
                 return firstOrder < secondOrder
             }
             .first
@@ -1024,17 +961,34 @@ private struct TasteAnchorCard: View {
     var body: some View {
         Button(action: onTap) {
             ZStack {
-                Image(anchor.posterAssetName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
-                    .brightness(0.06)
-                    .overlay {
-                        if isSelected {
-                            Color.black.opacity(0.42)
+                Group {
+                    if let posterUrl = anchor.posterUrl {
+                        RemoteImage(url: posterUrl)
+                            .brightness(0.06)
+                    } else {
+                        LinearGradient(
+                            colors: anchor.colors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        .overlay(alignment: .bottomLeading) {
+                            Text(anchor.title)
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundStyle(.white)
+                                .lineLimit(3)
+                                .minimumScaleFactor(0.82)
+                                .multilineTextAlignment(.leading)
+                                .padding(10)
                         }
                     }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .overlay {
+                    if isSelected {
+                        Color.black.opacity(0.42)
+                    }
+                }
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")

@@ -20,6 +20,8 @@
 		0A00010B2C00000100000001 /* TasteOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020C2C00000100000001 /* TasteOnboardingView.swift */; };
 		0A00010C2C00000100000001 /* AdConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020D2C00000100000001 /* AdConsentManager.swift */; };
 		0A00010D2C00000100000001 /* GoogleUserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 0A000B042C00000100000001 /* GoogleUserMessagingPlatform */; };
+		0A00010E2C00000100000001 /* LocalNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020E2C00000100000001 /* LocalNotifications.swift */; };
+		0A00010F2C00000100000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0A00020F2C00000100000001 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		0A00020B2C00000100000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A00020C2C00000100000001 /* TasteOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteOnboardingView.swift; sourceTree = "<group>"; };
 		0A00020D2C00000100000001 /* AdConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdConsentManager.swift; sourceTree = "<group>"; };
+		0A00020E2C00000100000001 /* LocalNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotifications.swift; sourceTree = "<group>"; };
+		0A00020F2C00000100000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				0A0002042C00000100000001 /* CatalogModels.swift */,
+				0A00020E2C00000100000001 /* LocalNotifications.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -121,6 +126,7 @@
 			children = (
 				0A00020B2C00000100000001 /* Assets.xcassets */,
 				0A0002082C00000100000001 /* Info.plist */,
+				0A00020F2C00000100000001 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -241,6 +247,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A00010A2C00000100000001 /* Assets.xcassets in Resources */,
+				0A00010F2C00000100000001 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +268,7 @@
 				0A0001082C00000100000001 /* RewardedEpisodeUnlockAd.swift in Sources */,
 				0A00010B2C00000100000001 /* TasteOnboardingView.swift in Sources */,
 				0A00010C2C00000100000001 /* AdConsentManager.swift in Sources */,
+				0A00010E2C00000100000001 /* LocalNotifications.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +409,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				MICRODRAMA_API_BASE_URL = "http://127.0.0.1:3027";
+				MICRODRAMA_API_BASE_URL = "https://micro-drama.onrender.com";
+				"MICRODRAMA_API_BASE_URL[sdk=iphonesimulator*]" = "http://127.0.0.1:3027";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vivant.microdrama;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

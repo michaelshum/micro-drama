@@ -164,6 +164,7 @@ struct EpisodePlayerView: View {
                     isNotificationSoftAskPresented = false
                     Task {
                         await notificationStore.requestAuthorization()
+                        await scheduleCurrentFollowReminder()
                     }
                 },
                 onNotNow: {
@@ -249,6 +250,14 @@ struct EpisodePlayerView: View {
 
     private func toggleFollow(for episode: Episode) {
         let didFollow = followedShowStore.toggle(show: activeShow, episode: episode)
+        if didFollow {
+            Task {
+                await LocalNotificationScheduler.shared.scheduleFollowedShowReminder(show: activeShow, episode: episode)
+            }
+        } else {
+            LocalNotificationScheduler.shared.cancelReminders(for: activeShow.id)
+        }
+
         guard didFollow, notificationStore.canShowSoftAsk else { return }
         isNotificationSoftAskPresented = true
     }
@@ -256,6 +265,18 @@ struct EpisodePlayerView: View {
     private func recordCurrentEpisode() {
         guard let episode = activeShow.episodes[safe: currentIndex] else { return }
         onEpisodeChanged(episode, activeShow)
+        Task {
+            await LocalNotificationScheduler.shared.scheduleContinueWatchingReminder(show: activeShow, episode: episode)
+        }
+    }
+
+    private func scheduleCurrentFollowReminder() async {
+        guard followedShowStore.isFollowing(activeShow),
+              let episode = activeShow.episodes[safe: currentIndex] else {
+            return
+        }
+
+        await LocalNotificationScheduler.shared.scheduleFollowedShowReminder(show: activeShow, episode: episode)
     }
 
     private func updateDragOffset(_ verticalTranslation: CGFloat) {
@@ -318,6 +339,7 @@ struct EpisodePlayerView: View {
 
     private func markShowCompletedIfNeeded(_ show: ShowDetail) {
         guard completedShowIDsInSession.insert(show.id).inserted else { return }
+        LocalNotificationScheduler.shared.cancelReminders(for: show.id)
         onShowCompleted(show)
     }
 
@@ -1609,7 +1631,7 @@ private struct LockedAdUnlockDrawer: View {
                         .font(.headline)
                         .foregroundStyle(.primary)
 
-                    Text("Watch one rewarded ad to keep playing this episode.")
+                    Text("Watch an ad to watch this episode.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1722,8 +1744,17 @@ private struct NotificationSoftAskSheet: View {
             }
 
             VStack(spacing: 10) {
-                Button("Notify Me", action: onNotify)
-                    .buttonStyle(.borderedProminent)
+                Button {
+                    onNotify()
+                } label: {
+                    Text("Notify Me")
+                        .font(.headline)
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+                    .buttonStyle(.plain)
                     .controlSize(.large)
                     .frame(maxWidth: .infinity)
 

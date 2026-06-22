@@ -11,6 +11,12 @@ enum APIError: LocalizedError {
     }
 }
 
+enum OndaWebLinks {
+    static let baseURL = URL(string: "https://onda-micro-drama.vercel.app")!
+    static let privacyPolicyURL = baseURL.appending(path: "privacy")
+    static let termsOfServiceURL = baseURL.appending(path: "terms")
+}
+
 struct APIClient {
     static let shared = APIClient()
 
@@ -30,6 +36,10 @@ struct APIClient {
 
     func fetchConfig() async throws -> AppConfig {
         try await fetch("/config")
+    }
+
+    func fetchTasteAnchors() async throws -> [TasteAnchor] {
+        try await fetch("/taste-anchors")
     }
 
     func fetchShows() async throws -> [Show] {

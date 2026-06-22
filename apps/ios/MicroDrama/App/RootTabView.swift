@@ -85,6 +85,22 @@ final class RootTabViewModel: ObservableObject {
         progressStore.markShowCompleted(showID: show.id)
     }
 
+    func openNotificationRoute(_ route: LocalNotificationRoute) async {
+        isTasteOnboardingPresented = false
+        isPreparingInitialExperience = true
+        defer { isPreparingInitialExperience = false }
+
+        do {
+            let showDetail = try await apiClient.fetchShow(id: route.showID)
+            initialEpisodeID = route.episodeID.flatMap { episodeID in
+                showDetail.episodes.contains { $0.id == episodeID } ? episodeID : nil
+            } ?? progressStore.activeLastWatchedEpisodeID(for: route.showID) ?? firstPlayableEpisodeID(in: showDetail)
+            initialShowDetail = showDetail
+        } catch {
+            return
+        }
+    }
+
     private func firstPlayableEpisodeID(in showDetail: ShowDetail) -> String? {
         showDetail.episodes.first { !$0.isLocked }?.id
     }
@@ -125,6 +141,7 @@ private enum RootTab {
 
 struct RootTabView: View {
     @StateObject private var viewModel = RootTabViewModel()
+    @ObservedObject private var notificationRouter = LocalNotificationRouter.shared
     @State private var selectedTab: RootTab = .home
 
     var body: some View {
@@ -156,7 +173,18 @@ struct RootTabView: View {
             }
         }
         .task {
+            if await openPendingNotificationRoute() {
+                return
+            }
             await viewModel.openInitialExperienceIfNeeded()
+            _ = await openPendingNotificationRoute()
+        }
+        .onChange(of: notificationRouter.pendingRoute) { _, route in
+            guard route != nil else { return }
+            selectedTab = .home
+            Task {
+                _ = await openPendingNotificationRoute()
+            }
         }
         .fullScreenCover(item: $viewModel.initialShowDetail) { showDetail in
             EpisodePlayerView(
@@ -171,6 +199,12 @@ struct RootTabView: View {
             )
         }
         .preferredColorScheme(.dark)
+    }
+
+    private func openPendingNotificationRoute() async -> Bool {
+        guard let route = notificationRouter.consumePendingRoute() else { return false }
+        await viewModel.openNotificationRoute(route)
+        return true
     }
 }
 
