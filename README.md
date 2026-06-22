@@ -1,6 +1,6 @@
-# Micro Drama
+# Onda
 
-Monorepo for the micro-drama product demo.
+Monorepo for Onda, a short-drama product demo.
 
 ## Structure
 

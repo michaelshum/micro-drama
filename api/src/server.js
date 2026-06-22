@@ -1039,5 +1039,5 @@ async function handleRequest(req, res) {
 }
 
 createServer(handleRequest).listen(port, () => {
-  console.log(`Micro Drama API listening on :${port}`);
+  console.log(`Onda API listening on :${port}`);
 });

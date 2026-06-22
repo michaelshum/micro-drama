@@ -1,6 +1,6 @@
 # iOS App
 
-SwiftUI iOS app for the Micro Drama demo.
+SwiftUI iOS app for Onda.
 
 Open `MicroDrama.xcodeproj` in Xcode and run the `MicroDrama` scheme.
 
