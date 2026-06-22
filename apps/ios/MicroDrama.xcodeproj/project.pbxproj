@@ -18,6 +18,8 @@
 		0A0001092C00000100000001 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 0A000B022C00000100000001 /* GoogleMobileAds */; };
 		0A00010A2C00000100000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A00020B2C00000100000001 /* Assets.xcassets */; };
 		0A00010B2C00000100000001 /* TasteOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020C2C00000100000001 /* TasteOnboardingView.swift */; };
+		0A00010C2C00000100000001 /* AdConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00020D2C00000100000001 /* AdConsentManager.swift */; };
+		0A00010D2C00000100000001 /* GoogleUserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 0A000B042C00000100000001 /* GoogleUserMessagingPlatform */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,7 @@
 		0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardedEpisodeUnlockAd.swift; sourceTree = "<group>"; };
 		0A00020B2C00000100000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A00020C2C00000100000001 /* TasteOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteOnboardingView.swift; sourceTree = "<group>"; };
+		0A00020D2C00000100000001 /* AdConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdConsentManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +44,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0001092C00000100000001 /* GoogleMobileAds in Frameworks */,
+				0A00010D2C00000100000001 /* GoogleUserMessagingPlatform in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,6 +160,7 @@
 		0A0004132C00000100000001 /* Ads */ = {
 			isa = PBXGroup;
 			children = (
+				0A00020D2C00000100000001 /* AdConsentManager.swift */,
 				0A00020A2C00000100000001 /* RewardedEpisodeUnlockAd.swift */,
 			);
 			path = Ads;
@@ -187,6 +192,7 @@
 			name = MicroDrama;
 			packageProductDependencies = (
 				0A000B022C00000100000001 /* GoogleMobileAds */,
+				0A000B042C00000100000001 /* GoogleUserMessagingPlatform */,
 			);
 			productName = MicroDrama;
 			productReference = 0A0002092C00000100000001 /* MicroDrama.app */;
@@ -218,6 +224,7 @@
 			mainGroup = 0A0004012C00000100000001;
 			packageReferences = (
 				0A000B012C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				0A000B032C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-user-messaging-platform" */,
 			);
 			productRefGroup = 0A0004092C00000100000001 /* Products */;
 			projectDirPath = "";
@@ -253,6 +260,7 @@
 				0A0001072C00000100000001 /* ProfileView.swift in Sources */,
 				0A0001082C00000100000001 /* RewardedEpisodeUnlockAd.swift in Sources */,
 				0A00010B2C00000100000001 /* TasteOnboardingView.swift in Sources */,
+				0A00010C2C00000100000001 /* AdConsentManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,6 +469,14 @@
 				minimumVersion = 13.0.0;
 			};
 		};
+		0A000B032C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-user-messaging-platform" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -468,6 +484,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0A000B012C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
+		};
+		0A000B042C00000100000001 /* GoogleUserMessagingPlatform */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A000B032C00000100000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-user-messaging-platform" */;
+			productName = GoogleUserMessagingPlatform;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

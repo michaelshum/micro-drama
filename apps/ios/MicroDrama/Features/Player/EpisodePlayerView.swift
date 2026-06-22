@@ -899,7 +899,6 @@ private struct EpisodePage: View {
     @State private var isScrubbing = false
     @State private var seekRequest: PlaybackSeekRequest?
     @State private var toggleRequest: PlaybackToggleRequest?
-    @State private var lockedOfferAlert: LockedOffer?
     @State private var isAdErrorPresented = false
     @State private var isUnlockDrawerPresented = false
     @State private var unlockDrawerDragOffset: CGFloat = 0
@@ -986,12 +985,10 @@ private struct EpisodePage: View {
                         .onTapGesture(perform: dismissUnlockDrawer)
                         .transition(.opacity)
 
-                    LockedPaywallDrawer(
+                    LockedAdUnlockDrawer(
                         episode: episode,
-                        onOfferTapped: { offer in
-                            dismissUnlockDrawer()
-                            lockedOfferAlert = offer
-                        }
+                        isAdLoading: rewardedAd.isLoading,
+                        onWatchAd: showRewardedAdUnlock
                     )
                     .padding(.horizontal, 14)
                     .padding(.bottom, 22)
@@ -1034,13 +1031,6 @@ private struct EpisodePage: View {
             }
         }
         .ignoresSafeArea()
-        .alert(item: $lockedOfferAlert) { offer in
-            Alert(
-                title: Text("Coming Soon"),
-                message: Text(offer.alertMessage),
-                dismissButton: .default(Text("OK"))
-            )
-        }
         .alert("Unable to show ad", isPresented: $isAdErrorPresented) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -1599,15 +1589,10 @@ private struct LockedEpisodeOverlay: View {
     }
 }
 
-private struct LockedPaywallDrawer: View {
+private struct LockedAdUnlockDrawer: View {
     let episode: Episode
-    let onOfferTapped: (LockedOffer) -> Void
-
-    private let offers: [LockedOffer] = [
-        .oneTimeUnlock,
-        .weeklyUnlimited,
-        .yearlyUnlimited
-    ]
+    let isAdLoading: Bool
+    let onWatchAd: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -1619,13 +1604,31 @@ private struct LockedPaywallDrawer: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 16) {
-                VStack(spacing: 10) {
-                    ForEach(offers) { offer in
-                        LockedOfferRow(offer: offer) {
-                            onOfferTapped(offer)
-                        }
-                    }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Unlock Episode \(episode.episodeNumber)")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+
+                    Text("Watch one rewarded ad to keep playing this episode.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+
+                Button(action: onWatchAd) {
+                    Label(
+                        isAdLoading ? "Loading ad..." : "Watch Ad to Unlock",
+                        systemImage: "play.rectangle.fill"
+                    )
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(.blue, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(isAdLoading)
+                .accessibilityLabel("Watch ad to unlock episode")
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
@@ -1636,162 +1639,6 @@ private struct LockedPaywallDrawer: View {
                 .stroke(Color.black.opacity(0.06), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.28), radius: 24, y: 14)
-    }
-}
-
-private struct LockedOfferRow: View {
-    let offer: LockedOffer
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: offer.systemImage)
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(offer.isRecommended ? .white : .blue)
-                    .frame(width: 36, height: 36)
-                    .background(offer.isRecommended ? Color.blue : Color.blue.opacity(0.12), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(offer.title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.78)
-
-                    Text(offer.subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.78)
-                }
-
-                Spacer(minLength: 8)
-
-                VStack(alignment: .trailing, spacing: 4) {
-                    if let badge = offer.badge {
-                        Text(badge)
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(offer.isRecommended ? .blue : .secondary)
-                            .padding(.horizontal, 6)
-                            .frame(height: 18)
-                            .background(offer.isRecommended ? Color.blue.opacity(0.12) : Color(uiColor: .tertiarySystemFill), in: Capsule())
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.78)
-                    }
-
-                    Text(offer.price)
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
-                }
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 11)
-            .frame(minHeight: 62)
-            .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 13, style: .continuous)
-                    .stroke(offer.isRecommended ? Color.blue.opacity(0.65) : Color.black.opacity(0.05), lineWidth: offer.isRecommended ? 1.5 : 1)
-            )
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(offer.title), \(offer.price)")
-    }
-}
-
-private enum LockedOffer: String, Identifiable {
-    case watchAd
-    case oneTimeUnlock
-    case weeklyUnlimited
-    case yearlyUnlimited
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .watchAd:
-            "Watch Ad"
-        case .oneTimeUnlock:
-            "One-time Unlock"
-        case .weeklyUnlimited:
-            "Weekly Unlimited"
-        case .yearlyUnlimited:
-            "Yearly Unlimited"
-        }
-    }
-
-    var subtitle: String {
-        switch self {
-        case .watchAd:
-            "Unlock this episode after an ad"
-        case .oneTimeUnlock:
-            "Get access to this episode"
-        case .weeklyUnlimited:
-            "Unlimited for one week"
-        case .yearlyUnlimited:
-            "Unlimited episodes all year"
-        }
-    }
-
-    var price: String {
-        switch self {
-        case .watchAd:
-            "Free"
-        case .oneTimeUnlock:
-            "$0.99"
-        case .weeklyUnlimited:
-            "$4.99/wk"
-        case .yearlyUnlimited:
-            "$39.99/yr"
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .watchAd:
-            "play.rectangle"
-        case .oneTimeUnlock:
-            "lock.open"
-        case .weeklyUnlimited:
-            "calendar.badge.clock"
-        case .yearlyUnlimited:
-            "crown"
-        }
-    }
-
-    var badge: String? {
-        switch self {
-        case .weeklyUnlimited:
-            "Recommended"
-        case .yearlyUnlimited:
-            "Best value"
-        default:
-            nil
-        }
-    }
-
-    var isRecommended: Bool {
-        self == .weeklyUnlimited
-    }
-
-    var alertMessage: String {
-        switch self {
-        case .watchAd:
-            "This will show an interstitial advertisement, unlocking the episode."
-        case .oneTimeUnlock:
-            "One-time episode unlock will implement iOS one-time purchase."
-        case .weeklyUnlimited:
-            "Weekly unlimited access will implement iOS in-app purchases."
-        case .yearlyUnlimited:
-            "Yearly unlimited access will implement iOS in-app purchases."
-        }
     }
 }
 

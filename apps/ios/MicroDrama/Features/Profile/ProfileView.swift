@@ -62,6 +62,7 @@ struct ProfileView: View {
 
     @StateObject private var notificationContentStore = MockNotificationStore.shared
     @StateObject private var notificationPermissionStore = NotificationPermissionStore.shared
+    @StateObject private var adConsentManager = AdConsentManager.shared
     @StateObject private var episodeOpener = EpisodeOpeningViewModel()
     @ObservedObject private var followedShowStore = FollowedShowStore.shared
 
@@ -128,6 +129,22 @@ struct ProfileView: View {
                 }
 
                 Section {
+                    if adConsentManager.isPrivacyOptionsRequired {
+                        Button {
+                            Task {
+                                await adConsentManager.presentPrivacyOptions()
+                            }
+                        } label: {
+                            ProfileSectionHeaderRow(
+                                systemImage: "hand.raised.fill",
+                                title: "Privacy Choices",
+                                trailingText: "Manage"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .listRowSeparator(.hidden)
+                    }
+
                     AppVersionFooter()
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 0, trailing: 16))
                         .listRowSeparator(.hidden)

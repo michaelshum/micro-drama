@@ -1,5 +1,6 @@
 import Foundation
 import GoogleMobileAds
+import UserMessagingPlatform
 
 @MainActor
 final class RewardedEpisodeUnlockAd: NSObject, ObservableObject {
@@ -23,6 +24,7 @@ final class RewardedEpisodeUnlockAd: NSObject, ObservableObject {
     }
 
     func loadIfNeeded() async {
+        guard ConsentInformation.shared.canRequestAds else { return }
         guard rewardedAd == nil, !isLoading else { return }
 
         isLoading = true

@@ -1,14 +1,12 @@
 import AVFoundation
-import GoogleMobileAds
 import SwiftUI
 
 @main
 struct MicroDramaApp: App {
     init() {
         configurePlaybackAudioSession()
-        MobileAds.shared.start()
         Task {
-            await RewardedEpisodeUnlockAd.shared.loadIfNeeded()
+            await AdConsentManager.shared.configureAndStartAds()
         }
     }
 
