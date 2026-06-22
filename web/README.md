@@ -1,6 +1,6 @@
-# Onda Legal Site
+# Onda Web Site
 
-Static legal pages for the Onda iOS app.
+Static marketing, support, and legal pages for the Onda iOS app.
 
 ## Deploy on Vercel
 
@@ -12,6 +12,8 @@ Static legal pages for the Onda iOS app.
 
 Expected URLs after deployment:
 
+- `/` for the marketing URL
+- `/support` for the support URL
 - `/privacy` for the privacy policy
 - `/terms` for the terms of service
 
@@ -22,6 +24,6 @@ cd web
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080`, `http://localhost:8080/privacy`, or `http://localhost:8080/terms`.
+Open `http://localhost:8080`, `http://localhost:8080/support`, `http://localhost:8080/privacy`, or `http://localhost:8080/terms`.
 
-Before App Store submission, confirm the contact email addresses in `privacy.html` and `terms.html` are correct for Onda.
+Before App Store submission, confirm the contact email address in the support, privacy, and terms pages is correct for Onda.

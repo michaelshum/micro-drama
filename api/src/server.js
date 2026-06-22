@@ -213,21 +213,31 @@ function uniqueStrings(values) {
   });
 }
 
-function publicTasteAnchor(req, anchor, visibleShowIds = null) {
+function shouldShowTasteAnchorPosters(homeConfig) {
+  return homeConfig?.tasteAnchorArtworkMode === "poster";
+}
+
+function publicTasteAnchor(req, anchor, shouldShowPoster, visibleShowIds = null) {
   const preferredShowIds = uniqueStrings(anchor.preferredShowIds)
     .filter((showId) => !visibleShowIds || visibleShowIds.has(showId));
 
-  return {
+  const publicAnchor = {
     id: anchor.id,
     title: anchor.title,
-    posterUrl: absoluteUrl(req, `/taste-anchors/${anchor.id}/poster`),
     preferredShowIds
   };
+
+  if (shouldShowPoster) {
+    publicAnchor.posterUrl = absoluteUrl(req, `/taste-anchors/${anchor.id}/poster`);
+  }
+
+  return publicAnchor;
 }
 
 function buildTasteAnchors(req, homeConfig, visibleShowIds = null) {
   const anchors = Array.isArray(homeConfig.tasteAnchors) ? homeConfig.tasteAnchors : [];
-  return anchors.map((anchor) => publicTasteAnchor(req, anchor, visibleShowIds));
+  const shouldShowPoster = shouldShowTasteAnchorPosters(homeConfig);
+  return anchors.map((anchor) => publicTasteAnchor(req, anchor, shouldShowPoster, visibleShowIds));
 }
 
 async function sendTasteAnchorPoster(res, anchorId) {
@@ -882,6 +892,11 @@ async function handleRequest(req, res) {
 
     const tasteAnchorPosterMatch = path.match(/^\/taste-anchors\/([^/]+)\/poster$/);
     if (tasteAnchorPosterMatch) {
+      if (!shouldShowTasteAnchorPosters(catalog.home || {})) {
+        notFound(res);
+        return;
+      }
+
       await sendTasteAnchorPoster(res, tasteAnchorPosterMatch[1]);
       return;
     }

@@ -10,6 +10,7 @@
     }
   },
   "home": {
+    "tasteAnchorArtworkMode": "gradient",
     "tasteAnchors": [
       {
         "id": "loveIsland",
