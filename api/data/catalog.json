@@ -15,6 +15,7 @@
       {
         "id": "loveIsland",
         "title": "Love Island",
+        "emoji": "🏝️",
         "preferredShowIds": [
           "show_demo_fruit_love_island",
           "show_demo_candy_love_island"
@@ -23,6 +24,7 @@
       {
         "id": "theBachelor",
         "title": "The Bachelor",
+        "emoji": "🌹",
         "preferredShowIds": [
           "show_demo_fruit_love_island",
           "show_demo_candy_love_island"
@@ -31,6 +33,7 @@
       {
         "id": "desperateHousewives",
         "title": "Desperate Housewives",
+        "emoji": "🏘️",
         "preferredShowIds": [
           "show_demo_the_eye_of_betrayal",
           "show_demo_double_shelf_life_marks_greed",
@@ -40,6 +43,7 @@
       {
         "id": "goneGirl",
         "title": "Gone Girl",
+        "emoji": "🔎",
         "preferredShowIds": [
           "show_demo_screen_time",
           "show_demo_the_eye_of_betrayal",
@@ -49,6 +53,7 @@
       {
         "id": "crazyRichAsians",
         "title": "Crazy Rich Asians",
+        "emoji": "🥂",
         "preferredShowIds": [
           "show_demo_one_night_in_fruitopia",
           "show_demo_i_married_my_exs_mafia_boss"
@@ -57,6 +62,7 @@
       {
         "id": "fiftyShades",
         "title": "Fifty Shades",
+        "emoji": "🔥",
         "preferredShowIds": [
           "show_demo_one_night_in_fruitopia",
           "show_demo_i_married_my_exs_mafia_boss"
@@ -65,6 +71,7 @@
       {
         "id": "prettyLittleLiars",
         "title": "Pretty Little Liars",
+        "emoji": "💄",
         "preferredShowIds": [
           "show_demo_screen_time",
           "show_demo_the_eye_of_betrayal"
@@ -73,6 +80,7 @@
       {
         "id": "suits",
         "title": "Suits",
+        "emoji": "💼",
         "preferredShowIds": [
           "show_demo_secrets_in_the_juice",
           "show_demo_one_night_in_fruitopia"
@@ -81,6 +89,7 @@
       {
         "id": "succession",
         "title": "Succession",
+        "emoji": "👑",
         "preferredShowIds": [
           "show_demo_secrets_in_the_juice"
         ]
@@ -88,6 +97,7 @@
       {
         "id": "gameOfThrones",
         "title": "Game of Thrones",
+        "emoji": "🐉",
         "preferredShowIds": [
           "show_demo_the_beast_queens_canvas"
         ]
@@ -95,6 +105,7 @@
       {
         "id": "beautyAndTheBeast",
         "title": "Beauty and the Beast",
+        "emoji": "🥀",
         "preferredShowIds": [
           "show_demo_the_beast_queens_canvas"
         ]
@@ -102,6 +113,7 @@
       {
         "id": "bridgerton",
         "title": "Bridgerton",
+        "emoji": "💐",
         "preferredShowIds": [
           "show_demo_i_married_my_exs_mafia_boss"
         ]
@@ -109,6 +121,7 @@
       {
         "id": "devilWearsPrada",
         "title": "The Devil Wears Prada",
+        "emoji": "👠",
         "preferredShowIds": [
           "show_demo_secrets_in_the_juice"
         ]
@@ -116,6 +129,7 @@
       {
         "id": "twilight",
         "title": "Twilight",
+        "emoji": "🌙",
         "preferredShowIds": [
           "show_demo_the_beast_queens_canvas"
         ]

@@ -46,12 +46,14 @@ enum TasteLanguage: String, CaseIterable, Identifiable, Codable {
 struct TasteAnchor: Identifiable, Codable, Hashable {
     let id: String
     let title: String
+    let emoji: String?
     let posterUrl: URL?
     let preferredShowIDs: [String]
 
     private enum CodingKeys: String, CodingKey {
         case id
         case title
+        case emoji
         case posterUrl
         case preferredShowIDs = "preferredShowIds"
     }
@@ -59,11 +61,13 @@ struct TasteAnchor: Identifiable, Codable, Hashable {
     init(
         id: String,
         title: String,
+        emoji: String? = nil,
         posterUrl: URL? = nil,
         preferredShowIDs: [String]
     ) {
         self.id = id
         self.title = title
+        self.emoji = emoji
         self.posterUrl = posterUrl
         self.preferredShowIDs = preferredShowIDs
     }
@@ -74,6 +78,45 @@ struct TasteAnchor: Identifiable, Codable, Hashable {
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+
+    var displayEmoji: String {
+        if let emoji, !emoji.isEmpty {
+            return emoji
+        }
+
+        switch id {
+        case "loveIsland":
+            return "🏝️"
+        case "theBachelor":
+            return "🌹"
+        case "desperateHousewives":
+            return "🏘️"
+        case "goneGirl":
+            return "🔎"
+        case "crazyRichAsians":
+            return "🥂"
+        case "fiftyShades":
+            return "🔥"
+        case "prettyLittleLiars":
+            return "💄"
+        case "suits":
+            return "💼"
+        case "succession":
+            return "👑"
+        case "gameOfThrones":
+            return "🐉"
+        case "beautyAndTheBeast":
+            return "🥀"
+        case "bridgerton":
+            return "💐"
+        case "devilWearsPrada":
+            return "👠"
+        case "twilight":
+            return "🌙"
+        default:
+            return "🎬"
+        }
     }
 
     var colors: [Color] {
@@ -971,6 +1014,12 @@ private struct TasteAnchorCard: View {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
+                        .overlay {
+                            Text(anchor.displayEmoji)
+                                .font(.system(size: 58))
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                                .accessibilityHidden(true)
+                        }
                         .overlay(alignment: .bottomLeading) {
                             Text(anchor.title)
                                 .font(.system(size: 15, weight: .bold))
@@ -992,9 +1041,11 @@ private struct TasteAnchorCard: View {
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 42, weight: .semibold))
+                        .font(.system(size: 26, weight: .semibold))
                         .foregroundStyle(.white)
                         .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 2)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                        .padding(8)
                 }
             }
             .aspectRatio(2.0 / 3.0, contentMode: .fit)

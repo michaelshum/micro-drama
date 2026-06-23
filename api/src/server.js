@@ -224,6 +224,7 @@ function publicTasteAnchor(req, anchor, shouldShowPoster, visibleShowIds = null)
   const publicAnchor = {
     id: anchor.id,
     title: anchor.title,
+    emoji: typeof anchor.emoji === "string" ? anchor.emoji : null,
     preferredShowIds
   };
 
